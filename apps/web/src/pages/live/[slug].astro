@@ -1,0 +1,411 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import LiveWallOverlay from '../../components/LiveWallOverlay.astro';
+
+export function getStaticPaths() {
+  return [
+    { params: { slug: 'boda-carlos-y-sofia' } },
+  ];
+}
+
+const { slug } = Astro.params;
+const eventSlug = slug || 'boda-carlos-y-sofia';
+---
+
+<Layout title="Muro en Vivo — Carlos & Sofia" theme="dark">
+  
+  <div id="live-wall-root" class="relative w-screen h-screen overflow-hidden bg-[#0d0e12] select-none text-white">
+    
+    <!-- Capa de fondo ambiental desenfocada (Crossfade de ambiente) -->
+    <div id="ambient-backdrop" class="absolute inset-0 bg-cover bg-center transition-all duration-1000 ease-out filter blur-3xl scale-110 opacity-30"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/60 pointer-events-none"></div>
+
+    <!-- Escenario principal de proyeccion cinematografica -->
+    <main class="relative z-10 w-full h-full flex flex-col justify-between p-6 sm:p-12">
+      
+      <!-- Espacio superior reservado para el encabezado de LiveWallOverlay -->
+      <div class="h-16"></div>
+
+      <!-- Contenedor central del recuerdo destacado -->
+      <div class="relative flex-1 flex items-center justify-center max-h-[78vh]">
+        
+        <div id="spotlight-frame" class="relative max-h-full max-w-5xl w-full flex items-center justify-center rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-white/10 bg-black/40 backdrop-blur-sm">
+          
+          <!-- Elemento multimedia activo (Inyectado con JavaScript) -->
+          <div id="spotlight-media-container" class="relative w-full h-full flex items-center justify-center min-h-[50vh]">
+            <!-- Foto o video con animacion Ken Burns -->
+          </div>
+
+          <!-- Ficha de informacion del autor del recuerdo -->
+          <div id="spotlight-badge" class="absolute bottom-0 inset-x-0 p-6 sm:p-8 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex items-end justify-between transition-opacity duration-500">
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div id="spotlight-avatar" class="h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-sm font-bold shadow-lg">
+                C
+              </div>
+              <div>
+                <span class="block text-xs uppercase tracking-widest text-emerald-400 font-semibold mb-0.5">Recuerdo Proyectado</span>
+                <h2 id="spotlight-author" class="text-lg sm:text-2xl font-bold tracking-wide text-white drop-shadow">Carlos M.</h2>
+                <p id="spotlight-time" class="text-xs text-gray-300 drop-shadow">hace 5 min</p>
+              </div>
+            </div>
+
+            <!-- Indicador visual de progreso del slide -->
+            <div class="hidden sm:flex flex-col items-end gap-1.5">
+              <div class="w-32 h-1 bg-white/20 rounded-full overflow-hidden">
+                <div id="spotlight-progress-bar" class="h-full bg-white w-0 transition-all duration-100 ease-linear"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Cinta de mosaico inferior con los ultimos recuerdos -->
+      <div class="relative z-20 w-full pt-4 pb-1">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs uppercase tracking-widest text-gray-400 font-semibold">Ultimos momentos compartidos</span>
+        </div>
+
+        <div id="live-thumbnails-strip" class="flex gap-2.5 overflow-x-hidden py-1">
+          <!-- Miniaturas inyectadas con JavaScript -->
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Componente Overlay con QR y Controles -->
+    <LiveWallOverlay slug={eventSlug} pin="4821" title="Carlos & Sofia" />
+
+  </div>
+
+</Layout>
+
+<style>
+  /* Animacion suave Ken Burns para fotos en pantalla gigante */
+  .ken-burns {
+    animation: kenburnsEffect 8.5s ease-out forwards;
+    will-change: transform;
+  }
+
+  @keyframes kenburnsEffect {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1.05);
+    }
+  }
+</style>
+
+<script define:vars={{ eventSlug }}>
+  const backdrop = document.getElementById('ambient-backdrop');
+  const mediaContainer = document.getElementById('spotlight-media-container');
+  const authorTag = document.getElementById('spotlight-author');
+  const timeTag = document.getElementById('spotlight-time');
+  const avatarTag = document.getElementById('spotlight-avatar');
+  const progressBar = document.getElementById('spotlight-progress-bar');
+  const thumbsStrip = document.getElementById('live-thumbnails-strip');
+  const counterTag = document.getElementById('live-counter');
+
+  const toastAlert = document.getElementById('live-toast-alert');
+  const toastAuthor = document.getElementById('live-toast-author');
+
+  const btnPlayPause = document.getElementById('btn-live-playpause');
+  const iconPause = document.getElementById('icon-live-pause');
+  const iconPlay = document.getElementById('icon-live-play');
+  const btnPrev = document.getElementById('btn-live-prev');
+  const btnNext = document.getElementById('btn-live-next');
+
+  // Datos mock de partida si la API aun no tiene imagenes
+  const DEMO_ITEMS = [
+    {
+      id: 'demo-1',
+      filename: 'ceremonia.jpg',
+      content_type: 'image/jpeg',
+      guest_author: 'Carlos M.',
+      created_at: 'hace 5 min',
+      url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&auto=format&fit=crop&q=85',
+      thumb_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=300&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'demo-2',
+      filename: 'novios_brindis.jpg',
+      content_type: 'image/jpeg',
+      guest_author: 'Sofia G.',
+      created_at: 'hace 12 min',
+      url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1600&auto=format&fit=crop&q=85',
+      thumb_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=300&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'demo-3',
+      filename: 'baile.jpg',
+      content_type: 'image/jpeg',
+      guest_author: 'Tia Carmen',
+      created_at: 'hace 20 min',
+      url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1600&auto=format&fit=crop&q=85',
+      thumb_url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=300&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'demo-4',
+      filename: 'recepcion.jpg',
+      content_type: 'image/jpeg',
+      guest_author: 'Alejandro',
+      created_at: 'hace 35 min',
+      url: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=1600&auto=format&fit=crop&q=85',
+      thumb_url: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=300&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'demo-5',
+      filename: 'anillos.jpg',
+      content_type: 'image/jpeg',
+      guest_author: 'Familia Morales',
+      created_at: 'hace 40 min',
+      url: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=1600&auto=format&fit=crop&q=85',
+      thumb_url: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=300&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'demo-6',
+      filename: 'pastel.jpg',
+      content_type: 'image/jpeg',
+      guest_author: 'Roberto',
+      created_at: 'hace 1 hora',
+      url: 'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=1600&auto=format&fit=crop&q=85',
+      thumb_url: 'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=300&auto=format&fit=crop&q=80',
+    },
+  ];
+
+  let items = [...DEMO_ITEMS];
+  let knownIds = new Set(items.map((i) => i.id));
+  let currentIndex = 0;
+  let isPaused = false;
+
+  const SLIDE_DURATION_MS = 8000;
+  let slideStartTime = 0;
+  let slideElapsedTime = 0;
+  let slideRaf = null;
+
+  // Carga inicial y actualizacion del feed
+  async function fetchFeed() {
+    try {
+      const res = await fetch(`http://localhost:8000/api/a/${eventSlug}/feed`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.length > 0) {
+          checkForNewItems(data);
+          items = data;
+        }
+      }
+    } catch {
+      // Usar mock en caso de desconexion
+    }
+    updateCounter();
+    renderThumbnailsStrip();
+  }
+
+  function checkForNewItems(freshData) {
+    const newItems = freshData.filter((it) => !knownIds.has(it.id));
+    if (newItems.length > 0) {
+      newItems.forEach((it) => knownIds.add(it.id));
+      const latest = newItems[0];
+      showNewToast(latest.guest_author || 'Invitado');
+      // Proyectar de inmediato el nuevo recuerdo entrante
+      currentIndex = 0;
+      loadSpotlightMedia(true);
+    }
+  }
+
+  function showNewToast(author) {
+    if (!toastAlert) return;
+    if (toastAuthor) toastAuthor.textContent = author;
+    toastAlert.classList.remove('opacity-0', '-translate-y-12', 'pointer-events-none');
+    toastAlert.classList.add('opacity-100', 'translate-y-0');
+
+    setTimeout(() => {
+      toastAlert.classList.remove('opacity-100', 'translate-y-0');
+      toastAlert.classList.add('opacity-0', '-translate-y-12', 'pointer-events-none');
+    }, 4500);
+  }
+
+  function updateCounter() {
+    if (counterTag) {
+      counterTag.textContent = `${items.length} recuerdos en proyeccion`;
+    }
+  }
+
+  function renderThumbnailsStrip() {
+    if (!thumbsStrip) return;
+    thumbsStrip.innerHTML = '';
+
+    items.forEach((item, idx) => {
+      const thumb = document.createElement('button');
+      thumb.type = 'button';
+      thumb.className = `relative flex-shrink-0 h-14 w-20 rounded-lg overflow-hidden border transition-all duration-300 ${
+        idx === currentIndex
+          ? 'border-emerald-400 ring-2 ring-emerald-400/50 scale-105'
+          : 'border-white/20 opacity-60 hover:opacity-100'
+      }`;
+
+      const imgSrc = item.thumb_url || item.url;
+      thumb.innerHTML = `
+        <img src="${imgSrc}" alt="${item.filename}" class="h-full w-full object-cover" />
+      `;
+
+      thumb.addEventListener('click', () => {
+        currentIndex = idx;
+        loadSpotlightMedia();
+      });
+
+      thumbsStrip.appendChild(thumb);
+    });
+  }
+
+  function stopSlideTimer() {
+    if (slideRaf) {
+      cancelAnimationFrame(slideRaf);
+      slideRaf = null;
+    }
+  }
+
+  function loadSpotlightMedia(isImmediate = false) {
+    stopSlideTimer();
+
+    const currentItem = items[currentIndex];
+    if (!currentItem) return;
+
+    const mediaSrc = currentItem.url || currentItem.thumb_url;
+    const isVideo = currentItem.content_type && currentItem.content_type.startsWith('video/');
+
+    // Fondo ambiental
+    if (backdrop) {
+      backdrop.style.backgroundImage = `url('${mediaSrc}')`;
+    }
+
+    // Datos del autor
+    const initial = currentItem.guest_author ? currentItem.guest_author.trim()[0].toUpperCase() : 'I';
+    if (avatarTag) avatarTag.textContent = initial;
+    if (authorTag) authorTag.textContent = currentItem.guest_author || 'Invitado';
+    if (timeTag) timeTag.textContent = currentItem.created_at || 'Recuerdo del evento';
+
+    // Contenido del reproductor
+    mediaContainer.innerHTML = '';
+
+    if (isVideo) {
+      const video = document.createElement('video');
+      video.src = mediaSrc;
+      video.autoplay = true;
+      video.playsInline = true;
+      video.muted = true;
+      video.className = 'max-h-[65vh] max-w-full object-contain rounded-xl';
+
+      video.addEventListener('timeupdate', () => {
+        if (progressBar && video.duration) {
+          const pct = (video.currentTime / video.duration) * 100;
+          progressBar.style.width = `${pct}%`;
+        }
+      });
+
+      video.addEventListener('ended', () => {
+        goToNext();
+      });
+
+      mediaContainer.appendChild(video);
+      if (!isPaused) video.play().catch(() => {});
+    } else {
+      const img = document.createElement('img');
+      img.src = mediaSrc;
+      img.alt = currentItem.filename;
+      img.className = 'max-h-[65vh] max-w-full object-contain rounded-xl ken-burns shadow-2xl';
+      mediaContainer.appendChild(img);
+
+      slideStartTime = performance.now();
+      slideElapsedTime = 0;
+      if (!isPaused) startSlideTimer();
+    }
+
+    renderThumbnailsStrip();
+  }
+
+  function startSlideTimer() {
+    function frame(now) {
+      if (isPaused) {
+        slideStartTime = now - slideElapsedTime;
+        slideRaf = requestAnimationFrame(frame);
+        return;
+      }
+
+      slideElapsedTime = now - slideStartTime;
+      const progress = Math.min(slideElapsedTime / SLIDE_DURATION_MS, 1);
+
+      if (progressBar) {
+        progressBar.style.width = `${progress * 100}%`;
+      }
+
+      if (progress < 1) {
+        slideRaf = requestAnimationFrame(frame);
+      } else {
+        goToNext();
+      }
+    }
+
+    slideRaf = requestAnimationFrame(frame);
+  }
+
+  function goToNext() {
+    currentIndex = (currentIndex + 1) % items.length;
+    loadSpotlightMedia();
+  }
+
+  function goToPrev() {
+    currentIndex = (currentIndex - 1 + items.length) % items.length;
+    loadSpotlightMedia();
+  }
+
+  function togglePlayPause() {
+    isPaused = !isPaused;
+    if (isPaused) {
+      iconPause?.classList.add('hidden');
+      iconPlay?.classList.remove('hidden');
+    } else {
+      iconPause?.classList.remove('hidden');
+      iconPlay?.classList.add('hidden');
+      slideStartTime = performance.now() - slideElapsedTime;
+      startSlideTimer();
+    }
+  }
+
+  btnPlayPause?.addEventListener('click', togglePlayPause);
+  btnPrev?.addEventListener('click', goToPrev);
+  btnNext?.addEventListener('click', goToNext);
+
+  // Atajos de teclado para DJ u operador tecnico
+  window.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      togglePlayPause();
+    } else if (e.key === 'ArrowRight') {
+      goToNext();
+    } else if (e.key === 'ArrowLeft') {
+      goToPrev();
+    } else if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    } else if (e.key === 'q' || e.key === 'Q') {
+      const qrCard = document.getElementById('live-qr-card');
+      if (qrCard) {
+        qrCard.classList.toggle('opacity-0');
+        qrCard.classList.toggle('pointer-events-none');
+      }
+    }
+  });
+
+  // Polling recurrente cada 8 segundos para detectar nuevas fotos en vivo
+  setInterval(fetchFeed, 8000);
+
+  // Inicializacion inmediata
+  fetchFeed();
+  loadSpotlightMedia();
+</script>

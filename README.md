@@ -164,7 +164,7 @@ npm run dev
 - [x] **Fase 3:** Core API Vocatus (Endpoints publicos de invitacion, busqueda y confirmacion RSVP con conteo de pases).
 - [x] **Fase 4:** Core API Animus (Validacion de PIN de 4 digitos, JWT efimero y generacion batch de URLs prefirmadas R2).
 - [x] **Fase 5:** Frontend Invitados (Vistas mobile-first `/v/[slug]` y `/a/[slug]` con carga directa, galeria tipo telefono y visor estilo Reels).
-- [ ] **Fase 6:** Live Wall (`/live/[slug]`) con polling/refresco en pantalla completa para proyectores.
+- [x] **Fase 6:** Live Wall (`/live/[slug]`) con polling/refresco en pantalla completa para proyectores.
 - [ ] **Fase 7:** Empaquetador masivo ZIP asincrono y notificaciones por correo via Resend.
 - [ ] **Fase 8:** Panel de Administracion & Cotizador (`/admin`) — Gestion de superadmin para cotizar y crear eventos + Dashboard para el anfitrion (metricas en vivo, moderacion de fotos y generador de plantillas QR).
 - [ ] **Fase 9:** Landing Page Comercial & Captacion (`/`) — Vitrina de venta de alto impacto para clientes finales, cotizador interactivo en linea y demostraciones en vivo.
