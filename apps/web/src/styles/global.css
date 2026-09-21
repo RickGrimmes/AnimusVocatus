@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  body {
+    @apply antialiased text-gray-900 bg-editorial-bg;
+    overscroll-behavior-y: none;
+  }
+}
+
+/* Ocultar barra de scroll pero permitir navegacion */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Contenedor Reels Snap */
+.reels-container {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.reel-slide {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}

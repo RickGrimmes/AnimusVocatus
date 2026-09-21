@@ -28,6 +28,45 @@ El sistema desacopla la experiencia en dos momentos clave:
 
 ---
 
+## Arquitectura de Negocio: 3 Areas en 1 Solo Proyecto
+
+No se requieren tres repositorios ni proyectos separados. La suite centraliza toda la operacion en este unico monorepo:
+
+```
+                                 PLATAFORMA VOCATUS & ANIMUS
+                                              │
+         ┌────────────────────────────────────┼────────────────────────────────────┐
+         ▼                                    ▼                                    ▼
+1. LANDING COMERCIAL                2. PANEL ADMINISTRATIVO             3. PRODUCTO MODULAR
+   Ruta: /                             Ruta: /admin                        Rutas: /v y /a
+   • Captacion de clientes             • Superadmin (Tu operacion):        • Vocatus: Invitacion
+   • Demos interactivos                  cotizaciones, alta de eventos,      con confirmacion RSVP
+   • Cotizador en linea                  activacion de modulos y cuotas.   • Animus: Boveda QR/PIN,
+   • Portafolio de plantillas          • Anfitrion (Tus clientes):           galeria tipo telefono
+                                         metricas RSVP, moderacion de        y reproductor Reels
+                                         fotos y descarga ZIP.
+```
+
+### Desacoplamiento de Modulos (Venta Flexible)
+Cada evento es 100% independiente con su propio `slug` y puede contratarse en tres modalidades:
+
+1. **Solo Vocatus (Invitaciones & RSVP):** Para eventos que solo requieren logistica e invitacion digital. Se desactiva la boveda Animus y no se muestra el banner de fotos.
+2. **Solo Animus (Boveda de Recuerdos & Reels):** Para graduaciones, cumpleanos o bodas donde ya entregaron invitaciones fisicas. Se entrega unicamente el codigo QR y PIN de mesa para subir fotos y videos.
+3. **Suite Completa (Vocatus + Animus):** Ambos modulos activos y sincronizados en el tiempo (*Time-Aware Routing*).
+
+### Motor de Plantillas Dinamicas (Theme Engine)
+Para evitar crear un proyecto de codigo por cada cliente, el sistema utiliza un **motor de plantillas dinamicas**:
+* **Mismo motor de datos:** Todos los eventos usan la misma API y base de datos (itinerario, pases, almacenamiento).
+* **Piel visual configurable:** En base de datos cada evento guarda su `template_id` y su `theme_config`:
+  - `editorial_minimalist`: Bodas elegantes y sobrias (tipografia serif clasica, fondo crema, detalles dorados o negros).
+  - `gold_luxury`: XV anos y aniversarios de gala (acentos dorados, brillos, video de bienvenida).
+  - `party_neon`: Cumpleanos y fiestas de noche (modo oscuro, colores vivos, enfoque en la fiesta).
+  - `botanical_soft`: Bautizos y primeras comuniones (tonos pastel, acuarelas florales suaves).
+  - `academic_gala`: Graduaciones y galas corporativas.
+* **Soporte VIP a la medida:** Si un cliente contrata un desarrollo 100% artesanal y exclusivo, Astro permite crear una pagina dedicada dentro del mismo proyecto (por ejemplo `src/pages/v/boda-vip.astro`) sin clonar repositorios ni alterar a otros clientes.
+
+---
+
 ## Flujo de Usuario y Enrutamiento Dinamico (Time-Aware)
 
 El enlace principal compartido con los invitados se adapta automaticamente segun la fecha del evento:
@@ -50,7 +89,7 @@ El enlace principal compartido con los invitados se adapta automaticamente segun
 | Capa | Tecnologia | Proposito |
 | :--- | :--- | :--- |
 | **Arquitectura** | **Monorepo** | Unificacion de cliente y API con despliegues independientes |
-| **Frontend** | **Astro / Next.js + Tailwind CSS** | Serverless / Edge rendering para carga ultrarrapida en moviles |
+| **Frontend** | **Astro + Tailwind CSS** | Serverless / Edge rendering para carga ultrarrapida en moviles |
 | **Backend API** | **FastAPI (Python 3.12)** | Asincronismo, validacion Pydantic v2 y firma criptografica S3 |
 | **Base de Datos** | **PostgreSQL 16** | Modelo relacional para eventos, boletos RSVP y metadatos de media |
 | **Almacenamiento** | **Cloudflare R2** | Almacenamiento compatible con S3 sin costos de transferencia ($0 egress) |
@@ -65,22 +104,24 @@ El enlace principal compartido con los invitados se adapta automaticamente segun
 ```text
 ANIMUS-VOCATUS/
 ├── apps/
-│   ├── web/                        # Frontend (Astro / Next.js)
+│   ├── web/                        # Frontend en Astro (Edge Ready)
 │   │   └── src/
-│   │       ├── components/         # Componentes UI (RSVP, Uploader, LiveWall, etc.)
+│   │       ├── components/         # RSVPModal, PinGate, GalleryGrid, ReelsViewer, UploaderModal
+│   │       ├── layouts/            # Layout.astro (temas dark y editorial)
 │   │       ├── pages/
-│   │       │   ├── v/              # Modulo Vocatus: /v/[slug] (Invitacion & RSVP)
-│   │       │   ├── a/              # Modulo Animus: /a/[slug] (Boveda de Invitados)
-│   │       │   ├── live/           # Muro en Vivo: /live/[slug] (Proyeccion)
-│   │       │   └── admin/          # Panel de anfitrion y moderacion
-│   │       └── lib/                # Clientes API, helpers y generador de thumbnails
+│   │       │   ├── index.astro     # Landing comercial y portal de acceso
+│   │       │   ├── v/[slug].astro  # Invitacion Vocatus con cuenta regresiva y RSVP
+│   │       │   ├── a/[slug].astro  # Boveda Animus con galeria tipo telefono y Reels
+│   │       │   ├── live/[slug].astro # Proyeccion en vivo (Live Wall)
+│   │       │   └── admin/          # Panel de administracion y cotizaciones
+│   │       └── lib/                # Clientes API y generador de miniaturas en cliente
 │   │
 │   └── api/                        # Backend (FastAPI + Python 3.12)
 │       └── app/
-│           ├── routers/            # Endpoints: events, rsvp, vault, admin, auth
-│           └── services/           # Servicios: storage (R2), mailer, zip_packager
+│           ├── routers/            # auth, events, rsvp, vault, admin
+│           └── services/           # storage (Cloudflare R2), mailer, zip_packager
 │
-├── .agents/                        # Reglas y configuraciones locales de agentes
+├── .agents/                        # Reglas y skills locales (instagram-media-experience)
 ├── .env.example                    # Plantilla de variables de entorno
 ├── docker-compose.yml              # Orquestacion local (PostgreSQL + API)
 ├── VOCATUS_ANIMUS_SPEC.md          # Especificacion tecnica maestra y contratos de API
@@ -97,16 +138,20 @@ Copia el archivo de ejemplo para configurar tus credenciales locales:
 cp .env.example .env
 ```
 
-Configura en tu `.env`:
-- Conexion a PostgreSQL (`DATABASE_URL`).
-- Credenciales de Cloudflare R2 (`R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`).
-- API Key de Resend (`RESEND_API_KEY`) para correos.
-- Claves de firma JWT (`SECRET_KEY`).
-
 ### 2. Base de Datos Local
 Para levantar PostgreSQL 16 con Docker:
 ```bash
 docker compose up -d db
+```
+
+### 3. Levantar Backend y Frontend en Desarrollo
+```bash
+# Terminal 1 - Backend FastAPI
+python -m uvicorn app.main:app --app-dir apps/api --reload --port 8000
+
+# Terminal 2 - Frontend Astro
+cd apps/web
+npm run dev
 ```
 
 ---
@@ -118,10 +163,11 @@ docker compose up -d db
 - [x] **Fase 2:** Modelado de datos en SQLAlchemy 2.0 y migraciones Alembic (User, Event, RSVPGuest, MediaItem, ZipJob).
 - [x] **Fase 3:** Core API Vocatus (Endpoints publicos de invitacion, busqueda y confirmacion RSVP con conteo de pases).
 - [x] **Fase 4:** Core API Animus (Validacion de PIN de 4 digitos, JWT efimero y generacion batch de URLs prefirmadas R2).
-- [ ] **Fase 5:** Frontend Invitados (Vistas mobile-first `/v/[slug]` y `/a/[slug]` con carga directa y miniaturas en cliente).
-- [ ] **Fase 6:** Live Wall (`/live/[slug]`) con polling/refresco en pantalla completa.
+- [x] **Fase 5:** Frontend Invitados (Vistas mobile-first `/v/[slug]` y `/a/[slug]` con carga directa, galeria tipo telefono y visor estilo Reels).
+- [ ] **Fase 6:** Live Wall (`/live/[slug]`) con polling/refresco en pantalla completa para proyectores.
 - [ ] **Fase 7:** Empaquetador masivo ZIP asincrono y notificaciones por correo via Resend.
-- [ ] **Fase 8:** Panel de Administracion para anfitriones (metricas, moderacion de fotos y descarga de tarjetas QR).
+- [ ] **Fase 8:** Panel de Administracion & Cotizador (`/admin`) — Gestion de superadmin para cotizar y crear eventos + Dashboard para el anfitrion (metricas en vivo, moderacion de fotos y generador de plantillas QR).
+- [ ] **Fase 9:** Landing Page Comercial & Captacion (`/`) — Vitrina de venta de alto impacto para clientes finales, cotizador interactivo en linea y demostraciones en vivo.
 
 ---
 

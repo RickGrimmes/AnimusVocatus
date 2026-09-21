@@ -1,0 +1,489 @@
+---
+---
+
+<div id="reels-viewer-modal" class="fixed inset-0 z-50 hidden bg-[#14161b] select-none flex flex-col justify-between overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.6)]">
+  
+  <!-- Encabezado superior tipo Historias / Reels -->
+  <div class="relative z-30 w-full pt-3 px-3 pb-2 bg-gradient-to-b from-black/90 via-black/50 to-transparent">
+    
+    <!-- Barras de progreso segmentadas (una por cada foto/video) -->
+    <div id="stories-progress-bars" class="flex gap-1 w-full mb-3">
+      <!-- Inyectado dinamicamente con Javascript -->
+    </div>
+
+    <!-- Barra de control y autor -->
+    <div class="flex items-center justify-between">
+      
+      <!-- Informacion del autor -->
+      <div class="flex items-center gap-2.5">
+        <div id="viewer-author-avatar" class="h-9 w-9 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-xs font-bold text-white shadow-sm">
+          A
+        </div>
+        <div>
+          <span id="viewer-author-name" class="block text-sm font-bold text-white drop-shadow">Invitado</span>
+          <span id="viewer-time-ago" class="block text-xs text-gray-300 drop-shadow">Recuerdo del evento</span>
+        </div>
+      </div>
+
+      <!-- Botones de accion: Pausa, Mute, Descargar, Cerrar -->
+      <div class="flex items-center gap-1 sm:gap-2">
+        
+        <!-- Boton Pausa / Play -->
+        <button
+          id="btn-viewer-pause"
+          type="button"
+          class="rounded-full p-2 text-white/90 hover:bg-white/10 active:scale-95 transition"
+          aria-label="Pausar o reanudar"
+        >
+          <!-- Icono Pausa -->
+          <svg id="icon-pause" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6" />
+          </svg>
+          <!-- Icono Play (oculto por defecto) -->
+          <svg id="icon-play" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+          </svg>
+        </button>
+
+        <!-- Boton Mute / Audio (solo activo si hay video) -->
+        <button
+          id="btn-viewer-mute"
+          type="button"
+          class="hidden rounded-full p-2 text-white/90 hover:bg-white/10 active:scale-95 transition"
+          aria-label="Silenciar o activar sonido"
+        >
+          <!-- Icono Volumen On -->
+          <svg id="icon-volume-on" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          </svg>
+          <!-- Icono Mute -->
+          <svg id="icon-volume-mute" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+          </svg>
+        </button>
+
+        <!-- Boton Descargar -->
+        <button
+          id="btn-viewer-download"
+          type="button"
+          class="rounded-full p-2 text-white/90 hover:bg-white/10 active:scale-95 transition"
+          aria-label="Descargar foto o video"
+        >
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+        </button>
+
+        <!-- Boton Cerrar -->
+        <button
+          id="btn-viewer-close"
+          type="button"
+          class="rounded-full p-2 text-white/90 hover:bg-white/10 active:scale-95 transition ml-1"
+          aria-label="Cerrar visor"
+        >
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Escenario Central Multimedia -->
+  <div id="viewer-stage" class="relative flex-1 flex items-center justify-center overflow-hidden">
+    
+    <!-- Zonas invisibles de toque para navegacion de historias -->
+    <div id="tap-prev-zone" class="absolute inset-y-0 left-0 w-1/3 z-20 cursor-pointer" aria-label="Anterior"></div>
+    <div id="tap-next-zone" class="absolute inset-y-0 right-0 w-2/3 z-20 cursor-pointer" aria-label="Siguiente"></div>
+
+    <!-- Contenedor del elemento activo (Imagen o Video) -->
+    <div id="media-content-wrapper" class="w-full h-full flex items-center justify-center p-2 sm:p-4 pointer-events-none">
+      <!-- Inyectado dinamicamente -->
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  const modal = document.getElementById('reels-viewer-modal');
+  const progressBarsContainer = document.getElementById('stories-progress-bars');
+  const stageWrapper = document.getElementById('media-content-wrapper');
+
+  const authorAvatar = document.getElementById('viewer-author-avatar');
+  const authorName = document.getElementById('viewer-author-name');
+  const timeAgo = document.getElementById('viewer-time-ago');
+
+  const btnPause = document.getElementById('btn-viewer-pause');
+  const iconPause = document.getElementById('icon-pause');
+  const iconPlay = document.getElementById('icon-play');
+
+  const btnMute = document.getElementById('btn-viewer-mute');
+  const iconVolumeOn = document.getElementById('icon-volume-on');
+  const iconVolumeMute = document.getElementById('icon-volume-mute');
+
+  const btnDownload = document.getElementById('btn-viewer-download');
+  const btnClose = document.getElementById('btn-viewer-close');
+
+  const tapPrev = document.getElementById('tap-prev-zone');
+  const tapNext = document.getElementById('tap-next-zone');
+
+  let mediaItems = [];
+  let currentIndex = 0;
+  let isPaused = false;
+  let isMuted = false;
+
+  // Temporizador para fotos (5 segundos por foto)
+  const PHOTO_DURATION_MS = 5000;
+  let photoStartTime = 0;
+  let photoElapsedTime = 0;
+  let photoTimerRaf = null;
+
+  let isClosing = false;
+
+  function closeModal() {
+    if (isClosing || modal.classList.contains('hidden')) return;
+    isClosing = true;
+    stopCurrentPlayback();
+    document.body.style.overflow = '';
+
+    modal.classList.remove('is-open');
+
+    setTimeout(() => {
+      modal.classList.add('hidden');
+      stageWrapper.innerHTML = '';
+      isClosing = false;
+    }, 380);
+  }
+
+  btnClose?.addEventListener('click', closeModal);
+
+  window.addEventListener('keydown', (e) => {
+    if (modal.classList.contains('hidden') || isClosing) return;
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowRight' || e.key === ' ') goToNext();
+    if (e.key === 'ArrowLeft') goToPrev();
+  });
+
+  window.addEventListener('open-reels-viewer', (e) => {
+    const { mediaList, startIndex } = e.detail;
+    mediaItems = mediaList || [];
+    currentIndex = startIndex || 0;
+    isPaused = false;
+    isClosing = false;
+    updatePauseButtonUI();
+
+    document.body.style.overflow = 'hidden';
+    modal.classList.remove('hidden');
+    void modal.offsetHeight;
+    modal.classList.add('is-open');
+
+    renderProgressBars();
+    loadCurrentMedia();
+  });
+
+  function renderProgressBars() {
+    progressBarsContainer.innerHTML = '';
+    mediaItems.forEach((_, idx) => {
+      const barWrapper = document.createElement('div');
+      barWrapper.className = 'flex-1 h-1 bg-white/25 rounded-full overflow-hidden';
+
+      const barFill = document.createElement('div');
+      barFill.className = 'h-full bg-white transition-all duration-75';
+      barFill.id = `story-progress-${idx}`;
+
+      if (idx < currentIndex) {
+        barFill.style.width = '100%';
+      } else {
+        barFill.style.width = '0%';
+      }
+
+      barWrapper.appendChild(barFill);
+      progressBarsContainer.appendChild(barWrapper);
+    });
+  }
+
+  function updateBarsState() {
+    mediaItems.forEach((_, idx) => {
+      const bar = document.getElementById(`story-progress-${idx}`);
+      if (!bar) return;
+      if (idx < currentIndex) {
+        bar.style.width = '100%';
+      } else if (idx > currentIndex) {
+        bar.style.width = '0%';
+      }
+    });
+  }
+
+  function stopCurrentPlayback() {
+    if (photoTimerRaf) {
+      cancelAnimationFrame(photoTimerRaf);
+      photoTimerRaf = null;
+    }
+    const currentVideo = stageWrapper.querySelector('video');
+    if (currentVideo) {
+      currentVideo.pause();
+    }
+  }
+
+  function loadCurrentMedia() {
+    stopCurrentPlayback();
+    updateBarsState();
+
+    const item = mediaItems[currentIndex];
+    if (!item) return;
+
+    // Actualizar metadatos del autor
+    const initial = item.guest_author ? item.guest_author.trim()[0].toUpperCase() : 'I';
+    authorAvatar.textContent = initial;
+    authorName.textContent = item.guest_author || 'Invitado de la Boda';
+    timeAgo.textContent = item.created_at || 'Recuerdo';
+
+    const isVideo = item.content_type && item.content_type.startsWith('video/');
+    const mediaSrc = item.url || item.thumb_url;
+
+    stageWrapper.innerHTML = '';
+
+    if (isVideo) {
+      btnMute.classList.remove('hidden');
+      const video = document.createElement('video');
+      video.src = mediaSrc;
+      video.playsInline = true;
+      video.autoplay = true;
+      video.muted = isMuted;
+      video.className = 'max-h-[85vh] max-w-full object-contain rounded-xl shadow-2xl';
+
+      const activeBar = document.getElementById(`story-progress-${currentIndex}`);
+
+      video.addEventListener('timeupdate', () => {
+        if (activeBar && video.duration) {
+          const pct = (video.currentTime / video.duration) * 100;
+          activeBar.style.width = `${pct}%`;
+        }
+      });
+
+      // Al terminar el video pasa al siguiente recuerdo automaticamente
+      video.addEventListener('ended', () => {
+        if (activeBar) activeBar.style.width = '100%';
+        goToNext();
+      });
+
+      stageWrapper.appendChild(video);
+      if (!isPaused) {
+        video.play().catch(() => {});
+      }
+    } else {
+      btnMute.classList.add('hidden');
+      const img = document.createElement('img');
+      img.src = mediaSrc;
+      img.alt = item.filename;
+      img.className = 'max-h-[85vh] max-w-full object-contain rounded-xl shadow-2xl';
+      stageWrapper.appendChild(img);
+
+      // Iniciar temporizador de historia (5 segundos)
+      photoStartTime = performance.now();
+      photoElapsedTime = 0;
+      startPhotoTimer();
+    }
+  }
+
+  function startPhotoTimer() {
+    const activeBar = document.getElementById(`story-progress-${currentIndex}`);
+
+    function frame(now) {
+      if (isPaused) {
+        photoStartTime = now - photoElapsedTime;
+        photoTimerRaf = requestAnimationFrame(frame);
+        return;
+      }
+
+      photoElapsedTime = now - photoStartTime;
+      const progress = Math.min(photoElapsedTime / PHOTO_DURATION_MS, 1);
+
+      if (activeBar) {
+        activeBar.style.width = `${progress * 100}%`;
+      }
+
+      if (progress < 1) {
+        photoTimerRaf = requestAnimationFrame(frame);
+      } else {
+        goToNext();
+      }
+    }
+
+    photoTimerRaf = requestAnimationFrame(frame);
+  }
+
+  function goToNext() {
+    if (currentIndex < mediaItems.length - 1) {
+      currentIndex++;
+      loadCurrentMedia();
+    } else {
+      // Si concluyo el ultimo recuerdo, cierra el visor
+      closeModal();
+    }
+  }
+
+  function goToPrev() {
+    if (currentIndex > 0) {
+      currentIndex--;
+      loadCurrentMedia();
+    } else {
+      // Reiniciar primera foto
+      loadCurrentMedia();
+    }
+  }
+
+  let touchStartY = 0;
+  let touchStartX = 0;
+  let didSwipe = false;
+
+  tapPrev?.addEventListener('click', (e) => {
+    if (didSwipe) return;
+    e.stopPropagation();
+    goToPrev();
+  });
+
+  tapNext?.addEventListener('click', (e) => {
+    if (didSwipe) return;
+    e.stopPropagation();
+    goToNext();
+  });
+
+  // Pausar manteniendo presionado en pantalla
+  const stage = document.getElementById('viewer-stage');
+  let pressTimeout = null;
+
+  function handleHoldStart() {
+    pressTimeout = setTimeout(() => {
+      setPausedState(true);
+    }, 150);
+  }
+
+  function handleHoldEnd() {
+    clearTimeout(pressTimeout);
+    setPausedState(false);
+  }
+
+  stage?.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      touchStartY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+      didSwipe = false;
+    }
+    handleHoldStart();
+  }, { passive: true });
+
+  stage?.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 1) {
+      const deltaY = e.touches[0].clientY - touchStartY;
+      const deltaX = e.touches[0].clientX - touchStartX;
+      if (deltaY > 30 && Math.abs(deltaY) > Math.abs(deltaX)) {
+        didSwipe = true;
+        clearTimeout(pressTimeout);
+      }
+    }
+  }, { passive: true });
+
+  stage?.addEventListener('touchend', (e) => {
+    handleHoldEnd();
+    if (didSwipe && e.changedTouches.length === 1) {
+      const deltaY = e.changedTouches[0].clientY - touchStartY;
+      const deltaX = e.changedTouches[0].clientX - touchStartX;
+      if (deltaY > 75 && Math.abs(deltaY) > Math.abs(deltaX)) {
+        closeModal();
+      }
+    }
+    setTimeout(() => {
+      didSwipe = false;
+    }, 50);
+  });
+
+  stage?.addEventListener('touchcancel', handleHoldEnd);
+
+  stage?.addEventListener('mousedown', handleHoldStart);
+  stage?.addEventListener('mouseup', handleHoldEnd);
+
+  // Boton Pausa / Play manual
+  btnPause?.addEventListener('click', () => {
+    setPausedState(!isPaused);
+  });
+
+  function setPausedState(pause) {
+    isPaused = pause;
+    updatePauseButtonUI();
+
+    const currentVideo = stageWrapper.querySelector('video');
+    if (currentVideo) {
+      if (isPaused) currentVideo.pause();
+      else currentVideo.play().catch(() => {});
+    }
+  }
+
+  function updatePauseButtonUI() {
+    if (isPaused) {
+      iconPause.classList.add('hidden');
+      iconPlay.classList.remove('hidden');
+    } else {
+      iconPause.classList.remove('hidden');
+      iconPlay.classList.add('hidden');
+    }
+  }
+
+  // Boton Mute / Unmute
+  btnMute?.addEventListener('click', () => {
+    isMuted = !isMuted;
+    const currentVideo = stageWrapper.querySelector('video');
+    if (currentVideo) {
+      currentVideo.muted = isMuted;
+    }
+    if (isMuted) {
+      iconVolumeOn.classList.add('hidden');
+      iconVolumeMute.classList.remove('hidden');
+    } else {
+      iconVolumeOn.classList.remove('hidden');
+      iconVolumeMute.classList.add('hidden');
+    }
+  });
+
+  // Boton Descargar foto o video
+  btnDownload?.addEventListener('click', async () => {
+    const item = mediaItems[currentIndex];
+    if (!item) return;
+
+    const fileUrl = item.url || item.thumb_url;
+    const fileName = item.filename || `recuerdo_${currentIndex + 1}`;
+
+    try {
+      const res = await fetch(fileUrl);
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch {
+      // Fallback enlace directo
+      window.open(fileUrl, '_blank');
+    }
+  });
+</script>
+
+<style>
+  #reels-viewer-modal {
+    transform: translateY(100%);
+    transition: transform 0.36s cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform;
+  }
+
+  #reels-viewer-modal.is-open {
+    transform: translateY(0);
+  }
+</style>
