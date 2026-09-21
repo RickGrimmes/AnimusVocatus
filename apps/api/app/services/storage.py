@@ -59,5 +59,13 @@ class StorageService:
             ExpiresIn=expires_in,
         )
 
+    def get_file_url(self, r2_key: str | None) -> str | None:
+        """Obtiene la URL de acceso publico o prefirmada de un archivo."""
+        if not r2_key:
+            return None
+        if settings.R2_PUBLIC_DOMAIN:
+            return f"{settings.R2_PUBLIC_DOMAIN.rstrip('/')}/{r2_key}"
+        return self.generate_presigned_download_url(r2_key)
+
 
 storage_service = StorageService()

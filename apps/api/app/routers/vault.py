@@ -1,14 +1,15 @@
 import uuid
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Header, status
+from fastapi import APIRouter, Depends, HTTPException, Header, Query, status
 from jose import JWTError, jwt
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.database import get_db
 from app.models import Event, MediaItem
 from app.schemas import (
+    AnimusEventInfo,
     BatchPresignedRequest,
     BatchPresignedResponse,
     GuestAuthResponse,
@@ -64,13 +65,26 @@ async def verify_guest_or_host(
     token = authorization.split(" ")[1]
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        token_event_id = payload.get("event_id")
         token_role = payload.get("role")
+        token_event_id = payload.get("event_id")
+        user_id = payload.get("sub")
 
-        if token_role == "guest" and token_event_id != str(event.id):
+        if token_role == "guest":
+            if token_event_id != str(event.id):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Token no valido para este evento",
+                )
+        elif token_role == "host":
+            if str(event.host_id) != user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="El anfitrion no tiene permisos sobre este evento",
+                )
+        else:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Token no valido para este evento",
+                detail="Rol no autorizado",
             )
     except JWTError:
         raise HTTPException(
@@ -78,6 +92,29 @@ async def verify_guest_or_host(
             detail="Token invalido o expirado",
         )
 
+    return event
+
+
+def attach_media_urls(item: MediaItem) -> MediaItemRead:
+    read_item = MediaItemRead.model_validate(item)
+    read_item.url = storage_service.get_file_url(item.r2_key)
+    read_item.thumb_url = storage_service.get_file_url(item.thumb_r2_key) if item.thumb_r2_key else read_item.url
+    return read_item
+
+
+@router.get("/{slug}/info", response_model=AnimusEventInfo)
+async def get_vault_public_info(
+    slug: str,
+    db: AsyncSession = Depends(get_db),
+):
+    """Informacion basica del evento antes de que el invitado ingrese el PIN."""
+    stmt = select(Event).where(Event.slug == slug, Event.is_active == True)
+    event = (await db.execute(stmt)).scalar_one_or_none()
+    if not event:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Evento no encontrado o inactivo",
+        )
     return event
 
 
@@ -97,7 +134,7 @@ async def enter_vault_with_pin(
             detail="Evento no encontrado o inactivo",
         )
 
-    if event.pin_code != payload.pin:
+    if event.pin_code != payload.pin.strip():
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="PIN incorrecto",
@@ -123,7 +160,7 @@ async def request_batch_presigned_urls(
     total_batch_size = sum(f.size_bytes for f in payload.files)
     if event.storage_used_bytes + total_batch_size > event.storage_limit_bytes:
         raise HTTPException(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            status_code=status.HTTP_413_CONTENT_TOO_LARGE,
             detail="Se ha superado el limite de almacenamiento contratado para este evento",
         )
 
@@ -140,7 +177,7 @@ async def request_batch_presigned_urls(
         if file.size_bytes > limit:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"El archivo {file.filename} excede el tamano maximo permitido",
+                detail=f"El archivo {file.filename} excede el tamano maximo permitido ({limit // (1024 * 1024)} MB)",
             )
 
         file_id = uuid.uuid4()
@@ -151,7 +188,6 @@ async def request_batch_presigned_urls(
             content_type=file.content_type,
         )
 
-        # Generar URL para miniatura WebP (para fotos)
         thumb_r2_key = None
         thumb_upload_url = None
         if file.content_type.startswith("image/"):
@@ -183,6 +219,12 @@ async def confirm_media_upload(
     db: AsyncSession = Depends(get_db),
 ):
     """Asienta el registro del archivo en base de datos e incrementa el almacenamiento ocupado."""
+    # Validacion de idempotencia
+    stmt_check = select(MediaItem).where(MediaItem.id == payload.id)
+    existing = (await db.execute(stmt_check)).scalar_one_or_none()
+    if existing:
+        return attach_media_urls(existing)
+
     media_item = MediaItem(
         id=payload.id,
         event_id=event.id,
@@ -199,14 +241,14 @@ async def confirm_media_upload(
     event.storage_used_bytes += payload.size_bytes
     await db.commit()
     await db.refresh(media_item)
-    return media_item
+    return attach_media_urls(media_item)
 
 
 @router.get("/{slug}/feed", response_model=List[MediaItemRead])
 async def get_event_feed(
     slug: str,
-    limit: int = 50,
-    offset: int = 0,
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
 ):
     """Feed publico de fotos aprobadas para la galeria y el Live Wall."""
@@ -223,4 +265,5 @@ async def get_event_feed(
         .offset(offset)
     )
     result = await db.execute(stmt)
-    return result.scalars().all()
+    items = result.scalars().all()
+    return [attach_media_urls(item) for item in items]

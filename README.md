@@ -117,7 +117,7 @@ docker compose up -d db
 - [x] **Fase 1:** Inicializacion de estructura base del monorepo (`apps/web`, `apps/api`) y documentacion central.
 - [x] **Fase 2:** Modelado de datos en SQLAlchemy 2.0 y migraciones Alembic (User, Event, RSVPGuest, MediaItem, ZipJob).
 - [x] **Fase 3:** Core API Vocatus (Endpoints publicos de invitacion, busqueda y confirmacion RSVP con conteo de pases).
-- [ ] **Fase 4:** Core API Animus (Validacion de PIN de 4 digitos, JWT efimero y generacion batch de URLs prefirmadas R2).
+- [x] **Fase 4:** Core API Animus (Validacion de PIN de 4 digitos, JWT efimero y generacion batch de URLs prefirmadas R2).
 - [ ] **Fase 5:** Frontend Invitados (Vistas mobile-first `/v/[slug]` y `/a/[slug]` con carga directa y miniaturas en cliente).
 - [ ] **Fase 6:** Live Wall (`/live/[slug]`) con polling/refresco en pantalla completa.
 - [ ] **Fase 7:** Empaquetador masivo ZIP asincrono y notificaciones por correo via Resend.

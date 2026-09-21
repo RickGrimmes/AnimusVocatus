@@ -194,18 +194,28 @@ class MediaItemConfirm(BaseModel):
     guest_author: Optional[str] = None
 
 
+class AnimusEventInfo(BaseModel):
+    slug: str
+    title: str
+    event_date: datetime
+    is_active: bool
+    model_config = ConfigDict(from_attributes=True)
+
+
 class MediaItemRead(BaseModel):
     id: uuid.UUID
     event_id: uuid.UUID
     r2_key: str
-    thumb_r2_key: Optional[str]
+    thumb_r2_key: Optional[str] = None
     filename: str
     content_type: str
     size_bytes: int
-    guest_author: Optional[str]
+    guest_author: Optional[str] = None
     moderation_status: str
     is_favorite: bool
     created_at: datetime
+    url: Optional[str] = None
+    thumb_url: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
 
