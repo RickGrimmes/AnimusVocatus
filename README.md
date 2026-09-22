@@ -1,39 +1,43 @@
-# Vocatus & Animus
+# Aevum
 
 > **Suite Web para Eventos Sociales de Alta Gama**  
-> *Invitaciones interactivas (RSVP) + Boveda colaborativa de recuerdos fotograficos en calidad original.*
+> *Aevum (latín): La era, el tiempo sin fin o la eternidad. La preservacion del momento presente y del recuerdo perdurable.*
 
 ---
 
 ## Vision General
 
-**Vocatus & Animus** es un Micro-SaaS concebido para digitalizar y simplificar el ciclo de vida completo de eventos sociales exclusivos (bodas, XV anos, aniversarios, galas y graduaciones), bajo una linea visual sobria, moderna y de alta usabilidad (*Industrial / Editorial Minimalist*).
+**Aevum** es la marca y empresa de tecnologia concebida para digitalizar y elevar la experiencia integral de eventos sociales exclusivos (bodas, XV anos, aniversarios, galas y graduaciones), bajo una linea visual sobria, moderna y de alta usabilidad (*Industrial / Editorial Minimalist*).
 
-El sistema desacopla la experiencia en dos momentos clave:
+El catalogo de soluciones de **Aevum** desacopla la experiencia en sus productos especializados:
 
 1. **Vocatus ("El Llamado") - Fase Pre-Evento**
    - Invitacion web interactiva y personalizada (`/v/[slug]`).
-   - Confirmacion de asistencia inteligente (**RSVP**) con control estricto de pases por invitado/familia.
+   - Confirmacion de asistencia inteligente (**RSVP**) con control estricto de pases por invitado/familia y control de restricciones alimentarias.
    - Itinerario interactivo, codigo de vestimenta, mesa de regalos y enlaces GPS directos a Google Maps y Waze.
    - Cuenta regresiva dinamica y recordatorios.
 
 2. **Animus ("La Memoria") - Fase en Vivo y Post-Evento**
-   - Boveda de fotos y videos colaborativa (`/a/[slug]`) sin requerir descarga de apps ni registro de usuarios.
-   - **Acceso sin friccion:** Escaneo de codigo **QR** en centros de mesa con **PIN de 4 digitos** embebido o manual.
+   - Boveda colaborativa de fotos y videos (`/a/[slug]`) sin requerir descarga de apps ni registro de usuarios.
+   - **Acceso sin friccion:** Escaneo de codigo **QR** en centros de mesa con **PIN de 4 digitos** exclusivo.
    - **Subida directa cliente-a-almacenamiento:** Subida via URLs prefirmadas a **Cloudflare R2** ($0 costo por transferencia/egreso), sin saturar el servidor central.
    - **Miniaturas instantaneas en cliente:** Compresion y generacion de thumbnails WebP con `OffscreenCanvas` en el navegador del invitado (~40ms).
-   - **Muro en Vivo (Live Wall):** Vista de proyeccion a pantalla completa (`/live/[slug]`) con actualizacion automatica para pantallas en la fiesta.
-   - **Empaquetado ZIP Masivo:** Descarga completa asincrona de 10 a 50 GB enviada por correo al anfitrion.
-   - **Purga programada a 60 dias:** Ciclo de vida sustentable con reglas automaticas de expiracion en R2 y base de datos.
+   - **Visor Inmersivo estilo Reels:** Reproduccion vertical a pantalla completa con navegacion tactil.
+
+3. **Live Wall ("La Proyeccion") - Durante la Fiesta**
+   - Mural dinamico en tiempo real (`/live/[slug]`) para pantallas gigantes y proyectores del salon con transiciones automaticas y codigo QR en esquina.
+
+4. **Gestor & Panel de Administracion (`/admin`)**
+   - Consola de control para anfitriones y superadministradores, con contador regresivo en vivo, moderacion de fotos, empaquetador masivo ZIP asincrono, simulador de smartphone y generador de carteles de mesa listos para imprenta.
 
 ---
 
 ## Arquitectura de Negocio: 3 Areas en 1 Solo Proyecto
 
-No se requieren tres repositorios ni proyectos separados. La suite centraliza toda la operacion en este unico monorepo:
+No se requieren repositorios separados. La plataforma **Aevum** centraliza toda la operacion en este unico monorepo:
 
 ```
-                                 PLATAFORMA VOCATUS & ANIMUS
+                                      PLATAFORMA AEVUM
                                               │
          ┌────────────────────────────────────┼────────────────────────────────────┐
          ▼                                    ▼                                    ▼
