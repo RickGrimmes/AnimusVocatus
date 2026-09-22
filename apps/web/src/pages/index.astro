@@ -2,60 +2,887 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Vocatus & Animus — Suite para Eventos Sociales" theme="editorial">
-  <main class="mx-auto max-w-lg px-6 py-16 text-center">
-    
-    <span class="text-xs font-semibold tracking-[0.3em] text-gray-400 uppercase">Suite Web para Eventos Sociales</span>
-    <h1 class="mt-4 font-serif text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">
-      Vocatus & Animus
-    </h1>
-    <p class="mt-4 text-sm text-gray-600 leading-relaxed">
-      Invitaciones interactivas con confirmacion inteligente (RSVP) y boveda colaborativa de fotos en tiempo real.
-    </p>
-
-    <!-- Fichas de Acceso Rapido a Modulos -->
-    <div class="mt-10 space-y-4 text-left">
-      
-      <!-- Modulo Vocatus -->
-      <a
-        href="/v/boda-carlos-y-sofia"
-        class="block rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:border-gray-900 hover:shadow-md"
-      >
-        <span class="text-[10px] font-bold tracking-widest text-gray-400 uppercase">Fase Pre-Evento</span>
-        <h2 class="mt-1 font-serif text-xl font-bold text-gray-900">Vocatus ("El Llamado")</h2>
-        <p class="mt-1 text-xs text-gray-600 leading-relaxed">
-          Invitacion digital interactiva, cuenta regresiva, mapas Waze/Google Maps y confirmacion de pases RSVP.
-        </p>
-        <span class="mt-4 inline-flex items-center text-xs font-bold text-gray-900">
-          <span>Abrir Invitacion Demo</span>
-          <span class="ml-1">&rarr;</span>
-        </span>
-      </a>
-
-      <!-- Modulo Animus -->
-      <a
-        href="/a/boda-carlos-y-sofia?pin=4821"
-        class="block rounded-2xl border border-gray-900 bg-black p-6 text-white shadow-md transition hover:bg-neutral-900"
-      >
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] font-bold tracking-widest text-insta-gray uppercase">El Dia de la Fiesta</span>
-          <span class="rounded bg-white/20 px-2 py-0.5 text-[10px] font-semibold text-white">PIN 4821</span>
+<Layout title="Vocatus & Animus — Suite Exclusiva para Bodas y Eventos Sociales" theme="editorial">
+  
+  <!-- Navegacion Superior -->
+  <header class="sticky top-0 z-50 border-b border-gray-200/80 bg-editorial-bg/90 backdrop-blur-md">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <a href="/" class="flex items-center gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-lg border border-amber-500/40 bg-gradient-to-br from-amber-600 to-amber-800 text-white shadow-sm font-serif font-bold text-lg">
+          V
         </div>
-        <h2 class="mt-1 font-serif text-xl font-bold text-white">Animus ("La Memoria")</h2>
-        <p class="mt-1 text-xs text-gray-400 leading-relaxed">
-          Boveda de fotos y videos en centros de mesa con visor inmersivo estilo Reels y galeria tipo telefono.
-        </p>
-        <span class="mt-4 inline-flex items-center text-xs font-bold text-white">
-          <span>Entrar a la Boveda Demo</span>
-          <span class="ml-1">&rarr;</span>
-        </span>
+        <div>
+          <span class="font-serif text-lg font-bold tracking-tight text-gray-950">Vocatus & Animus</span>
+          <span class="hidden text-[10px] font-semibold tracking-widest text-amber-700 uppercase sm:inline-block sm:ml-2">Event Suite</span>
+        </div>
       </a>
 
+      <nav class="hidden items-center gap-8 text-xs font-semibold tracking-wider text-gray-600 uppercase md:flex">
+        <a href="#experiencia" class="transition hover:text-gray-950">La Experiencia</a>
+        <a href="#comparativa" class="transition hover:text-gray-950">Vs. WhatsApp</a>
+        <a href="#modulos" class="transition hover:text-gray-950">Modulos</a>
+        <a href="#cotizador" class="transition hover:text-amber-700">Cotizador</a>
+        <a href="#demos" class="transition hover:text-gray-950">Demos en Vivo</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a
+          href="/admin"
+          class="rounded-xl border border-gray-300 bg-white px-3.5 py-2 text-xs font-semibold text-gray-800 shadow-sm transition hover:border-gray-900 hover:text-gray-950"
+        >
+          Acceso Anfitrion
+        </a>
+        <a
+          href="#cotizador"
+          class="rounded-xl bg-gray-950 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-neutral-800"
+        >
+          Cotizar Evento
+        </a>
+      </div>
     </div>
+  </header>
 
-    <footer class="mt-16 text-center text-xs text-gray-400">
-      <span>Vocatus & Animus &bull; Version 1.0 &bull; Editorial & Industrial Minimalist</span>
-    </footer>
+  <main>
+    <!-- Seccion Hero -->
+    <section class="relative overflow-hidden border-b border-gray-200 bg-gradient-to-b from-editorial-bg via-white to-editorial-bg py-20 lg:py-28">
+      <div class="mx-auto max-w-7xl px-6">
+        <div class="grid items-center gap-12 lg:grid-cols-12">
+          
+          <div class="text-left lg:col-span-7">
+            <div class="inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-amber-50/80 px-3.5 py-1 text-[11px] font-bold tracking-widest text-amber-900 uppercase">
+              <span class="h-1.5 w-1.5 rounded-full bg-amber-600"></span>
+              Suite Digital Exclusiva para Bodas de Alta Gama
+            </div>
 
+            <h1 class="mt-6 font-serif text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl lg:text-6xl leading-[1.12]">
+              Todas las fotos, videos y recuerdos de tu gran dia, <span class="italic text-amber-900 font-normal">sin apps ni desorden.</span>
+            </h1>
+
+            <p class="mt-6 max-w-2xl text-base text-gray-600 leading-relaxed sm:text-lg">
+              La solucion definitiva que une la elegancia de una invitacion interactiva con confirmacion RSVP nominal (<strong class="text-gray-900 font-semibold">Vocatus</strong>) y la boveda digital privada en centros de mesa con subida instantanea y proyeccion en vivo (<strong class="text-gray-900 font-semibold">Animus</strong>).
+            </p>
+
+            <!-- Sellos de confianza / Diferenciales -->
+            <div class="mt-8 flex flex-wrap gap-4 text-xs font-semibold text-gray-700">
+              <div class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 shadow-sm">
+                <svg class="h-4 w-4 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Cero descargas de apps</span>
+              </div>
+              <div class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 shadow-sm">
+                <svg class="h-4 w-4 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Calidad original sin compresion</span>
+              </div>
+              <div class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 shadow-sm">
+                <svg class="h-4 w-4 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Codigo QR y PIN de mesa</span>
+              </div>
+            </div>
+
+            <!-- Botones de Accion -->
+            <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+              <a
+                href="#demos"
+                class="inline-flex items-center justify-center rounded-xl bg-gray-950 px-6 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-neutral-800"
+              >
+                <span>Explorar Demos en Vivo</span>
+                <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+              <a
+                href="#cotizador"
+                class="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3.5 text-sm font-semibold text-gray-800 shadow-sm transition hover:border-gray-900 hover:text-gray-950"
+              >
+                <span>Calcular Presupuesto Online</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Composicion Visual de Dispositivos -->
+          <div class="relative lg:col-span-5">
+            <div class="relative mx-auto max-w-sm rounded-3xl border-8 border-gray-900 bg-gray-900 p-2 shadow-2xl">
+              <div class="overflow-hidden rounded-2xl bg-white border border-gray-800 aspect-[9/18]">
+                <!-- Barra superior de simulacion -->
+                <div class="bg-gray-950 px-4 py-3 flex items-center justify-between text-white">
+                  <div class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-amber-500"></span>
+                    <span class="text-[10px] font-bold tracking-widest uppercase">Vocatus & Animus</span>
+                  </div>
+                  <span class="text-[9px] font-mono text-gray-400">PIN 4821</span>
+                </div>
+
+                <!-- Contenido previo ilustrativo -->
+                <div class="p-5 text-center">
+                  <span class="text-[9px] font-bold tracking-widest text-amber-700 uppercase">Invitacion Exclusiva</span>
+                  <h3 class="mt-1 font-serif text-2xl font-bold text-gray-900">Carlos & Sofia</h3>
+                  <p class="text-[11px] text-gray-500 mt-0.5">Sabado, 18 de Octubre, 2026</p>
+                  
+                  <div class="mt-4 rounded-xl overflow-hidden border border-gray-200">
+                    <img
+                      src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80"
+                      alt="Boda de muestra"
+                      class="h-44 w-full object-cover"
+                    />
+                  </div>
+
+                  <div class="mt-4 grid grid-cols-2 gap-2">
+                    <div class="rounded-lg bg-gray-50 p-2 border border-gray-100">
+                      <span class="text-[9px] text-gray-400 uppercase font-semibold">Pases</span>
+                      <p class="text-xs font-bold text-gray-900">2 Asignados</p>
+                    </div>
+                    <div class="rounded-lg bg-emerald-50 p-2 border border-emerald-100">
+                      <span class="text-[9px] text-emerald-700 uppercase font-semibold">Estado</span>
+                      <p class="text-xs font-bold text-emerald-800">Confirmado</p>
+                    </div>
+                  </div>
+
+                  <div class="mt-4 rounded-xl bg-gray-950 p-3 text-white text-left">
+                    <span class="text-[8px] font-bold tracking-widest text-amber-400 uppercase">Boveda de Recuerdos</span>
+                    <p class="text-[10px] text-gray-300 mt-0.5">Tus invitados escanean el QR en su mesa y suben fotos en segundos.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Insignia flotante -->
+            <div class="absolute -bottom-4 -left-6 hidden sm:flex items-center gap-3 rounded-2xl border border-gray-200 bg-white/95 p-4 shadow-xl backdrop-blur-md">
+              <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-900 font-bold text-sm">
+                QR
+              </div>
+              <div>
+                <p class="text-xs font-bold text-gray-950">Carteles de Mesa Listos</p>
+                <p class="text-[11px] text-gray-500">Imprime con QR y PIN unico</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Seccion Comparativa: Por que NO usar solo WhatsApp -->
+    <section id="comparativa" class="border-b border-gray-200 bg-white py-20">
+      <div class="mx-auto max-w-7xl px-6">
+        
+        <div class="text-center max-w-3xl mx-auto">
+          <span class="text-xs font-bold tracking-widest text-amber-800 uppercase">La Realidad del Gran Dia</span>
+          <h2 class="mt-3 font-serif text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+            ¿Por que un grupo de WhatsApp o un Drive no funcionan en tu evento?
+          </h2>
+          <p class="mt-4 text-sm text-gray-600 leading-relaxed">
+            Intentar recolectar los momentos mas importantes de tu vida con herramientas cotidianas genera caos, perdida de calidad y frustracion.
+          </p>
+        </div>
+
+        <div class="mt-14 grid gap-8 md:grid-cols-2">
+          
+          <!-- Columna WhatsApp / Nubes genericas -->
+          <div class="rounded-3xl border border-red-200 bg-red-50/40 p-8 shadow-sm">
+            <div class="flex items-center justify-between border-b border-red-200/80 pb-4">
+              <span class="text-xs font-bold tracking-wider text-red-900 uppercase">Metodo Tradicional</span>
+              <span class="rounded-full bg-red-100 px-3 py-1 text-[11px] font-semibold text-red-800">WhatsApp / Nubes Genericas</span>
+            </div>
+            
+            <ul class="mt-6 space-y-4 text-sm text-gray-700">
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-200 text-red-800 font-bold text-xs">X</span>
+                <span><strong>Compresion destructiva:</strong> Las fotos y videos pierden hasta el 70% de su resolucion y se ven borrosas al imprimirlas.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-200 text-red-800 font-bold text-xs">X</span>
+                <span><strong>Desorden total:</strong> Los recuerdos se pierden en medio de saludos, bromas y cientos de mensajes de texto.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-200 text-red-800 font-bold text-xs">X</span>
+                <span><strong>Perseguir a los invitados:</strong> Los anfitriones pasan semanas pidiendo fotos a familiares uno por uno.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-200 text-red-800 font-bold text-xs">X</span>
+                <span><strong>Exposicion de datos:</strong> Los numeros de telefono de todos los asistentes quedan expuestos ante personas desconocidas.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-200 text-red-800 font-bold text-xs">X</span>
+                <span><strong>Friccion de acceso:</strong> Enlaces a carpetas que piden iniciar sesion con cuenta de Google o descargar aplicaciones pesadas.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Columna Vocatus & Animus -->
+          <div class="rounded-3xl border-2 border-amber-600/40 bg-gradient-to-b from-white to-amber-50/20 p-8 shadow-md">
+            <div class="flex items-center justify-between border-b border-amber-200 pb-4">
+              <span class="text-xs font-bold tracking-wider text-amber-900 uppercase">Nuestra Solucion</span>
+              <span class="rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold text-amber-900">Suite Vocatus & Animus</span>
+            </div>
+
+            <ul class="mt-6 space-y-4 text-sm text-gray-800">
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-white font-bold text-xs">✓</span>
+                <span><strong>Calidad original certificada:</strong> Almacenamiento seguro en la nube preservando cada megapixel y segundo de video.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-white font-bold text-xs">✓</span>
+                <span><strong>Cero aplicaciones ni registros:</strong> El invitado apunta la camara de su telefono al cartel de mesa, ingresa el PIN y sube en 3 segundos.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-white font-bold text-xs">✓</span>
+                <span><strong>Proyeccion Live Wall en vivo:</strong> Las fotos proyectadas en las pantallas gigantes del salon mientras la fiesta ocurre.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-white font-bold text-xs">✓</span>
+                <span><strong>Privacidad blindada:</strong> Solo quienes tienen el QR y PIN del evento acceden a la boveda. Moderacion previa por el anfitrion.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-600 text-white font-bold text-xs">✓</span>
+                <span><strong>Descarga masiva ZIP en 1 clic:</strong> Al finalizar el evento, los anfitriones reciben un archivo comprimido con todos los recuerdos.</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Seccion Pilares / Modulos de la Suite -->
+    <section id="modulos" class="border-b border-gray-200 bg-editorial-bg py-20">
+      <div class="mx-auto max-w-7xl px-6">
+        
+        <div class="text-center max-w-3xl mx-auto">
+          <span class="text-xs font-bold tracking-widest text-amber-800 uppercase">Arquitectura Integral</span>
+          <h2 class="mt-3 font-serif text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+            Tres pilares sincronizados para cada etapa de tu evento
+          </h2>
+        </div>
+
+        <div class="mt-14 grid gap-8 md:grid-cols-3">
+          
+          <!-- Pilar 1: Vocatus -->
+          <div class="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm transition hover:border-gray-900 hover:shadow-md">
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-900 font-serif font-bold text-xl">
+              1
+            </div>
+            <span class="mt-5 block text-[10px] font-bold tracking-widest text-gray-400 uppercase">Pre-Evento & Logistica</span>
+            <h3 class="mt-1 font-serif text-2xl font-bold text-gray-950">Vocatus ("El Llamado")</h3>
+            <p class="mt-3 text-xs text-gray-600 leading-relaxed">
+              Invitacion digital sobria con tipografia editorial. Cuenta regresiva, ubicaciones con enlace a Waze y Google Maps, itinerario del dia y confirmacion inteligente de pases nominales con alertas de alergias alimentarias.
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-100">
+              <a href="/v/boda-carlos-y-sofia" class="inline-flex items-center text-xs font-bold text-gray-900 hover:underline">
+                <span>Ver Invitacion Vocatus</span>
+                <span class="ml-1">&rarr;</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Pilar 2: Animus -->
+          <div class="rounded-3xl border border-gray-900 bg-gray-950 p-7 text-white shadow-lg transition hover:shadow-xl">
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-amber-400 font-serif font-bold text-xl">
+              2
+            </div>
+            <span class="mt-5 block text-[10px] font-bold tracking-widest text-amber-400 uppercase">Durante la Fiesta</span>
+            <h3 class="mt-1 font-serif text-2xl font-bold text-white">Animus ("La Memoria")</h3>
+            <p class="mt-3 text-xs text-gray-300 leading-relaxed">
+              La boveda colaborativa para los centros de mesa. Los invitados capturan fotos y videos con su telefono y se sincronizan al instante en una galeria privada con visor inmersivo estilo Reels.
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-800">
+              <a href="/a/boda-carlos-y-sofia?pin=4821" class="inline-flex items-center text-xs font-bold text-amber-400 hover:underline">
+                <span>Ver Boveda Animus (PIN 4821)</span>
+                <span class="ml-1">&rarr;</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Pilar 3: Live Wall -->
+          <div class="rounded-3xl border border-gray-200 bg-white p-7 shadow-sm transition hover:border-gray-900 hover:shadow-md">
+            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-900 font-serif font-bold text-xl">
+              3
+            </div>
+            <span class="mt-5 block text-[10px] font-bold tracking-widest text-gray-400 uppercase">Experiencia en Pantalla</span>
+            <h3 class="mt-1 font-serif text-2xl font-bold text-gray-950">Live Wall ("Proyeccion")</h3>
+            <p class="mt-3 text-xs text-gray-600 leading-relaxed">
+              Mural en tiempo real para proyectores y pantallas LED del salon. Muestra las ultimas fotos subidas con transiciones suaves y un codigo QR flotante para incentivar que todos participen.
+            </p>
+            <div class="mt-6 pt-4 border-t border-gray-100">
+              <a href="/live/boda-carlos-y-sofia" class="inline-flex items-center text-xs font-bold text-gray-900 hover:underline">
+                <span>Ver Proyeccion Live Wall</span>
+                <span class="ml-1">&rarr;</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Cotizador Comercial Interactivo en Linea -->
+    <section id="cotizador" class="border-b border-gray-200 bg-white py-20">
+      <div class="mx-auto max-w-5xl px-6">
+        
+        <div class="text-center max-w-2xl mx-auto">
+          <span class="text-xs font-bold tracking-widest text-amber-800 uppercase">Transparencia Total</span>
+          <h2 class="mt-3 font-serif text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+            Calculadora de Presupuesto en Segundos
+          </h2>
+          <p class="mt-4 text-sm text-gray-600">
+            Personaliza el alcance segun el tamano de tu celebracion. Sin sorpresas ni cobros ocultos.
+          </p>
+        </div>
+
+        <!-- Tarjeta del Cotizador -->
+        <div class="mt-12 rounded-3xl border border-gray-200 bg-editorial-bg p-8 shadow-sm">
+          
+          <div class="grid gap-8 lg:grid-cols-12">
+            
+            <!-- Controles del Cotizador -->
+            <div class="space-y-6 lg:col-span-7">
+              
+              <!-- Tipo de Evento -->
+              <div>
+                <label class="block text-xs font-bold text-gray-800 uppercase tracking-wider">Tipo de Celebracion</label>
+                <select id="calc-event-type" class="mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-900 shadow-sm focus:border-amber-600 focus:outline-none">
+                  <option value="boda">Boda Nupcial</option>
+                  <option value="xv">Fiesta de XV Anos</option>
+                  <option value="aniversario">Aniversario de Bodas</option>
+                  <option value="graduacion">Graduacion Universitaria</option>
+                  <option value="corporativo">Gala Corporativa</option>
+                </select>
+              </div>
+
+              <!-- Slider de Invitados -->
+              <div>
+                <div class="flex justify-between items-center">
+                  <label class="text-xs font-bold text-gray-800 uppercase tracking-wider">Numero Estimado de Invitados</label>
+                  <span id="calc-guests-label" class="text-sm font-bold text-amber-900 bg-amber-100 px-3 py-0.5 rounded-full">150 personas</span>
+                </div>
+                <input
+                  id="calc-guests-slider"
+                  type="range"
+                  min="30"
+                  max="600"
+                  step="10"
+                  value="150"
+                  class="mt-3 w-full accent-amber-700 cursor-pointer"
+                />
+                <div class="flex justify-between text-[11px] text-gray-400 mt-1">
+                  <span>30 invitados</span>
+                  <span>300 invitados</span>
+                  <span>600+ invitados</span>
+                </div>
+              </div>
+
+              <!-- Paquete Comercial Base -->
+              <div>
+                <label class="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">Paquete Base</label>
+                <div class="grid grid-cols-3 gap-3">
+                  <button
+                    type="button"
+                    class="calc-tier-btn rounded-xl border-2 border-amber-600 bg-white p-3 text-left transition"
+                    data-tier="pro"
+                  >
+                    <span class="block text-[10px] font-bold text-amber-700 uppercase">Recomendado</span>
+                    <span class="block text-xs font-bold text-gray-900 mt-0.5">Memoria Pro</span>
+                    <span class="block text-[11px] text-gray-500">$3,490 MXN</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="calc-tier-btn rounded-xl border border-gray-200 bg-white p-3 text-left transition"
+                    data-tier="essential"
+                  >
+                    <span class="block text-[10px] font-bold text-gray-400 uppercase">Basico</span>
+                    <span class="block text-xs font-bold text-gray-900 mt-0.5">Esencial</span>
+                    <span class="block text-[11px] text-gray-500">$1,990 MXN</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="calc-tier-btn rounded-xl border border-gray-200 bg-white p-3 text-left transition"
+                    data-tier="vip"
+                  >
+                    <span class="block text-[10px] font-bold text-amber-800 uppercase">VIP Total</span>
+                    <span class="block text-xs font-bold text-gray-900 mt-0.5">Boda Magna</span>
+                    <span class="block text-[11px] text-gray-500">$5,990 MXN</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Meses de Resguardo -->
+              <div>
+                <label class="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">Tiempo de Resguardo en Nube</label>
+                <div class="grid grid-cols-4 gap-2">
+                  <button type="button" class="calc-months-btn rounded-lg border border-gray-200 bg-white py-2 text-xs font-semibold text-gray-700" data-months="1">1 Mes</button>
+                  <button type="button" class="calc-months-btn rounded-lg border-2 border-amber-600 bg-white py-2 text-xs font-bold text-amber-900" data-months="3">3 Meses</button>
+                  <button type="button" class="calc-months-btn rounded-lg border border-gray-200 bg-white py-2 text-xs font-semibold text-gray-700" data-months="6">6 Meses</button>
+                  <button type="button" class="calc-months-btn rounded-lg border border-gray-200 bg-white py-2 text-xs font-semibold text-gray-700" data-months="12">1 Ano</button>
+                </div>
+              </div>
+
+              <!-- Modulos Opcionales -->
+              <div>
+                <label class="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-2">Complementos Opcionales</label>
+                <div class="space-y-2">
+                  <label class="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 cursor-pointer">
+                    <div class="flex items-center gap-3">
+                      <input id="addon-livewall" type="checkbox" checked class="h-4 w-4 rounded accent-amber-700" />
+                      <div>
+                        <span class="text-xs font-bold text-gray-900">Mural en Vivo (Live Wall)</span>
+                        <p class="text-[11px] text-gray-500">Proyeccion en pantalla completa para proyectores del salon</p>
+                      </div>
+                    </div>
+                    <span class="text-xs font-bold text-gray-900">+$1,490 MXN</span>
+                  </label>
+
+                  <label class="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 cursor-pointer">
+                    <div class="flex items-center gap-3">
+                      <input id="addon-zip" type="checkbox" checked class="h-4 w-4 rounded accent-amber-700" />
+                      <div>
+                        <span class="text-xs font-bold text-gray-900">Empaquetador Masivo ZIP en Alta Resolucion</span>
+                        <p class="text-[11px] text-gray-500">Descarga completa en 1 clic enviada a tu correo</p>
+                      </div>
+                    </div>
+                    <span class="text-xs font-bold text-gray-900">+$690 MXN</span>
+                  </label>
+
+                  <label class="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3 cursor-pointer">
+                    <div class="flex items-center gap-3">
+                      <input id="addon-domain" type="checkbox" class="h-4 w-4 rounded accent-amber-700" />
+                      <div>
+                        <span class="text-xs font-bold text-gray-900">Dominio Personalizado Propio (.com)</span>
+                        <p class="text-[11px] text-gray-500">Ejemplo: carlosysofia.com con certificado SSL</p>
+                      </div>
+                    </div>
+                    <span class="text-xs font-bold text-gray-900">+$990 MXN</span>
+                  </label>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Resumen de Cotizacion y Total -->
+            <div class="flex flex-col justify-between rounded-2xl border border-gray-900 bg-gray-950 p-6 text-white lg:col-span-5">
+              <div>
+                <span class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">Presupuesto Estimado</span>
+                <h3 class="mt-1 font-serif text-2xl font-bold text-white">Resumen de Inversion</h3>
+
+                <div class="mt-6 space-y-3 text-xs border-b border-gray-800 pb-6 text-gray-300">
+                  <div class="flex justify-between">
+                    <span id="summary-tier-name">Paquete Memoria Pro</span>
+                    <span id="summary-tier-price" class="font-mono text-white">$3,490</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span id="summary-guests-info">Hasta 150 invitados</span>
+                    <span id="summary-guests-price" class="font-mono text-white">$0</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span id="summary-months-info">Resguardo por 3 meses</span>
+                    <span id="summary-months-price" class="font-mono text-white">$0</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span id="summary-addons-info">Live Wall + Empaquetador ZIP</span>
+                    <span id="summary-addons-price" class="font-mono text-white">+$2,180</span>
+                  </div>
+                </div>
+
+                <div class="mt-6">
+                  <div class="flex items-baseline justify-between">
+                    <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Total Neto (MXN)</span>
+                    <span id="calc-total-display" class="font-serif text-3xl font-bold text-amber-400">$5,670</span>
+                  </div>
+                  <p class="text-[10px] text-gray-400 mt-1">IVA incluido. Pago unico, sin suscripciones mensuales recurrentes.</p>
+                </div>
+
+                <div class="mt-6 rounded-xl bg-white/5 p-4 border border-white/10 text-[11px] text-gray-300 space-y-1">
+                  <p class="font-semibold text-white">Incluye en tu evento:</p>
+                  <p>&bull; Invitacion Vocatus con confirmacion nominal</p>
+                  <p>&bull; Boveda Animus ilimitada con PIN privado</p>
+                  <p>&bull; Plantillas de centros de mesa listas para imprenta</p>
+                  <p>&bull; Panel de anfitrion con metricas y moderacion</p>
+                </div>
+              </div>
+
+              <div class="mt-8">
+                <button
+                  type="button"
+                  id="btn-contract"
+                  class="w-full rounded-xl bg-amber-500 py-3.5 text-center text-xs font-bold text-gray-950 uppercase tracking-wider shadow-lg transition hover:bg-amber-400"
+                >
+                  Solicitar este Paquete
+                </button>
+                <div id="contract-feedback" class="mt-3 hidden rounded-lg bg-emerald-900/60 border border-emerald-500 p-2.5 text-center text-[11px] text-emerald-200">
+                  Cotizacion guardada. Un asesor nupcial te contactara en breve.
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Hub de Demostraciones en Vivo -->
+    <section id="demos" class="border-b border-gray-200 bg-editorial-bg py-20">
+      <div class="mx-auto max-w-7xl px-6">
+        
+        <div class="text-center max-w-3xl mx-auto">
+          <span class="text-xs font-bold tracking-widest text-amber-800 uppercase">Demostracion Interactiva</span>
+          <h2 class="mt-3 font-serif text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+            Vive la experiencia exactamente como tus invitados
+          </h2>
+          <p class="mt-4 text-sm text-gray-600">
+            Prueba todos los componentes activos del evento muestra "Boda Carlos & Sofia" sin necesidad de crear cuenta.
+          </p>
+        </div>
+
+        <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          
+          <!-- Demo 1: Vocatus -->
+          <a
+            href="/v/boda-carlos-y-sofia"
+            class="group flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:border-gray-900 hover:shadow-md"
+          >
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="rounded bg-gray-100 px-2.5 py-1 text-[10px] font-bold text-gray-700 uppercase">Paso 1</span>
+                <span class="text-[10px] font-mono text-gray-400">Mobile Web</span>
+              </div>
+              <h3 class="mt-4 font-serif text-lg font-bold text-gray-950 group-hover:text-amber-800 transition">
+                Invitacion Vocatus
+              </h3>
+              <p class="mt-2 text-xs text-gray-600 leading-relaxed">
+                Invitacion digital interactiva, cuenta regresiva, mapas y confirmador de pases por nombre.
+              </p>
+            </div>
+            <div class="mt-6 flex items-center text-xs font-bold text-gray-900 group-hover:text-amber-800">
+              <span>Abrir Invitacion</span>
+              <span class="ml-1 transition group-hover:translate-x-1">&rarr;</span>
+            </div>
+          </a>
+
+          <!-- Demo 2: Animus -->
+          <a
+            href="/a/boda-carlos-y-sofia?pin=4821"
+            class="group flex flex-col justify-between rounded-2xl border border-gray-900 bg-gray-950 p-6 text-white shadow-md transition hover:bg-neutral-900"
+          >
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="rounded bg-amber-500/20 px-2.5 py-1 text-[10px] font-bold text-amber-400 uppercase">Paso 2</span>
+                <span class="rounded bg-white/20 px-2 py-0.5 text-[9px] font-mono text-white">PIN 4821</span>
+              </div>
+              <h3 class="mt-4 font-serif text-lg font-bold text-white group-hover:text-amber-400 transition">
+                Boveda Animus
+              </h3>
+              <p class="mt-2 text-xs text-gray-300 leading-relaxed">
+                Galeria privada en centros de mesa con subida rapida y visor vertical estilo Reels.
+              </p>
+            </div>
+            <div class="mt-6 flex items-center text-xs font-bold text-amber-400">
+              <span>Abrir Boveda</span>
+              <span class="ml-1 transition group-hover:translate-x-1">&rarr;</span>
+            </div>
+          </a>
+
+          <!-- Demo 3: Live Wall -->
+          <a
+            href="/live/boda-carlos-y-sofia"
+            class="group flex flex-col justify-between rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:border-gray-900 hover:shadow-md"
+          >
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="rounded bg-gray-100 px-2.5 py-1 text-[10px] font-bold text-gray-700 uppercase">Paso 3</span>
+                <span class="text-[10px] font-mono text-gray-400">Pantalla Grande</span>
+              </div>
+              <h3 class="mt-4 font-serif text-lg font-bold text-gray-950 group-hover:text-amber-800 transition">
+                Live Wall Salon
+              </h3>
+              <p class="mt-2 text-xs text-gray-600 leading-relaxed">
+                Proyeccion continua en pantalla completa para los proyectores y pantallas del evento.
+              </p>
+            </div>
+            <div class="mt-6 flex items-center text-xs font-bold text-gray-900 group-hover:text-amber-800">
+              <span>Abrir Pantalla Completa</span>
+              <span class="ml-1 transition group-hover:translate-x-1">&rarr;</span>
+            </div>
+          </a>
+
+          <!-- Demo 4: Panel Admin -->
+          <a
+            href="/admin/boda-carlos-y-sofia"
+            class="group flex flex-col justify-between rounded-2xl border border-amber-300/80 bg-gradient-to-b from-amber-50/40 to-white p-6 shadow-sm transition hover:border-amber-600 hover:shadow-md"
+          >
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="rounded bg-amber-200/80 px-2.5 py-1 text-[10px] font-bold text-amber-900 uppercase">Anfitrion</span>
+                <span class="text-[10px] font-mono text-amber-900">Dashboard</span>
+              </div>
+              <h3 class="mt-4 font-serif text-lg font-bold text-gray-950 group-hover:text-amber-800 transition">
+                Consola Anfitrion
+              </h3>
+              <p class="mt-2 text-xs text-gray-600 leading-relaxed">
+                Gestion del evento con simulador de smartphone en vivo, moderacion y descarga ZIP.
+              </p>
+            </div>
+            <div class="mt-6 flex items-center text-xs font-bold text-amber-900">
+              <span>Entrar al Dashboard</span>
+              <span class="ml-1 transition group-hover:translate-x-1">&rarr;</span>
+            </div>
+          </a>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Preguntas Frecuentes (FAQ) -->
+    <section class="border-b border-gray-200 bg-white py-20">
+      <div class="mx-auto max-w-4xl px-6">
+        
+        <div class="text-center">
+          <span class="text-xs font-bold tracking-widest text-amber-800 uppercase">Claridad y Confianza</span>
+          <h2 class="mt-3 font-serif text-3xl font-bold tracking-tight text-gray-950">
+            Preguntas Frecuentes
+          </h2>
+        </div>
+
+        <div class="mt-12 space-y-4">
+          
+          <div class="rounded-2xl border border-gray-200 bg-editorial-bg p-6">
+            <h3 class="font-serif text-base font-bold text-gray-950">
+              ¿Mis invitados necesitan descargar alguna aplicacion en su celular?
+            </h3>
+            <p class="mt-2 text-xs text-gray-600 leading-relaxed">
+              No. Vocatus & Animus funciona en cualquier navegador moderno (Safari, Chrome, Edge). El invitado simplemente escanea el codigo QR en su mesa con la camara de su telefono y entra de inmediato a la invitacion o boveda.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 bg-editorial-bg p-6">
+            <h3 class="font-serif text-base font-bold text-gray-950">
+              ¿Que sucede si en el salon o hacienda hay mala conexion a internet?
+            </h3>
+            <p class="mt-2 text-xs text-gray-600 leading-relaxed">
+              La plataforma esta optimizada con carga ligera y colas de subida resilientes. Los invitados pueden tomar fotos y subirlas; si la conexion titubea, el navegador reintenta la subida automaticamente sin perder los archivos.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 bg-editorial-bg p-6">
+            <h3 class="font-serif text-base font-bold text-gray-950">
+              ¿Cualquiera con el enlace puede ver o subir fotos?
+            </h3>
+            <p class="mt-2 text-xs text-gray-600 leading-relaxed">
+              No. La boveda Animus requiere un codigo PIN unico de 4 digitos configurado por los anfitriones (impreso en el cartel de cada mesa). Ademas, el anfitrion cuenta con un panel de moderacion para ocultar cualquier foto no deseada.
+            </p>
+          </div>
+
+          <div class="rounded-2xl border border-gray-200 bg-editorial-bg p-6">
+            <h3 class="font-serif text-base font-bold text-gray-950">
+              ¿Como descargan los novios todas las fotos al terminar el evento?
+            </h3>
+            <p class="mt-2 text-xs text-gray-600 leading-relaxed">
+              Desde la consola de administracion, con un solo clic el anfitrion solicita la exportacion. Nuestro servicio procesa un archivo ZIP con todos los recuerdos en su tamano original y te envia un correo electronico con enlace directo de descarga.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Banner Final de Conversion -->
+    <section class="bg-gray-950 py-20 text-white text-center">
+      <div class="mx-auto max-w-3xl px-6">
+        <span class="text-xs font-bold tracking-widest text-amber-400 uppercase">Comienza Hoy Mismo</span>
+        <h2 class="mt-4 font-serif text-3xl font-bold tracking-tight sm:text-4xl">
+          Haz que los recuerdos de tu evento perduren para siempre
+        </h2>
+        <p class="mt-4 text-sm text-gray-300 leading-relaxed">
+          Unete a las parejas y anfitriones que decidieron no dejar sus fotos al azar en grupos de chat.
+        </p>
+
+        <div class="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+          <a
+            href="#cotizador"
+            class="rounded-xl bg-amber-500 px-8 py-3.5 text-xs font-bold text-gray-950 uppercase tracking-wider shadow-lg transition hover:bg-amber-400"
+          >
+            Calcular Presupuesto
+          </a>
+          <a
+            href="/admin"
+            class="rounded-xl border border-white/20 bg-white/10 px-8 py-3.5 text-xs font-semibold text-white transition hover:bg-white/20"
+          >
+            Acceder al Panel de Control
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <!-- Pie de Pagina -->
+  <footer class="border-t border-gray-200 bg-editorial-bg py-12 text-center text-xs text-gray-500">
+    <div class="mx-auto max-w-7xl px-6 flex flex-col items-center justify-between gap-6 sm:flex-row">
+      <div class="flex items-center gap-2">
+        <span class="font-serif font-bold text-gray-900">Vocatus & Animus</span>
+        <span>&bull;</span>
+        <span>Version 1.0</span>
+      </div>
+
+      <div class="flex gap-6">
+        <a href="/v/boda-carlos-y-sofia" class="hover:text-gray-900">Invitacion Demo</a>
+        <a href="/a/boda-carlos-y-sofia?pin=4821" class="hover:text-gray-900">Boveda Demo</a>
+        <a href="/live/boda-carlos-y-sofia" class="hover:text-gray-900">Live Wall</a>
+        <a href="/admin" class="hover:text-gray-900">Consola Anfitrion</a>
+      </div>
+
+      <p>&copy; 2026 Vocatus & Animus. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Script Interactivo del Cotizador -->
+  <script is:inline>
+    (function () {
+      // Precios base por paquete
+      var TIER_PRICES = {
+        essential: 1990,
+        pro: 3490,
+        vip: 5990
+      };
+
+      var TIER_NAMES = {
+        essential: 'Paquete Esencial',
+        pro: 'Paquete Memoria Pro',
+        vip: 'Paquete Boda Magna VIP'
+      };
+
+      var currentTier = 'pro';
+      var currentGuests = 150;
+      var currentMonths = 3;
+
+      var guestsSlider = document.getElementById('calc-guests-slider');
+      var guestsLabel = document.getElementById('calc-guests-label');
+      var tierBtns = document.querySelectorAll('.calc-tier-btn');
+      var monthBtns = document.querySelectorAll('.calc-months-btn');
+
+      var addonLiveWall = document.getElementById('addon-livewall');
+      var addonZip = document.getElementById('addon-zip');
+      var addonDomain = document.getElementById('addon-domain');
+
+      var totalDisplay = document.getElementById('calc-total-display');
+      var summaryTierName = document.getElementById('summary-tier-name');
+      var summaryTierPrice = document.getElementById('summary-tier-price');
+      var summaryGuestsInfo = document.getElementById('summary-guests-info');
+      var summaryGuestsPrice = document.getElementById('summary-guests-price');
+      var summaryMonthsInfo = document.getElementById('summary-months-info');
+      var summaryMonthsPrice = document.getElementById('summary-months-price');
+      var summaryAddonsInfo = document.getElementById('summary-addons-info');
+      var summaryAddonsPrice = document.getElementById('summary-addons-price');
+
+      function calculateTotal() {
+        var basePrice = TIER_PRICES[currentTier] || 3490;
+
+        // Costo marginal por invitados si supera los 150 base
+        var guestExtra = 0;
+        if (currentGuests > 150) {
+          guestExtra = Math.ceil((currentGuests - 150) / 50) * 450;
+        }
+
+        // Costo por meses de resguardo
+        var monthsExtra = 0;
+        if (currentMonths === 6) monthsExtra = 690;
+        if (currentMonths === 12) monthsExtra = 1290;
+
+        // Modulos adicionales
+        var addonsExtra = 0;
+        var activeAddons = [];
+        if (addonLiveWall && addonLiveWall.checked) {
+          addonsExtra += 1490;
+          activeAddons.push('Live Wall');
+        }
+        if (addonZip && addonZip.checked) {
+          addonsExtra += 690;
+          activeAddons.push('Empaquetador ZIP');
+        }
+        if (addonDomain && addonDomain.checked) {
+          addonsExtra += 990;
+          activeAddons.push('Dominio propio');
+        }
+
+        var total = basePrice + guestExtra + monthsExtra + addonsExtra;
+
+        // Actualizar UI
+        if (totalDisplay) totalDisplay.textContent = '$' + total.toLocaleString('es-MX');
+        if (summaryTierName) summaryTierName.textContent = TIER_NAMES[currentTier];
+        if (summaryTierPrice) summaryTierPrice.textContent = '$' + basePrice.toLocaleString('es-MX');
+
+        if (summaryGuestsInfo) summaryGuestsInfo.textContent = 'Hasta ' + currentGuests + ' invitados';
+        if (summaryGuestsPrice) summaryGuestsPrice.textContent = guestExtra > 0 ? '+$' + guestExtra.toLocaleString('es-MX') : '$0';
+
+        if (summaryMonthsInfo) summaryMonthsInfo.textContent = 'Resguardo por ' + currentMonths + (currentMonths === 1 ? ' mes' : (currentMonths === 12 ? ' ano' : ' meses'));
+        if (summaryMonthsPrice) summaryMonthsPrice.textContent = monthsExtra > 0 ? '+$' + monthsExtra.toLocaleString('es-MX') : '$0';
+
+        if (summaryAddonsInfo) summaryAddonsInfo.textContent = activeAddons.length > 0 ? activeAddons.join(' + ') : 'Sin complementos';
+        if (summaryAddonsPrice) summaryAddonsPrice.textContent = addonsExtra > 0 ? '+$' + addonsExtra.toLocaleString('es-MX') : '$0';
+      }
+
+      if (guestsSlider) {
+        guestsSlider.addEventListener('input', function (e) {
+          currentGuests = parseInt(e.target.value, 10);
+          if (guestsLabel) guestsLabel.textContent = currentGuests + ' personas';
+          calculateTotal();
+        });
+      }
+
+      tierBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          tierBtns.forEach(function (b) {
+            b.classList.remove('border-2', 'border-amber-600');
+            b.classList.add('border', 'border-gray-200');
+          });
+          btn.classList.remove('border', 'border-gray-200');
+          btn.classList.add('border-2', 'border-amber-600');
+          currentTier = btn.getAttribute('data-tier') || 'pro';
+          calculateTotal();
+        });
+      });
+
+      monthBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          monthBtns.forEach(function (b) {
+            b.classList.remove('border-2', 'border-amber-600', 'text-amber-900', 'font-bold');
+            b.classList.add('border', 'border-gray-200', 'text-gray-700', 'font-semibold');
+          });
+          btn.classList.remove('border', 'border-gray-200', 'text-gray-700', 'font-semibold');
+          btn.classList.add('border-2', 'border-amber-600', 'text-amber-900', 'font-bold');
+          currentMonths = parseInt(btn.getAttribute('data-months'), 10) || 3;
+          calculateTotal();
+        });
+      });
+
+      if (addonLiveWall) addonLiveWall.addEventListener('change', calculateTotal);
+      if (addonZip) addonZip.addEventListener('change', calculateTotal);
+      if (addonDomain) addonDomain.addEventListener('change', calculateTotal);
+
+      var btnContract = document.getElementById('btn-contract');
+      var contractFeedback = document.getElementById('contract-feedback');
+      if (btnContract && contractFeedback) {
+        btnContract.addEventListener('click', function () {
+          contractFeedback.classList.remove('hidden');
+          btnContract.textContent = 'Solicitud Registrada Exitosamente';
+          btnContract.disabled = true;
+          btnContract.classList.add('opacity-70', 'cursor-not-allowed');
+        });
+      }
+
+      calculateTotal();
+    })();
+  </script>
+
 </Layout>

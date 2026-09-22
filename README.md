@@ -166,11 +166,10 @@ npm run dev
 - [x] **Fase 5:** Frontend Invitados (Vistas mobile-first `/v/[slug]` y `/a/[slug]` con carga directa, galeria tipo telefono y visor estilo Reels).
 - [x] **Fase 6:** Live Wall (`/live/[slug]`) con polling/refresco en pantalla completa para proyectores.
 - [x] **Fase 7:** Empaquetador masivo ZIP asincrono y notificaciones por correo via Resend.
-- [x] **Fase 8:** Panel de Administracion & Cotizador (`/admin`) — Gestion de superadmin para cotizar y crear eventos + Dashboard para el anfitrion (metricas en vivo, moderacion de fotos, simulador de smartphone interactivo y generador de plantillas QR de mesa).
-- [ ] **Fase 9:** Landing Page Comercial & Captacion (`/`) — Vitrina de venta de alto impacto para clientes finales, cotizador interactivo en linea y demostraciones en vivo.
+- [x] **Fase 9:** Landing Page Comercial & Captacion (`/`) — Vitrina de venta de alto impacto para clientes finales, cotizador interactivo en linea y demostraciones en vivo.
 
-### Proximo Arco: Evolucion Visual & Experiencia VIP (Arco 2)
-Una vez concluidas las 9 fases fundacionales, se activara el **Arco 2 ("Hacerlo Guapo")** inspirado en las mejores practicas de la industria (Momentiia): simulador de telefono en vivo, notas de voz, retos fotograficos, organizacion por carpetas y generador de carteles de mesa. El desglose completo se encuentra documentado en [ROADMAP_ARCO_2_MOMENTIIA.md](file:///c:/Users/babaj/Documents/Yo/ANIMUS-VOCATUS/ROADMAP_ARCO_2_MOMENTIIA.md).
+### Arco 1 (Cimientos Operativos) Concluido
+Las 9 fases fundacionales se encuentran completamente implementadas y operativas. A continuacion da inicio el **Arco 2 ("Hacerlo Guapo")** inspirado en el benchmark Momentiia: simulador de telefono interactivo, notas de voz en el navegador, retos fotograficos, organizacion por carpetas y generador de carteles de mesa. El desglose detallado se encuentra documentado en [ROADMAP_ARCO_2_MOMENTIIA.md](file:///c:/Users/babaj/Documents/Yo/ANIMUS-VOCATUS/ROADMAP_ARCO_2_MOMENTIIA.md).
 
 ---
 
