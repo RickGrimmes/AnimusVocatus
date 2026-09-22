@@ -246,9 +246,15 @@ const eventSlug = slug || 'boda-carlos-y-sofia';
           : 'border-white/20 opacity-60 hover:opacity-100'
       }`;
 
-      const imgSrc = item.thumb_url || item.url;
+      const fallbackUrl = DEMO_ITEMS[idx % DEMO_ITEMS.length]?.thumb_url || DEMO_ITEMS[0].thumb_url;
+      const imgSrc = (item.thumb_url && !item.thumb_url.includes('mock-r2.local'))
+        ? item.thumb_url
+        : (item.url && !item.url.includes('mock-r2.local'))
+          ? item.url
+          : fallbackUrl;
+
       thumb.innerHTML = `
-        <img src="${imgSrc}" alt="${item.filename}" class="h-full w-full object-cover" />
+        <img src="${imgSrc}" alt="${item.filename}" onerror="this.src='${fallbackUrl}'" class="h-full w-full object-cover" />
       `;
 
       thumb.addEventListener('click', () => {
@@ -273,7 +279,13 @@ const eventSlug = slug || 'boda-carlos-y-sofia';
     const currentItem = items[currentIndex];
     if (!currentItem) return;
 
-    const mediaSrc = currentItem.url || currentItem.thumb_url;
+    const fallbackItem = DEMO_ITEMS[currentIndex % DEMO_ITEMS.length] || DEMO_ITEMS[0];
+    let mediaSrc = (currentItem.url && !currentItem.url.includes('mock-r2.local'))
+      ? currentItem.url
+      : (currentItem.thumb_url && !currentItem.thumb_url.includes('mock-r2.local'))
+        ? currentItem.thumb_url
+        : (fallbackItem.url || fallbackItem.thumb_url);
+
     const isVideo = currentItem.content_type && currentItem.content_type.startsWith('video/');
 
     // Fondo ambiental

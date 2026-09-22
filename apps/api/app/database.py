@@ -36,3 +36,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
             raise
         finally:
             await session.close()
+
+
+def get_session_factory():
+    return AsyncSessionLocal

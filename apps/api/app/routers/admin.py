@@ -1,11 +1,13 @@
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, status
+from typing import List
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import get_db
+from app.database import AsyncSessionLocal, get_db, get_session_factory
 from app.models import Event, MediaItem, RSVPGuest, User, ZipJob
 from app.routers.auth import get_current_user
 from app.schemas import AdminDashboardMetrics, MediaItemRead, MediaModerateRequest, ZipJobRead
+from app.services.zip_packager import process_zip_job
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
@@ -99,10 +101,12 @@ async def moderate_media_item(
 @router.post("/events/{slug}/request-zip", response_model=ZipJobRead)
 async def request_zip_export(
     slug: str,
+    background_tasks: BackgroundTasks,
     event: Event = Depends(get_host_event),
     db: AsyncSession = Depends(get_db),
+    session_factory=Depends(get_session_factory),
 ):
-    """Registra una peticion de empaquetado ZIP masivo."""
+    """Registra una peticion de empaquetado ZIP masivo y la procesa en segundo plano."""
     zip_job = ZipJob(
         event_id=event.id,
         status="pending",
@@ -110,4 +114,40 @@ async def request_zip_export(
     db.add(zip_job)
     await db.commit()
     await db.refresh(zip_job)
+
+    background_tasks.add_task(process_zip_job, zip_job.id, session_factory)
     return zip_job
+
+
+@router.get("/events/{slug}/zip-jobs", response_model=List[ZipJobRead])
+async def list_zip_jobs(
+    slug: str,
+    event: Event = Depends(get_host_event),
+    db: AsyncSession = Depends(get_db),
+):
+    """Lista el historial de exportaciones ZIP solicitadas para el evento."""
+    stmt = (
+        select(ZipJob)
+        .where(ZipJob.event_id == event.id)
+        .order_by(ZipJob.created_at.desc())
+    )
+    result = await db.execute(stmt)
+    return result.scalars().all()
+
+
+@router.get("/events/{slug}/zip-jobs/{job_id}", response_model=ZipJobRead)
+async def get_zip_job_status(
+    slug: str,
+    job_id: uuid.UUID,
+    event: Event = Depends(get_host_event),
+    db: AsyncSession = Depends(get_db),
+):
+    """Consulta el estado y enlace de descarga de una exportacion ZIP especifica."""
+    stmt = select(ZipJob).where(ZipJob.id == job_id, ZipJob.event_id == event.id)
+    job = (await db.execute(stmt)).scalar_one_or_none()
+    if not job:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Trabajo de exportacion ZIP no encontrado",
+        )
+    return job

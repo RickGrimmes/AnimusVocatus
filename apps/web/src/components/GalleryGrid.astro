@@ -128,11 +128,17 @@ const { slug } = Astro.props;
       const cell = document.createElement('div');
       cell.className = 'relative aspect-square cursor-pointer overflow-hidden bg-white/5 active:opacity-75';
 
-      const imgSrc = item.thumb_url || item.url || 'https://placehold.co/400x400/121212/white?text=Foto';
+      const fallbackUrl = DEMO_MEDIA[index % DEMO_MEDIA.length]?.thumb_url || DEMO_MEDIA[0].thumb_url;
+      const imgSrc = (item.thumb_url && !item.thumb_url.includes('mock-r2.local'))
+        ? item.thumb_url
+        : (item.url && !item.url.includes('mock-r2.local'))
+          ? item.url
+          : fallbackUrl;
+
       const isVideo = item.content_type && item.content_type.startsWith('video/');
 
       cell.innerHTML = `
-        <img src="${imgSrc}" alt="${item.filename}" loading="lazy" class="h-full w-full object-cover transition duration-300 hover:scale-105" />
+        <img src="${imgSrc}" alt="${item.filename}" loading="lazy" onerror="this.src='${fallbackUrl}'" class="h-full w-full object-cover transition duration-300 hover:scale-105" />
         ${
           isVideo
             ? `<div class="absolute right-1.5 top-1.5 rounded-full bg-black/60 p-1 text-white backdrop-blur-sm">

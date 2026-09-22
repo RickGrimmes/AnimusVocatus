@@ -85,3 +85,10 @@ app.include_router(rsvp.router)
 app.include_router(vault.router)
 app.include_router(admin.router)
 
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+
+uploads_dir = Path(__file__).resolve().parent.parent / "uploads"
+uploads_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/media", StaticFiles(directory=str(uploads_dir)), name="media")
+

@@ -267,3 +267,16 @@ async def get_event_feed(
     result = await db.execute(stmt)
     items = result.scalars().all()
     return [attach_media_urls(item) for item in items]
+
+
+@router.put("/upload-mock")
+async def mock_upload_file(request: Request, key: str = Query(...)):
+    """Guarda archivos localmente cuando no hay bucket Cloudflare R2 configurado."""
+    from pathlib import Path
+    body = await request.body()
+    uploads_dir = Path(__file__).resolve().parent.parent.parent / "uploads"
+    file_path = uploads_dir / key
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_bytes(body)
+    return {"status": "ok", "key": key, "bytes": len(body)}
+

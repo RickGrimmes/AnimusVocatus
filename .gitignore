@@ -15,6 +15,10 @@ build/
 
 # Base de datos y Docker
 pgdata/
+*.db
+*.sqlite
+*.sqlite3
+uploads/
 
 # Node & Frontend
 node_modules/

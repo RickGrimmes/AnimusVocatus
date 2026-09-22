@@ -2,13 +2,16 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+_DB_PATH = Path(__file__).resolve().parent.parent / "vocatus_animus.db"
+
+
 class Settings(BaseSettings):
     ENV: str = "development"
     PORT: int = 8000
     DEBUG: bool = True
 
-    # Base de Datos
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/vocatus_animus"
+    # Base de Datos (SQLite para desarrollo local sin Docker, PostgreSQL para produccion)
+    DATABASE_URL: str = f"sqlite+aiosqlite:///{_DB_PATH.as_posix()}"
 
     # Seguridad y Tokens
     SECRET_KEY: str = "insecure_dev_secret_key_change_in_production"
