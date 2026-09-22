@@ -49,19 +49,19 @@ export interface MediaFeedItem {
   thumb_url?: string;
 }
 
-// Fallback demo para invitacion Vocatus
+// Fallback demo para invitación Vocatus
 export const DEMO_VOCATUS_EVENT: VocatusEvent = {
   slug: 'boda-carlos-y-sofia',
-  title: 'Carlos & Sofia',
+  title: 'Carlos & Sofía',
   event_date: '2026-10-25T18:00:00Z',
   event_type: 'boda',
   location_name: 'Hacienda de los Morales',
-  location_address: 'Vazquez de Mella 525, Polanco, CDMX',
+  location_address: 'Vázquez de Mella 525, Polanco, CDMX',
   location_maps_url: 'https://maps.google.com/?q=Hacienda+de+los+Morales',
   location_waze_url: 'https://waze.com/ul?q=Hacienda+de+los+Morales',
   dress_code: 'Rigurosa Etiqueta / Black Tie',
   gift_registry_info: 'Liverpool: 51239485 | El Palacio de Hierro: 982341',
-  itinerary: '18:00 Ceremonia Religiosa | 19:30 Coctel de Bienvenida | 21:00 Cena y Brindis | 23:00 Apertura de Pista',
+  itinerary: '18:00 Ceremonia Religiosa | 19:30 Cóctel de Bienvenida | 21:00 Cena y Brindis | 23:00 Apertura de Pista',
   is_active: true,
 };
 
@@ -92,7 +92,7 @@ export async function submitEventRSVP(slug: string, payload: RSVPPayload) {
     body: JSON.stringify(payload),
   });
   if (!res.ok) {
-    const error = await res.json().catch(() => ({ detail: 'Error al enviar confirmacion' }));
+    const error = await res.json().catch(() => ({ detail: 'Error al enviar confirmación' }));
     throw new Error(error.detail || 'Error al confirmar');
   }
   return await res.json();

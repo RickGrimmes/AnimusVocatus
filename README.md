@@ -9,6 +9,11 @@
 
 **Aevum** es la marca y empresa de tecnologia concebida para digitalizar y elevar la experiencia integral de eventos sociales exclusivos (bodas, XV anos, aniversarios, galas y graduaciones), bajo una linea visual sobria, moderna y de alta usabilidad (*Industrial / Editorial Minimalist*).
 
+### Identidad Visual & Tipografia de Marca
+- **Isotipo Oficial:** `[AE]` entre corchetes.
+- **Tipografia Exclusiva de la Marca:** **`Bodoni Moda SC`** (Google Fonts). Esta tipografia se utiliza especificamente de manera obligatoria cada vez que se escribe o representa la palabra **Aevum** y su isotipo **`[AE]`** en la interfaz y materiales de difusion.
+- **Tipografias de Soporte:** `Playfair Display` para titulares editoriales, `Faculty Glyphic` / `Roboto` para cuerpo de texto y `Space Mono` para codigos PIN y metadatos.
+
 El catalogo de soluciones de **Aevum** desacopla la experiencia en sus productos especializados:
 
 1. **Vocatus ("El Llamado") - Fase Pre-Evento**

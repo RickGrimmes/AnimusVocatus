@@ -12,6 +12,11 @@
     @apply antialiased text-gray-900 bg-editorial-bg;
     overscroll-behavior-y: none;
   }
+
+  .font-aevum {
+    font-family: 'Bodoni Moda SC', serif;
+    font-optical-sizing: auto;
+  }
 }
 
 /* Ocultar barra de scroll pero permitir navegacion */
@@ -33,4 +38,92 @@
 .reel-slide {
   scroll-snap-align: start;
   scroll-snap-stop: always;
+}
+
+/* Animaciones Momentiia / Arco 2 */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(2deg);
+  }
+}
+
+@keyframes floatSlowReverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(10px) rotate(-2deg);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes pulseWave {
+  0%, 100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes phoneInnerScroll {
+  0%, 15% {
+    transform: translateY(0);
+  }
+  45%, 65% {
+    transform: translateY(-28%);
+  }
+  85%, 100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-float {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: floatSlowReverse 7s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: floatSlow 9s ease-in-out infinite;
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 42s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.animate-phone-scroll {
+  animation: phoneInnerScroll 14s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+/* Scroll Reveal */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
 }

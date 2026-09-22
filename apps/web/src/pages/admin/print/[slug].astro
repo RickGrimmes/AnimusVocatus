@@ -10,12 +10,12 @@ export function getStaticPaths() {
 const { slug } = Astro.params;
 const eventSlug = slug || 'boda-carlos-y-sofia';
 const pin = '4821';
-const eventTitle = 'Carlos & Sofia';
+const eventTitle = 'Carlos & Sofía';
 ---
 
 <Layout title={`Carteles de Mesa — ${eventTitle}`} theme="dark">
   
-  <!-- Barra superior fija para el anfitrion (oculta al imprimir) -->
+  <!-- Barra superior fija para el anfitrión (oculta al imprimir) -->
   <header class="no-print sticky top-0 z-50 flex items-center justify-between border-b border-white/10 bg-[#181a20]/95 px-6 py-4 backdrop-blur-md">
     <div class="flex items-center gap-3">
       <a href={`/admin/${eventSlug}`} class="flex items-center gap-1 text-xs text-gray-400 hover:text-white transition">
@@ -25,7 +25,7 @@ const eventTitle = 'Carlos & Sofia';
         <span>Volver al panel</span>
       </a>
       <div class="h-4 w-px bg-white/20"></div>
-      <h1 class="text-sm font-bold text-white">Carteles de Centro de Mesa para Impresion</h1>
+      <h1 class="text-sm font-bold text-white">Carteles de Centro de Mesa para Impresión</h1>
     </div>
 
     <div class="flex items-center gap-3">
@@ -43,7 +43,7 @@ const eventTitle = 'Carlos & Sofia';
     </div>
   </header>
 
-  <!-- Lienzo de impresion con 2 tarjetas elegantes por hoja -->
+  <!-- Lienzo de impresión con 2 tarjetas elegantes por hoja -->
   <main class="min-h-screen bg-[#14161b] p-6 sm:p-12 flex flex-col items-center print:bg-white print:p-0">
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl w-full print:grid-cols-2 print:gap-4 print:w-full print:max-w-none">
@@ -52,7 +52,7 @@ const eventTitle = 'Carlos & Sofia';
       <div class="print-card border border-white/15 rounded-3xl bg-[#1c1e24] p-8 text-center flex flex-col items-center justify-between shadow-2xl print:border-2 print:border-black/30 print:bg-white print:rounded-2xl print:p-6 print:shadow-none">
         
         <div class="w-full">
-          <span class="text-[11px] uppercase tracking-widest text-emerald-400 print:text-black font-semibold">Aevum &bull; Boveda Animus</span>
+          <span class="text-[11px] uppercase tracking-widest text-emerald-400 print:text-black font-semibold"><span class="font-mono font-bold">[AE]</span> Aevum &bull; Bóveda Animus</span>
           <h2 class="mt-2 text-2xl font-serif font-bold text-white print:text-black tracking-wide">{eventTitle}</h2>
           <p class="mt-1 text-xs text-gray-300 print:text-gray-700">Comparte con nosotros las fotos y videos de tu mesa</p>
         </div>
@@ -61,7 +61,7 @@ const eventTitle = 'Carlos & Sofia';
           <img
             id="qr-img-1"
             src={`https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=4&data=${encodeURIComponent(`http://localhost:4321/a/${eventSlug}?pin=${pin}`)}`}
-            alt="Codigo QR para centro de mesa"
+            alt="Código QR para centro de mesa"
             class="h-44 w-44 object-contain rounded-lg"
           />
         </div>
@@ -73,8 +73,8 @@ const eventTitle = 'Carlos & Sofia';
           </div>
 
           <div class="text-[11px] text-gray-400 print:text-gray-600 leading-relaxed max-w-xs mx-auto">
-            1. Abre la camara de tu telefono<br>
-            2. Escanea el codigo QR e ingresa el PIN<br>
+            1. Abre la cámara de tu teléfono<br>
+            2. Escanea el código QR e ingresa el PIN<br>
             3. Sube tus fotos y videos al instante sin descargar apps
           </div>
         </div>
@@ -85,7 +85,7 @@ const eventTitle = 'Carlos & Sofia';
       <div class="print-card border border-white/15 rounded-3xl bg-[#1c1e24] p-8 text-center flex flex-col items-center justify-between shadow-2xl print:border-2 print:border-black/30 print:bg-white print:rounded-2xl print:p-6 print:shadow-none">
         
         <div class="w-full">
-          <span class="text-[11px] uppercase tracking-widest text-emerald-400 print:text-black font-semibold">Aevum &bull; Boveda Animus</span>
+          <span class="text-[11px] uppercase tracking-widest text-emerald-400 print:text-black font-semibold"><span class="font-mono font-bold">[AE]</span> Aevum &bull; Bóveda Animus</span>
           <h2 class="mt-2 text-2xl font-serif font-bold text-white print:text-black tracking-wide">{eventTitle}</h2>
           <p class="mt-1 text-xs text-gray-300 print:text-gray-700">Comparte con nosotros las fotos y videos de tu mesa</p>
         </div>
@@ -94,7 +94,7 @@ const eventTitle = 'Carlos & Sofia';
           <img
             id="qr-img-2"
             src={`https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=4&data=${encodeURIComponent(`http://localhost:4321/a/${eventSlug}?pin=${pin}`)}`}
-            alt="Codigo QR para centro de mesa"
+            alt="Código QR para centro de mesa"
             class="h-44 w-44 object-contain rounded-lg"
           />
         </div>
@@ -106,8 +106,8 @@ const eventTitle = 'Carlos & Sofia';
           </div>
 
           <div class="text-[11px] text-gray-400 print:text-gray-600 leading-relaxed max-w-xs mx-auto">
-            1. Abre la camara de tu telefono<br>
-            2. Escanea el codigo QR e ingresa el PIN<br>
+            1. Abre la cámara de tu teléfono<br>
+            2. Escanea el código QR e ingresa el PIN<br>
             3. Sube tus fotos y videos al instante sin descargar apps
           </div>
         </div>

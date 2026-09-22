@@ -5,7 +5,7 @@ interface Props {
   title?: string;
 }
 
-const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
+const { slug, pin = '4821', title = 'Carlos & Sofía' } = Astro.props;
 ---
 
 <!-- Encabezado superior ambiental -->
@@ -33,7 +33,7 @@ const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
 
 </header>
 
-<!-- Notificacion emergente cuando entra un nuevo recuerdo -->
+<!-- Notificación emergente cuando entra un nuevo recuerdo -->
 <div id="live-toast-alert" class="fixed top-24 left-1/2 -translate-x-1/2 z-50 transform -translate-y-12 opacity-0 pointer-events-none transition-all duration-500 ease-out flex items-center gap-3 px-6 py-3 rounded-full bg-white/15 backdrop-blur-xl border border-white/30 text-white shadow-2xl">
   <div class="h-8 w-8 rounded-full bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-300">
     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -46,19 +46,19 @@ const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
   </div>
 </div>
 
-<!-- Tarjeta Flotante con Codigo QR para Escaneo a Distancia -->
+<!-- Tarjeta Flotante con Código QR para Escaneo a Distancia -->
 <aside id="live-qr-card" class="fixed bottom-6 right-6 z-40 max-w-xs sm:max-w-sm rounded-2xl bg-[#14161b]/90 backdrop-blur-xl border border-white/15 p-5 shadow-2xl transition-all duration-500 transform translate-y-0">
   
   <div class="flex items-start justify-between gap-3 mb-3">
     <div>
       <h3 class="text-sm font-bold text-white tracking-wide">Sube tus fotos y videos</h3>
-      <p class="text-xs text-gray-400 mt-0.5">Escanea con tu camara y proyecta tus momentos al instante</p>
+      <p class="text-xs text-gray-400 mt-0.5">Escanea con tu cámara y proyecta tus momentos al instante</p>
     </div>
     <button
       id="btn-toggle-qr"
       type="button"
       class="text-gray-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition"
-      aria-label="Minimizar codigo QR"
+      aria-label="Minimizar código QR"
     >
       <svg id="icon-collapse-qr" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -71,7 +71,7 @@ const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
       <img
         id="qr-image-tag"
         src={`https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=4&data=${encodeURIComponent(`http://localhost:4321/a/${slug}?pin=${pin}`)}`}
-        alt={`Codigo QR para acceder a la boveda de ${title}`}
+        alt={`Código QR para acceder a la bóveda de ${title}`}
         class="h-36 w-36 sm:h-44 sm:w-44 object-contain rounded-lg"
       />
     </div>
@@ -89,12 +89,12 @@ const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
 <!-- Controles discretos para operador / DJ (autocultables tras inactividad) -->
 <div id="live-operator-controls" class="fixed bottom-6 left-6 z-40 flex items-center gap-2 p-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white transition-opacity duration-500">
   
-  <!-- Boton Play / Pausa -->
+  <!-- Botón Play / Pausa -->
   <button
     id="btn-live-playpause"
     type="button"
     class="p-2.5 rounded-full hover:bg-white/10 active:scale-95 transition"
-    title="Pausar o reanudar rotacion (Espacio)"
+    title="Pausar o reanudar rotación (Espacio)"
   >
     <svg id="icon-live-pause" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6" />
@@ -104,7 +104,7 @@ const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
     </svg>
   </button>
 
-  <!-- Boton Anterior -->
+  <!-- Botón Anterior -->
   <button
     id="btn-live-prev"
     type="button"
@@ -116,7 +116,7 @@ const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
     </svg>
   </button>
 
-  <!-- Boton Siguiente -->
+  <!-- Botón Siguiente -->
   <button
     id="btn-live-next"
     type="button"
@@ -128,7 +128,7 @@ const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
     </svg>
   </button>
 
-  <!-- Boton Alternar QR -->
+  <!-- Botón Alternar QR -->
   <button
     id="btn-live-qr-visibility"
     type="button"
@@ -140,7 +140,7 @@ const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
     </svg>
   </button>
 
-  <!-- Boton Pantalla Completa -->
+  <!-- Botón Pantalla Completa -->
   <button
     id="btn-live-fullscreen"
     type="button"
@@ -158,7 +158,7 @@ const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
 </div>
 
 <script define:vars={{ slug, pin }}>
-  // Ajuste dinamico de URL del QR con el origen del navegador actual
+  // Ajuste dinámico de URL del QR con el origen del navegador actual
   const qrImage = document.getElementById('qr-image-tag');
   if (qrImage) {
     const currentOrigin = window.location.origin;
@@ -166,7 +166,7 @@ const { slug, pin = '4821', title = 'Carlos & Sofia' } = Astro.props;
     qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=4&data=${encodeURIComponent(targetUrl)}`;
   }
 
-  // Minimizacion de la tarjeta QR
+  // Minimización de la tarjeta QR
   const qrCard = document.getElementById('live-qr-card');
   const qrContent = document.getElementById('live-qr-content');
   const btnToggleQr = document.getElementById('btn-toggle-qr');

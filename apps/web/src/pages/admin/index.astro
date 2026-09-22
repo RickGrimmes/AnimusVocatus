@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Panel de Administracion — Aevum" theme="dark">
+<Layout title="Panel de Administración — Aevum" theme="dark">
   
   <div class="min-h-screen bg-[#121318] text-white flex flex-col lg:flex-row">
     
@@ -11,7 +11,10 @@ import Layout from '../../layouts/Layout.astro';
       
       <div>
         <!-- Logo / Marca -->
-        <div class="flex items-center gap-2 mb-8">
+        <div class="flex items-center gap-2.5 mb-8">
+          <div class="flex h-7 items-center justify-center px-1.5 rounded-lg border border-amber-500/30 bg-white/5 text-white font-serif font-bold text-xs shadow-sm">
+            <span class="text-amber-400 font-mono font-normal mr-0.5">[</span>AE<span class="text-amber-400 font-mono font-normal ml-0.5">]</span>
+          </div>
           <span class="text-xs uppercase tracking-widest font-bold text-amber-400">Aevum &bull; Suite</span>
         </div>
 
@@ -28,7 +31,7 @@ import Layout from '../../layouts/Layout.astro';
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span>Mis albumes</span>
+            <span>Mis álbumes</span>
           </a>
 
           <button
@@ -39,12 +42,12 @@ import Layout from '../../layouts/Layout.astro';
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
-            <span>Cotizador en linea</span>
+            <span>Cotizador en línea</span>
           </button>
         </nav>
       </div>
 
-      <!-- Perfil inferior del anfitrion -->
+      <!-- Perfil inferior del anfitrión -->
       <div class="pt-6 border-t border-white/10 mt-6 lg:mt-0">
         <div class="flex items-center gap-3 mb-3">
           <div class="h-9 w-9 rounded-full bg-white/20 border border-white/30 flex items-center justify-center font-bold text-sm text-white">
@@ -56,7 +59,7 @@ import Layout from '../../layouts/Layout.astro';
           </div>
         </div>
         <a href="/" class="text-xs text-gray-500 hover:text-gray-300 transition block">
-          Cerrar sesion
+          Cerrar sesión
         </a>
       </div>
 
@@ -71,7 +74,7 @@ import Layout from '../../layouts/Layout.astro';
         <p class="text-sm text-gray-400 mt-1">Esto es lo que tienes entre manos.</p>
       </div>
 
-      <!-- Tarjeta Destacada "Tu Proximo Evento" estilo Momentiia -->
+      <!-- Tarjeta Destacada "Tu Próximo Evento" estilo Momentiia -->
       <div class="relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-r from-[#1e2028] via-[#242733] to-[#1c1e26] p-6 sm:p-8 shadow-2xl mb-8">
         <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           
@@ -83,11 +86,11 @@ import Layout from '../../layouts/Layout.astro';
               class="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl object-cover border border-white/20 shadow-lg"
             />
             <div>
-              <span class="text-[11px] uppercase tracking-widest text-gray-400 font-semibold">Tu proximo evento</span>
-              <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">Boda Carlos & Sofia</h2>
+              <span class="text-[11px] uppercase tracking-widest text-gray-400 font-semibold">Tu próximo evento</span>
+              <h2 class="text-2xl sm:text-3xl font-bold text-white mt-1">Boda Carlos & Sofía</h2>
               
               <div class="flex flex-wrap items-center gap-2.5 mt-2 text-xs">
-                <span class="font-bold text-amber-300">Faltan 34 dias</span>
+                <span class="font-bold text-amber-300">Faltan 34 días</span>
                 <span class="text-gray-400">&bull; 25 de octubre de 2026</span>
                 <span class="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-semibold border border-amber-400/30">
                   Plan Legado Pro
@@ -96,7 +99,7 @@ import Layout from '../../layouts/Layout.astro';
             </div>
           </div>
 
-          <!-- Boton Abrir -->
+          <!-- Botón Abrir -->
           <a
             href="/admin/boda-carlos-y-sofia"
             class="flex items-center gap-2 rounded-2xl bg-[#d4af37] px-6 py-3 text-xs font-bold text-black uppercase tracking-wider shadow-xl hover:bg-[#e6c24d] transition active:scale-95"
@@ -109,7 +112,7 @@ import Layout from '../../layouts/Layout.astro';
 
         </div>
 
-        <!-- Barra de Progreso de Preparacion (8 de 9 pasos) -->
+        <!-- Barra de Progreso de Preparación (8 de 9 pasos) -->
         <div class="mt-6 pt-5 border-t border-white/10">
           <div class="flex justify-between text-xs text-gray-400 mb-1.5">
             <span class="font-medium text-gray-300">8 de 9 pasos listos</span>
@@ -122,19 +125,19 @@ import Layout from '../../layouts/Layout.astro';
 
       </div>
 
-      <!-- Tarjetas de Metricas Rapidas -->
+      <!-- Tarjetas de Métricas Rápidas -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         
         <div class="rounded-2xl border border-white/10 bg-[#191b22] p-5 shadow-lg">
-          <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Albumes Activos</span>
+          <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Álbumes Activos</span>
           <div class="mt-2 text-3xl font-bold text-white">1</div>
-          <span class="text-xs text-gray-500 mt-1 block">Boda Carlos & Sofia</span>
+          <span class="text-xs text-gray-500 mt-1 block">Boda Carlos & Sofía</span>
         </div>
 
         <div class="rounded-2xl border border-white/10 bg-[#191b22] p-5 shadow-lg">
           <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Fotos y Videos Guardados</span>
           <div class="mt-2 text-3xl font-bold text-white">6</div>
-          <span class="text-xs text-emerald-400 mt-1 block">Boveda sincronizada</span>
+          <span class="text-xs text-emerald-400 mt-1 block">Bóveda sincronizada</span>
         </div>
 
         <div class="rounded-2xl border border-white/10 bg-[#191b22] p-5 shadow-lg">
@@ -145,9 +148,9 @@ import Layout from '../../layouts/Layout.astro';
 
       </div>
 
-      <!-- Seccion de Acciones Rapidas estilo Momentiia -->
+      <!-- Seccion de Acciones Rápidas estilo Momentiia -->
       <div class="mb-8">
-        <h3 class="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-3">Acciones Rapidas</h3>
+        <h3 class="text-xs uppercase tracking-widest text-gray-400 font-semibold mb-3">Acciones Rápidas</h3>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           
@@ -183,7 +186,7 @@ import Layout from '../../layouts/Layout.astro';
                 </svg>
               </div>
               <div>
-                <span class="block text-sm font-bold text-white">Ver boveda de recuerdos</span>
+                <span class="block text-sm font-bold text-white">Ver bóveda de recuerdos</span>
                 <span class="block text-xs text-gray-400">Moderar fotos y descargar ZIP</span>
               </div>
             </div>
@@ -204,7 +207,7 @@ import Layout from '../../layouts/Layout.astro';
               </div>
               <div>
                 <span class="block text-sm font-bold text-white">Descargar carteles para mesa</span>
-                <span class="block text-xs text-gray-400">Plantillas con codigo QR y PIN</span>
+                <span class="block text-xs text-gray-400">Plantillas con código QR y PIN</span>
               </div>
             </div>
             <svg class="h-4 w-4 text-gray-500 group-hover:text-white transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -226,7 +229,7 @@ import Layout from '../../layouts/Layout.astro';
               </div>
               <div>
                 <span class="block text-sm font-bold text-white">Ver como invitado</span>
-                <span class="block text-xs text-gray-400">Abrir invitacion en vivo</span>
+                <span class="block text-xs text-gray-400">Abrir invitación en vivo</span>
               </div>
             </div>
             <svg class="h-4 w-4 text-gray-500 group-hover:text-white transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -262,25 +265,25 @@ import Layout from '../../layouts/Layout.astro';
           <label class="block text-xs text-gray-400 font-medium mb-1.5">Tipo de Evento</label>
           <select id="quote-event-type" class="w-full rounded-xl bg-white/5 border border-white/15 px-3.5 py-2.5 text-sm text-white focus:outline-none">
             <option value="boda">Boda de Gala</option>
-            <option value="xv">XV Anos</option>
-            <option value="graduacion">Graduacion</option>
+            <option value="xv">XV Años</option>
+            <option value="graduación">Graduación</option>
             <option value="aniversario">Aniversario</option>
             <option value="corporativo">Evento Corporativo</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs text-gray-400 font-medium mb-1.5">Alcance y Modulos Contratados</label>
+          <label class="block text-xs text-gray-400 font-medium mb-1.5">Alcance y Módulos Contratados</label>
           <select id="quote-tier" class="w-full rounded-xl bg-white/5 border border-white/15 px-3.5 py-2.5 text-sm text-white focus:outline-none">
-            <option value="esencial">Pacto Esencial — Solo Invitaciones & RSVP (Sin Boveda)</option>
-            <option value="sincronia">Sincronia Total — Invitacion + Boveda Fotos (15 GB)</option>
+            <option value="esencial">Pacto Esencial — Sólo Invitaciones & RSVP (Sin Bóveda)</option>
+            <option value="sincronia">Sincronía Total — Invitación + Bóveda Fotos (15 GB)</option>
             <option value="legado" selected>Legado Pro — Suite Completa + Muro en Vivo + Video (50 GB)</option>
           </select>
         </div>
 
         <div>
           <div class="flex justify-between text-xs text-gray-400 mb-1.5">
-            <span>Numero estimado de invitados:</span>
+            <span>Número estimado de invitados:</span>
             <span id="quote-guests-display" class="font-bold text-white">150 personas</span>
           </div>
           <input
@@ -302,7 +305,7 @@ import Layout from '../../layouts/Layout.astro';
           </div>
           <div class="flex justify-between text-xs">
             <span class="text-gray-400">Empaquetado masivo ZIP:</span>
-            <span class="font-bold text-white">Incluido (Vigencia 7 dias)</span>
+            <span class="font-bold text-white">Incluido (Vigencia 7 días)</span>
           </div>
           <div class="flex justify-between text-xs">
             <span class="text-gray-400">Muro en Vivo (Live Wall):</span>
@@ -366,7 +369,7 @@ import Layout from '../../layouts/Layout.astro';
       if (livewallCalc) livewallCalc.textContent = 'No incluido';
       if (priceCalc) priceCalc.textContent = '$1,299 MXN';
     } else if (tier === 'sincronia') {
-      if (storageCalc) storageCalc.textContent = '15 GB (Solo Fotos)';
+      if (storageCalc) storageCalc.textContent = '15 GB (Sólo Fotos)';
       if (livewallCalc) livewallCalc.textContent = 'Opcional';
       if (priceCalc) priceCalc.textContent = '$2,499 MXN';
     } else {
@@ -380,7 +383,7 @@ import Layout from '../../layouts/Layout.astro';
   selectTier?.addEventListener('change', recalculate);
 
   btnConfirmQuote?.addEventListener('click', () => {
-    alert('Cotizacion guardada. El evento estara disponible en tu listado.');
+    alert('Cotización guardada. El evento estará disponible en tu listado.');
     closeModal();
   });
 </script>

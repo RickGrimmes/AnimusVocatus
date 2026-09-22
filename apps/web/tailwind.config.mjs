@@ -29,6 +29,9 @@ export default {
           'sans-serif',
         ],
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        aevum: ['"Bodoni Moda SC"', 'serif'],
+        faculty: ['"Faculty Glyphic"', 'sans-serif'],
+        mono: ['"Space Mono"', 'monospace'],
       },
       keyframes: {
         'heart-bounce': {

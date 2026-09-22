@@ -12,7 +12,7 @@ const { slug } = Astro.props;
     <!-- Encabezado del modal -->
     <div class="flex items-center justify-between border-b border-gray-100 pb-4">
       <div>
-        <span class="text-xs font-semibold tracking-widest text-gray-400 uppercase">Confirmacion RSVP</span>
+        <span class="text-xs font-semibold tracking-widest text-gray-400 uppercase">Confirmación RSVP</span>
         <h3 class="font-serif text-xl font-bold text-gray-900">Acompáñanos</h3>
       </div>
       <button id="close-rsvp-btn" type="button" class="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700">
@@ -22,7 +22,7 @@ const { slug } = Astro.props;
       </button>
     </div>
 
-    <!-- Contenido dinamico: Paso 1 - Busqueda -->
+    <!-- Contenido dinámico: Paso 1 - Búsqueda -->
     <div id="rsvp-step-search" class="pt-5">
       <label for="rsvp-search-input" class="block text-sm font-medium text-gray-700">
         Escribe tu nombre o el de tu familia
@@ -45,7 +45,7 @@ const { slug } = Astro.props;
       </div>
     </div>
 
-    <!-- Contenido dinamico: Paso 2 - Formulario de confirmacion -->
+    <!-- Contenido dinámico: Paso 2 - Formulario de confirmación -->
     <div id="rsvp-step-form" class="hidden pt-5">
       <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
         <span class="text-xs font-semibold text-gray-400 uppercase">Invitado Seleccionado</span>
@@ -62,20 +62,20 @@ const { slug } = Astro.props;
               id="status-confirm-btn"
               class="rounded-xl border-2 border-gray-900 bg-gray-900 py-2.5 text-center text-xs font-semibold tracking-wider text-white uppercase transition-colors"
             >
-              Asistire
+              Asistiré
             </button>
             <button
               type="button"
               id="status-decline-btn"
               class="rounded-xl border-2 border-gray-200 bg-white py-2.5 text-center text-xs font-semibold tracking-wider text-gray-600 uppercase transition-colors hover:border-gray-300"
             >
-              No podre
+              No podré
             </button>
           </div>
         </div>
 
         <div id="passes-selector-wrapper">
-          <label class="block text-sm font-medium text-gray-700">Numero de boletos a confirmar</label>
+          <label class="block text-sm font-medium text-gray-700">Número de boletos a confirmar</label>
           <div class="mt-2 flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-2">
             <button type="button" id="btn-minus-pass" class="h-10 w-10 rounded-lg bg-white font-bold text-gray-800 shadow-sm disabled:opacity-40">-</button>
             <span id="passes-count-display" class="font-serif text-lg font-bold text-gray-900">1</span>
@@ -88,7 +88,7 @@ const { slug } = Astro.props;
           <input
             type="text"
             id="dietary-input"
-            placeholder="Vegetariano, celiaco, alergias..."
+            placeholder="Vegetariano, celíaco, alergias..."
             class="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm focus:border-gray-900 focus:bg-white focus:outline-none"
           />
         </div>
@@ -98,7 +98,7 @@ const { slug } = Astro.props;
           <textarea
             id="message-input"
             rows="2"
-            placeholder="Escribe una dedicatoria o felicitacion..."
+            placeholder="Escribe una dedicatoria o felicitación..."
             class="mt-1 w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm focus:border-gray-900 focus:bg-white focus:outline-none"
           ></textarea>
         </div>
@@ -111,7 +111,7 @@ const { slug } = Astro.props;
             id="btn-back-search"
             class="w-1/3 rounded-xl border border-gray-200 py-3 text-xs font-bold tracking-wider text-gray-600 uppercase"
           >
-            Atras
+            Atrás
           </button>
           <button
             type="submit"
@@ -124,7 +124,7 @@ const { slug } = Astro.props;
       </form>
     </div>
 
-    <!-- Contenido dinamico: Paso 3 - Exito -->
+    <!-- Contenido dinámico: Paso 3 - Éxito -->
     <div id="rsvp-step-success" class="hidden py-8 text-center">
       <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
         <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -133,7 +133,7 @@ const { slug } = Astro.props;
       </div>
       <h4 class="mt-4 font-serif text-xl font-bold text-gray-900">Respuesta Registrada</h4>
       <p id="rsvp-success-message" class="mt-2 text-sm text-gray-600">
-        Gracias por confirmar tu asistencia. Nos dara mucho gusto celebrar juntos.
+        Gracias por confirmar tu asistencia. Nos dará mucho gusto celebrar juntos.
       </p>
       <button
         type="button"
@@ -225,7 +225,7 @@ const { slug } = Astro.props;
   function renderSearchResults(guests) {
     resultsContainer.innerHTML = '';
     if (guests.length === 0) {
-      resultsContainer.innerHTML = '<p class="py-3 text-center text-xs text-gray-500">No encontramos pases con ese nombre. Intenta solo con el apellido.</p>';
+      resultsContainer.innerHTML = '<p class="py-3 text-center text-xs text-gray-500">No encontramos pases con ese nombre. Intenta sólo con el apellido.</p>';
       return;
     }
 

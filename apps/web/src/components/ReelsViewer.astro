@@ -8,13 +8,13 @@
     
     <!-- Barras de progreso segmentadas (una por cada foto/video) -->
     <div id="stories-progress-bars" class="flex gap-1 w-full mb-3">
-      <!-- Inyectado dinamicamente con Javascript -->
+      <!-- Inyectado dinámicamente con JavaScript -->
     </div>
 
     <!-- Barra de control y autor -->
     <div class="flex items-center justify-between">
       
-      <!-- Informacion del autor -->
+      <!-- Información del autor -->
       <div class="flex items-center gap-2.5">
         <div id="viewer-author-avatar" class="h-9 w-9 rounded-full bg-white/20 border border-white/30 flex items-center justify-center text-xs font-bold text-white shadow-sm">
           A
@@ -25,45 +25,45 @@
         </div>
       </div>
 
-      <!-- Botones de accion: Pausa, Mute, Descargar, Cerrar -->
+      <!-- Botones de acción: Pausa, Mute, Descargar, Cerrar -->
       <div class="flex items-center gap-1 sm:gap-2">
         
-        <!-- Boton Pausa / Play -->
+        <!-- Botón Pausa / Play -->
         <button
           id="btn-viewer-pause"
           type="button"
           class="rounded-full p-2 text-white/90 hover:bg-white/10 active:scale-95 transition"
           aria-label="Pausar o reanudar"
         >
-          <!-- Icono Pausa -->
+          <!-- Ícono Pausa -->
           <svg id="icon-pause" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6" />
           </svg>
-          <!-- Icono Play (oculto por defecto) -->
+          <!-- Ícono Play (oculto por defecto) -->
           <svg id="icon-play" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
           </svg>
         </button>
 
-        <!-- Boton Mute / Audio (solo activo si hay video) -->
+        <!-- Botón Mute / Audio (sólo activo si hay video) -->
         <button
           id="btn-viewer-mute"
           type="button"
           class="hidden rounded-full p-2 text-white/90 hover:bg-white/10 active:scale-95 transition"
           aria-label="Silenciar o activar sonido"
         >
-          <!-- Icono Volumen On -->
+          <!-- Ícono Volumen On -->
           <svg id="icon-volume-on" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
           </svg>
-          <!-- Icono Mute -->
+          <!-- Ícono Mute -->
           <svg id="icon-volume-mute" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
           </svg>
         </button>
 
-        <!-- Boton Descargar -->
+        <!-- Botón Descargar -->
         <button
           id="btn-viewer-download"
           type="button"
@@ -75,7 +75,7 @@
           </svg>
         </button>
 
-        <!-- Boton Cerrar -->
+        <!-- Botón Cerrar -->
         <button
           id="btn-viewer-close"
           type="button"
@@ -96,13 +96,13 @@
   <!-- Escenario Central Multimedia -->
   <div id="viewer-stage" class="relative flex-1 flex items-center justify-center overflow-hidden">
     
-    <!-- Zonas invisibles de toque para navegacion de historias -->
+    <!-- Zonas invisibles de toque para navegación de historias -->
     <div id="tap-prev-zone" class="absolute inset-y-0 left-0 w-1/3 z-20 cursor-pointer" aria-label="Anterior"></div>
     <div id="tap-next-zone" class="absolute inset-y-0 right-0 w-2/3 z-20 cursor-pointer" aria-label="Siguiente"></div>
 
     <!-- Contenedor del elemento activo (Imagen o Video) -->
     <div id="media-content-wrapper" class="w-full h-full flex items-center justify-center p-2 sm:p-4 pointer-events-none">
-      <!-- Inyectado dinamicamente -->
+      <!-- Inyectado dinámicamente -->
     </div>
 
   </div>
@@ -266,7 +266,7 @@
         }
       });
 
-      // Al terminar el video pasa al siguiente recuerdo automaticamente
+      // Al terminar el video pasa al siguiente recuerdo automáticamente
       video.addEventListener('ended', () => {
         if (activeBar) activeBar.style.width = '100%';
         goToNext();
@@ -323,7 +323,7 @@
       currentIndex++;
       loadCurrentMedia();
     } else {
-      // Si concluyo el ultimo recuerdo, cierra el visor
+      // Si concluyó el último recuerdo, cierra el visor
       closeModal();
     }
   }
@@ -408,7 +408,7 @@
   stage?.addEventListener('mousedown', handleHoldStart);
   stage?.addEventListener('mouseup', handleHoldEnd);
 
-  // Boton Pausa / Play manual
+  // Botón Pausa / Play manual
   btnPause?.addEventListener('click', () => {
     setPausedState(!isPaused);
   });
@@ -434,7 +434,7 @@
     }
   }
 
-  // Boton Mute / Unmute
+  // Botón Mute / Unmute
   btnMute?.addEventListener('click', () => {
     isMuted = !isMuted;
     const currentVideo = stageWrapper.querySelector('video');
@@ -450,7 +450,7 @@
     }
   });
 
-  // Boton Descargar foto o video
+  // Botón Descargar foto o video
   btnDownload?.addEventListener('click', async () => {
     const item = mediaItems[currentIndex];
     if (!item) return;
