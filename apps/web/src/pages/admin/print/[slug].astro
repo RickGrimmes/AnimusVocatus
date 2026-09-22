@@ -1,0 +1,153 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+
+export function getStaticPaths() {
+  return [
+    { params: { slug: 'boda-carlos-y-sofia' } },
+  ];
+}
+
+const { slug } = Astro.params;
+const eventSlug = slug || 'boda-carlos-y-sofia';
+const pin = '4821';
+const eventTitle = 'Carlos & Sofia';
+---
+
+<Layout title={`Carteles de Mesa — ${eventTitle}`} theme="dark">
+  
+  <!-- Barra superior fija para el anfitrion (oculta al imprimir) -->
+  <header class="no-print sticky top-0 z-50 flex items-center justify-between border-b border-white/10 bg-[#181a20]/95 px-6 py-4 backdrop-blur-md">
+    <div class="flex items-center gap-3">
+      <a href={`/admin/${eventSlug}`} class="flex items-center gap-1 text-xs text-gray-400 hover:text-white transition">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span>Volver al panel</span>
+      </a>
+      <div class="h-4 w-px bg-white/20"></div>
+      <h1 class="text-sm font-bold text-white">Carteles de Centro de Mesa para Impresion</h1>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <span class="text-xs text-gray-400 hidden sm:inline">Formato recomendado: Papel opalina o cartulina blanca</span>
+      <button
+        type="button"
+        onclick="window.print()"
+        class="flex items-center gap-2 rounded-xl bg-white px-5 py-2 text-xs font-bold text-black uppercase tracking-wider shadow-lg hover:bg-gray-200 transition active:scale-95"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+        </svg>
+        <span>Imprimir Carteles</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Lienzo de impresion con 2 tarjetas elegantes por hoja -->
+  <main class="min-h-screen bg-[#14161b] p-6 sm:p-12 flex flex-col items-center print:bg-white print:p-0">
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl w-full print:grid-cols-2 print:gap-4 print:w-full print:max-w-none">
+      
+      <!-- Tarjeta 1 -->
+      <div class="print-card border border-white/15 rounded-3xl bg-[#1c1e24] p-8 text-center flex flex-col items-center justify-between shadow-2xl print:border-2 print:border-black/30 print:bg-white print:rounded-2xl print:p-6 print:shadow-none">
+        
+        <div class="w-full">
+          <span class="text-[11px] uppercase tracking-widest text-emerald-400 print:text-black font-semibold">Boveda de Recuerdos &bull; Animus</span>
+          <h2 class="mt-2 text-2xl font-serif font-bold text-white print:text-black tracking-wide">{eventTitle}</h2>
+          <p class="mt-1 text-xs text-gray-300 print:text-gray-700">Comparte con nosotros las fotos y videos de tu mesa</p>
+        </div>
+
+        <div class="my-6 p-4 rounded-2xl bg-white shadow-md border border-gray-200">
+          <img
+            id="qr-img-1"
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=4&data=${encodeURIComponent(`http://localhost:4321/a/${eventSlug}?pin=${pin}`)}`}
+            alt="Codigo QR para centro de mesa"
+            class="h-44 w-44 object-contain rounded-lg"
+          />
+        </div>
+
+        <div class="w-full space-y-3">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-white/10 print:bg-gray-100 border border-white/15 print:border-gray-300 text-xs font-mono">
+            <span class="text-gray-400 print:text-gray-600">PIN de acceso:</span>
+            <span class="font-bold text-white print:text-black tracking-widest text-sm">{pin}</span>
+          </div>
+
+          <div class="text-[11px] text-gray-400 print:text-gray-600 leading-relaxed max-w-xs mx-auto">
+            1. Abre la camara de tu telefono<br>
+            2. Escanea el codigo QR e ingresa el PIN<br>
+            3. Sube tus fotos y videos al instante sin descargar apps
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tarjeta 2 -->
+      <div class="print-card border border-white/15 rounded-3xl bg-[#1c1e24] p-8 text-center flex flex-col items-center justify-between shadow-2xl print:border-2 print:border-black/30 print:bg-white print:rounded-2xl print:p-6 print:shadow-none">
+        
+        <div class="w-full">
+          <span class="text-[11px] uppercase tracking-widest text-emerald-400 print:text-black font-semibold">Boveda de Recuerdos &bull; Animus</span>
+          <h2 class="mt-2 text-2xl font-serif font-bold text-white print:text-black tracking-wide">{eventTitle}</h2>
+          <p class="mt-1 text-xs text-gray-300 print:text-gray-700">Comparte con nosotros las fotos y videos de tu mesa</p>
+        </div>
+
+        <div class="my-6 p-4 rounded-2xl bg-white shadow-md border border-gray-200">
+          <img
+            id="qr-img-2"
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=4&data=${encodeURIComponent(`http://localhost:4321/a/${eventSlug}?pin=${pin}`)}`}
+            alt="Codigo QR para centro de mesa"
+            class="h-44 w-44 object-contain rounded-lg"
+          />
+        </div>
+
+        <div class="w-full space-y-3">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg bg-white/10 print:bg-gray-100 border border-white/15 print:border-gray-300 text-xs font-mono">
+            <span class="text-gray-400 print:text-gray-600">PIN de acceso:</span>
+            <span class="font-bold text-white print:text-black tracking-widest text-sm">{pin}</span>
+          </div>
+
+          <div class="text-[11px] text-gray-400 print:text-gray-600 leading-relaxed max-w-xs mx-auto">
+            1. Abre la camara de tu telefono<br>
+            2. Escanea el codigo QR e ingresa el PIN<br>
+            3. Sube tus fotos y videos al instante sin descargar apps
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</Layout>
+
+<style>
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    body {
+      background: white !important;
+      color: black !important;
+    }
+    @page {
+      size: letter portrait;
+      margin: 1.5cm;
+    }
+    .print-card {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+  }
+</style>
+
+<script define:vars={{ eventSlug, pin }}>
+  // Ajustar el origen exacto del navegador para el QR
+  const origin = window.location.origin;
+  const targetUrl = `${origin}/a/${eventSlug}?pin=${pin}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=350x350&margin=4&data=${encodeURIComponent(targetUrl)}`;
+  
+  const img1 = document.getElementById('qr-img-1');
+  const img2 = document.getElementById('qr-img-2');
+  if (img1) img1.src = qrUrl;
+  if (img2) img2.src = qrUrl;
+</script>

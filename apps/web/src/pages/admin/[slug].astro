@@ -1,0 +1,502 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PhoneSimulator from '../../components/PhoneSimulator.astro';
+
+export function getStaticPaths() {
+  return [
+    { params: { slug: 'boda-carlos-y-sofia' } },
+  ];
+}
+
+const { slug } = Astro.params;
+const eventSlug = slug || 'boda-carlos-y-sofia';
+const pin = '4821';
+---
+
+<Layout title="Dashboard del Evento — Carlos & Sofia" theme="dark">
+  
+  <div class="min-h-screen bg-[#121318] text-white">
+    
+    <!-- Barra Superior de Navegacion del Anfitrion -->
+    <header class="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-[#161820]/95 px-6 py-3.5 backdrop-blur-md">
+      
+      <div class="flex items-center gap-4">
+        <a href="/admin" class="flex items-center gap-1.5 text-xs font-semibold text-gray-400 hover:text-white transition">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          <span>Inicio</span>
+        </a>
+        <div class="h-4 w-px bg-white/20"></div>
+        <h1 class="text-base font-serif font-bold text-white tracking-wide">Boda Carlos & Sofia</h1>
+        <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[11px] font-bold border border-emerald-500/30">
+          Activo &bull; Plan Legado Pro
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a
+          href={`/v/${eventSlug}`}
+          target="_blank"
+          class="hidden sm:flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-xs font-bold text-white hover:bg-white/15 transition"
+        >
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          <span>Ver como invitado</span>
+        </a>
+
+        <a
+          href={`/live/${eventSlug}`}
+          target="_blank"
+          class="flex items-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-2 text-xs font-bold text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 transition"
+        >
+          <span>Muro en Vivo</span>
+        </a>
+      </div>
+
+    </header>
+
+    <!-- Disposicion en Dos Columnas: Panel a la Izquierda, Simulador a la Derecha -->
+    <main class="max-w-7xl mx-auto p-6 sm:p-8 lg:p-10">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        
+        <!-- Columna Izquierda: Herramientas de Gestion del Anfitrion (7 cols) -->
+        <div class="lg:col-span-7 space-y-6">
+          
+          <!-- Tarjeta de Cuenta Regresiva & Mensaje Inspiracional (Estilo Momentiia) -->
+          <div class="rounded-3xl border border-white/15 bg-gradient-to-br from-[#1c1e26] to-[#15161c] p-6 sm:p-8 shadow-2xl">
+            
+            <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-amber-400 font-semibold">Cuenta Regresiva</span>
+                <h2 class="text-xl font-bold text-white mt-0.5">25 de octubre de 2026</h2>
+              </div>
+              <a href={`/admin/print/${eventSlug}`} class="text-xs text-gray-400 hover:text-amber-300 transition underline">
+                Descargar carteles QR
+              </a>
+            </div>
+
+            <!-- Cajas de Reloj Dorado -->
+            <div class="grid grid-cols-4 gap-2.5 sm:gap-3 text-center mb-6">
+              <div class="rounded-2xl bg-black/40 border border-white/10 p-3 sm:p-4">
+                <span id="countdown-days" class="block text-2xl sm:text-3xl font-extrabold text-amber-400">34</span>
+                <span class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Dias</span>
+              </div>
+              <div class="rounded-2xl bg-black/40 border border-white/10 p-3 sm:p-4">
+                <span id="countdown-hours" class="block text-2xl sm:text-3xl font-extrabold text-amber-400">18</span>
+                <span class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Horas</span>
+              </div>
+              <div class="rounded-2xl bg-black/40 border border-white/10 p-3 sm:p-4">
+                <span id="countdown-minutes" class="block text-2xl sm:text-3xl font-extrabold text-amber-400">42</span>
+                <span class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Minutos</span>
+              </div>
+              <div class="rounded-2xl bg-black/40 border border-white/10 p-3 sm:p-4">
+                <span id="countdown-seconds" class="block text-2xl sm:text-3xl font-extrabold text-amber-400">15</span>
+                <span class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Segundos</span>
+              </div>
+            </div>
+
+            <!-- Frase Motivacional Editorial -->
+            <div class="space-y-2 border-t border-white/10 pt-5">
+              <h3 class="text-base font-bold text-white">Faltan 34 dias para el gran dia</h3>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Lo importante ya esta en marcha. Solo falta que llegue la fecha y disfrutarla; de preservar cada momento nos encargamos nosotros.
+              </p>
+              <p class="text-[11px] italic text-amber-300/80 pt-1">
+                "Las mejores fotos las toma alguien que se estaba riendo con ustedes."
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Pestanas de Secciones Administrativas -->
+          <div class="flex border-b border-white/10 gap-2 overflow-x-auto pb-1 text-xs font-bold">
+            <button id="tab-btn-summary" class="tab-btn px-4 py-2.5 rounded-xl bg-white text-black transition">
+              Resumen
+            </button>
+            <button id="tab-btn-photos" class="tab-btn px-4 py-2.5 rounded-xl text-gray-400 hover:text-white transition">
+              Fotos & Moderacion
+            </button>
+            <button id="tab-btn-zip" class="tab-btn px-4 py-2.5 rounded-xl text-gray-400 hover:text-white transition">
+              Descarga Masiva ZIP
+            </button>
+            <button id="tab-btn-posters" class="tab-btn px-4 py-2.5 rounded-xl text-gray-400 hover:text-white transition">
+              Carteles de Mesa
+            </button>
+          </div>
+
+          <!-- Contenido Pestana 1: Resumen de Metricas y Almacenamiento -->
+          <div id="tab-content-summary" class="space-y-6">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              
+              <!-- Metricas RSVP -->
+              <div class="rounded-2xl border border-white/10 bg-[#181a22] p-5">
+                <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Asistencia RSVP</span>
+                <div class="mt-2 flex items-baseline gap-2">
+                  <span class="text-3xl font-extrabold text-white">7</span>
+                  <span class="text-xs text-gray-400">pases confirmados de 11</span>
+                </div>
+                <div class="mt-3 h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div class="h-full bg-emerald-400 rounded-full" style="width: 63%"></div>
+                </div>
+                <div class="mt-2 flex justify-between text-[11px] text-gray-400">
+                  <span>63% de confirmacion</span>
+                  <span class="text-amber-400 font-semibold">4 pases pendientes</span>
+                </div>
+              </div>
+
+              <!-- Metricas Almacenamiento -->
+              <div class="rounded-2xl border border-white/10 bg-[#181a22] p-5">
+                <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold">Almacenamiento en Boveda</span>
+                <div class="mt-2 flex items-baseline gap-2">
+                  <span class="text-3xl font-extrabold text-white">16.4</span>
+                  <span class="text-xs text-gray-400">MB ocupados de 50 GB</span>
+                </div>
+                <div class="mt-3 h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div class="h-full bg-blue-400 rounded-full" style="width: 0.03%"></div>
+                </div>
+                <div class="mt-2 flex justify-between text-[11px] text-gray-400">
+                  <span class="text-emerald-400 font-semibold">&lt; 1% ocupado</span>
+                  <span>50 GB cuota contratada</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Informacion General del Evento -->
+            <div class="rounded-2xl border border-white/10 bg-[#181a22] p-5 space-y-3 text-xs">
+              <span class="text-xs uppercase tracking-wider text-gray-400 font-semibold block">Ficha Logistica</span>
+              <div class="grid grid-cols-2 gap-3 pt-1">
+                <div>
+                  <span class="text-gray-500 block">Lugar del Evento:</span>
+                  <span class="font-semibold text-white">Hacienda de Cortes</span>
+                </div>
+                <div>
+                  <span class="text-gray-500 block">PIN de mesa:</span>
+                  <span class="font-mono font-bold text-amber-300">{pin}</span>
+                </div>
+                <div>
+                  <span class="text-gray-500 block">Codigo de Vestimenta:</span>
+                  <span class="font-semibold text-white">Rigurosa Etiqueta</span>
+                </div>
+                <div>
+                  <span class="text-gray-500 block">Vigencia del servicio:</span>
+                  <span class="font-semibold text-emerald-400">Hasta 60 dias post-evento</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Contenido Pestana 2: Fotos & Moderacion -->
+          <div id="tab-content-photos" class="hidden space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-400">6 recuerdos activos en la boveda</span>
+              <span class="text-xs text-gray-500">Toca para aprobar u ocultar</span>
+            </div>
+
+            <div id="admin-photos-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <!-- Inyectado por JavaScript -->
+            </div>
+          </div>
+
+          <!-- Contenido Pestana 3: Descarga Masiva ZIP -->
+          <div id="tab-content-zip" class="hidden space-y-6">
+            <div class="rounded-3xl border border-white/15 bg-[#181a22] p-6 sm:p-8 shadow-xl">
+              <span class="text-xs uppercase tracking-widest text-amber-400 font-semibold">Empaquetado Masivo Asincrono</span>
+              <h3 class="text-xl font-bold text-white mt-1">Descargar Todos los Recuerdos</h3>
+              <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+                Genera un unico archivo ZIP con todas las fotografias y videos en resolucion original subidos por tus invitados, organizados sin perdida de calidad.
+              </p>
+
+              <div class="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <button
+                  id="btn-request-zip"
+                  type="button"
+                  class="flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-xs font-bold text-black uppercase tracking-wider shadow-lg hover:bg-gray-200 transition active:scale-95"
+                >
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  <span>Preparar descarga completa (ZIP)</span>
+                </button>
+
+                <div id="zip-status-indicator" class="hidden items-center gap-2 text-xs font-medium text-amber-300">
+                  <span class="h-2 w-2 rounded-full bg-amber-400 animate-ping"></span>
+                  <span>Procesando archivo en segundo plano...</span>
+                </div>
+              </div>
+
+              <!-- Resultado del trabajo ZIP -->
+              <div id="zip-job-result" class="mt-6 hidden rounded-2xl bg-black/40 border border-emerald-500/30 p-5 space-y-3">
+                <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold">
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Tu archivo ZIP esta listo para descarga</span>
+                </div>
+
+                <div class="flex items-center justify-between text-xs text-gray-300">
+                  <span id="zip-file-size">Tamano: 16.4 MB</span>
+                  <span class="text-gray-500">Vigencia: 7 dias</span>
+                </div>
+
+                <a
+                  id="zip-download-link"
+                  href="#"
+                  target="_blank"
+                  class="block text-center rounded-xl bg-emerald-500 text-black font-bold text-xs py-2.5 uppercase tracking-wider hover:bg-emerald-400 transition"
+                >
+                  Descargar Archivo ZIP Ahora
+                </a>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Contenido Pestana 4: Carteles de Mesa -->
+          <div id="tab-content-posters" class="hidden space-y-6">
+            <div class="rounded-3xl border border-white/15 bg-[#181a22] p-6 sm:p-8 shadow-xl">
+              <span class="text-xs uppercase tracking-widest text-emerald-400 font-semibold">Centros de Mesa</span>
+              <h3 class="text-xl font-bold text-white mt-1">Tarjetas con Codigo QR y PIN</h3>
+              <p class="text-xs text-gray-300 mt-2 leading-relaxed">
+                Imprime estas elegantes tarjetas para colocar en cada mesa del banquete. Tus invitados solo apuntaran la camara de su telefono para subir fotos y videos en el acto.
+              </p>
+
+              <div class="mt-6 flex gap-3">
+                <a
+                  href={`/admin/print/${eventSlug}`}
+                  target="_blank"
+                  class="flex items-center gap-2 rounded-2xl bg-[#d4af37] px-6 py-3.5 text-xs font-bold text-black uppercase tracking-wider shadow-lg hover:bg-[#e6c24d] transition active:scale-95"
+                >
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span>Abrir vista de impresion</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Columna Derecha: Simulador de Telefono en Vivo "Asi lo veran" (5 cols) -->
+        <div class="lg:col-span-5 flex flex-col items-center sticky top-20">
+          <div class="mb-3 text-center">
+            <span class="text-xs uppercase tracking-widest text-amber-400 font-bold block">Asi lo veran</span>
+            <p class="text-xs text-gray-400">Prueba la experiencia de tus invitados en vivo</p>
+          </div>
+
+          <PhoneSimulator slug={eventSlug} pin={pin} />
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+</Layout>
+
+<script define:vars={{ eventSlug }}>
+  // 1. Reloj de Cuenta Regresiva en vivo
+  const targetDate = new Date('2026-10-25T18:00:00Z').getTime();
+
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const diff = targetDate - now;
+
+    if (diff > 0) {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      const dElem = document.getElementById('countdown-days');
+      const hElem = document.getElementById('countdown-hours');
+      const mElem = document.getElementById('countdown-minutes');
+      const sElem = document.getElementById('countdown-seconds');
+
+      if (dElem) dElem.textContent = String(days).padStart(2, '0');
+      if (hElem) hElem.textContent = String(hours).padStart(2, '0');
+      if (mElem) mElem.textContent = String(minutes).padStart(2, '0');
+      if (sElem) sElem.textContent = String(seconds).padStart(2, '0');
+    }
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+
+  // 2. Gestion de Pestanas
+  const tabBtnSummary = document.getElementById('tab-btn-summary');
+  const tabBtnPhotos = document.getElementById('tab-btn-photos');
+  const tabBtnZip = document.getElementById('tab-btn-zip');
+  const tabBtnPosters = document.getElementById('tab-btn-posters');
+
+  const contentSummary = document.getElementById('tab-content-summary');
+  const contentPhotos = document.getElementById('tab-content-photos');
+  const contentZip = document.getElementById('tab-content-zip');
+  const contentPosters = document.getElementById('tab-content-posters');
+
+  const tabs = [
+    { btn: tabBtnSummary, content: contentSummary },
+    { btn: tabBtnPhotos, content: contentPhotos },
+    { btn: tabBtnZip, content: contentZip },
+    { btn: tabBtnPosters, content: contentPosters },
+  ];
+
+  tabs.forEach((tab) => {
+    tab.btn?.addEventListener('click', () => {
+      tabs.forEach((t) => {
+        t.btn.className = 'tab-btn px-4 py-2.5 rounded-xl text-gray-400 hover:text-white transition';
+        t.content.classList.add('hidden');
+      });
+      tab.btn.className = 'tab-btn px-4 py-2.5 rounded-xl bg-white text-black font-bold transition';
+      tab.content.classList.remove('hidden');
+    });
+  });
+
+  // 3. Carga y Moderacion de Fotos
+  const photosGrid = document.getElementById('admin-photos-grid');
+  let currentMedia = [];
+
+  async function loadPhotosForModeration() {
+    try {
+      const res = await fetch(`http://localhost:8000/api/a/${eventSlug}/feed`);
+      if (res.ok) {
+        currentMedia = await res.json();
+        renderModerationGrid();
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
+  function renderModerationGrid() {
+    if (!photosGrid) return;
+    photosGrid.innerHTML = '';
+
+    currentMedia.forEach((item) => {
+      const card = document.createElement('div');
+      card.className = 'relative rounded-2xl overflow-hidden bg-white/5 border border-white/10 group';
+
+      const imgSrc = item.thumb_url || item.url;
+      card.innerHTML = `
+        <div class="aspect-square w-full overflow-hidden">
+          <img src="${imgSrc}" alt="${item.filename}" class="h-full w-full object-cover transition duration-300 group-hover:scale-105" />
+        </div>
+        <div class="p-2.5 bg-[#161820]">
+          <span class="block text-xs font-bold text-white truncate">${item.guest_author || 'Invitado'}</span>
+          <span class="block text-[10px] text-gray-400 truncate">${item.filename}</span>
+          <div class="mt-2 flex items-center justify-between text-[11px]">
+            <span class="px-2 py-0.5 rounded-md ${item.moderation_status === 'approved' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-gray-500/20 text-gray-400'} font-semibold">
+              ${item.moderation_status}
+            </span>
+          </div>
+        </div>
+      `;
+
+      photosGrid.appendChild(card);
+    });
+  }
+
+  loadPhotosForModeration();
+
+  // 4. Disparador de Descarga Masiva ZIP
+  const btnRequestZip = document.getElementById('btn-request-zip');
+  const zipStatusIndicator = document.getElementById('zip-status-indicator');
+  const zipJobResult = document.getElementById('zip-job-result');
+  const zipFileSize = document.getElementById('zip-file-size');
+  const zipDownloadLink = document.getElementById('zip-download-link');
+
+  async function checkLatestZipJob() {
+    try {
+      // Login anfitrion para obtener token rapido
+      const loginParams = new URLSearchParams();
+      loginParams.append('username', 'carlos@ejemplo.com');
+      loginParams.append('password', 'admin123');
+
+      const authRes = await fetch('http://localhost:8000/api/auth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: loginParams,
+      });
+
+      if (!authRes.ok) return;
+      const { access_token } = await authRes.json();
+
+      const jobsRes = await fetch(`http://localhost:8000/api/admin/events/${eventSlug}/zip-jobs`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+
+      if (jobsRes.ok) {
+        const jobs = await jobsRes.json();
+        if (jobs.length > 0) {
+          const latest = jobs[0];
+          if (latest.status === 'ready') {
+            displayZipReady(latest);
+          }
+        }
+      }
+    } catch {
+      //
+    }
+  }
+
+  function displayZipReady(job) {
+    if (zipStatusIndicator) zipStatusIndicator.classList.add('hidden');
+    if (zipJobResult) zipJobResult.classList.remove('hidden');
+    if (zipFileSize) zipFileSize.textContent = `Tamano: ${(job.zip_size_bytes / (1024 * 1024)).toFixed(1)} MB`;
+    if (zipDownloadLink) zipDownloadLink.href = job.download_url;
+  }
+
+  btnRequestZip?.addEventListener('click', async () => {
+    btnRequestZip.disabled = true;
+    if (zipStatusIndicator) zipStatusIndicator.classList.remove('hidden');
+
+    try {
+      const loginParams = new URLSearchParams();
+      loginParams.append('username', 'carlos@ejemplo.com');
+      loginParams.append('password', 'admin123');
+
+      const authRes = await fetch('http://localhost:8000/api/auth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: loginParams,
+      });
+
+      const { access_token } = await authRes.json();
+
+      const reqRes = await fetch(`http://localhost:8000/api/admin/events/${eventSlug}/request-zip`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+
+      if (reqRes.ok) {
+        const job = await reqRes.json();
+        // Polling para checar cuando pase a ready
+        const interval = setInterval(async () => {
+          const pollRes = await fetch(`http://localhost:8000/api/admin/events/${eventSlug}/zip-jobs/${job.id}`, {
+            headers: { Authorization: `Bearer ${access_token}` },
+          });
+          if (pollRes.ok) {
+            const updated = await pollRes.json();
+            if (updated.status === 'ready') {
+              clearInterval(interval);
+              displayZipReady(updated);
+              btnRequestZip.disabled = false;
+            }
+          }
+        }, 1200);
+      }
+    } catch {
+      btnRequestZip.disabled = false;
+      if (zipStatusIndicator) zipStatusIndicator.classList.add('hidden');
+    }
+  });
+
+  checkLatestZipJob();
+</script>

@@ -166,7 +166,7 @@ npm run dev
 - [x] **Fase 5:** Frontend Invitados (Vistas mobile-first `/v/[slug]` y `/a/[slug]` con carga directa, galeria tipo telefono y visor estilo Reels).
 - [x] **Fase 6:** Live Wall (`/live/[slug]`) con polling/refresco en pantalla completa para proyectores.
 - [x] **Fase 7:** Empaquetador masivo ZIP asincrono y notificaciones por correo via Resend.
-- [ ] **Fase 8:** Panel de Administracion & Cotizador (`/admin`) — Gestion de superadmin para cotizar y crear eventos + Dashboard para el anfitrion (metricas en vivo, moderacion de fotos y generador de plantillas QR).
+- [x] **Fase 8:** Panel de Administracion & Cotizador (`/admin`) — Gestion de superadmin para cotizar y crear eventos + Dashboard para el anfitrion (metricas en vivo, moderacion de fotos, simulador de smartphone interactivo y generador de plantillas QR de mesa).
 - [ ] **Fase 9:** Landing Page Comercial & Captacion (`/`) — Vitrina de venta de alto impacto para clientes finales, cotizador interactivo en linea y demostraciones en vivo.
 
 ### Proximo Arco: Evolucion Visual & Experiencia VIP (Arco 2)

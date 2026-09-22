@@ -1,0 +1,76 @@
+---
+interface Props {
+  slug: string;
+  pin?: string;
+}
+
+const { slug, pin = '4821' } = Astro.props;
+---
+
+<div class="flex flex-col items-center">
+  
+  <!-- Selector de vista para el simulador -->
+  <div class="flex items-center gap-1.5 p-1 rounded-full bg-white/10 border border-white/15 mb-4 text-xs font-medium backdrop-blur-md">
+    <button
+      id="btn-sim-invitation"
+      type="button"
+      class="px-4 py-1.5 rounded-full bg-white text-black font-bold shadow-md transition active:scale-95"
+    >
+      Invitacion
+    </button>
+    <button
+      id="btn-sim-vault"
+      type="button"
+      class="px-4 py-1.5 rounded-full text-gray-300 hover:text-white transition active:scale-95"
+    >
+      Boveda & Reels
+    </button>
+  </div>
+
+  <!-- Marco de Smartphone (Simulador de Telefono en Vivo) -->
+  <div class="relative w-[300px] h-[610px] sm:w-[320px] sm:h-[650px] rounded-[48px] bg-[#1a1c23] p-3 shadow-[0_25px_70px_rgba(0,0,0,0.85)] border-4 border-[#2d3139] ring-1 ring-white/10 flex flex-col">
+    
+    <!-- Isla Dinamica / Bocina superior -->
+    <div class="absolute top-5 left-1/2 -translate-x-1/2 z-30 w-24 h-5 rounded-full bg-black flex items-center justify-end px-3">
+      <div class="h-2 w-2 rounded-full bg-[#1c2230]"></div>
+    </div>
+
+    <!-- Pantalla interactiva interna (Iframe a la webapp) -->
+    <div class="relative w-full h-full rounded-[38px] overflow-hidden bg-black border border-white/5">
+      <iframe
+        id="phone-simulator-frame"
+        src={`/v/${slug}`}
+        title="Simulador de experiencia movil para invitados"
+        class="w-full h-full border-0 select-none"
+        loading="lazy"
+      ></iframe>
+    </div>
+
+    <!-- Barra de inicio inferior estilo iOS -->
+    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 rounded-full bg-white/40 pointer-events-none"></div>
+
+  </div>
+
+  <p class="text-[11px] text-gray-500 mt-3 text-center">
+    Vista previa en tiempo real tal como lo experimentan tus invitados en su celular.
+  </p>
+
+</div>
+
+<script define:vars={{ slug, pin }}>
+  const frame = document.getElementById('phone-simulator-frame');
+  const btnInvitation = document.getElementById('btn-sim-invitation');
+  const btnVault = document.getElementById('btn-sim-vault');
+
+  btnInvitation?.addEventListener('click', () => {
+    btnInvitation.className = 'px-4 py-1.5 rounded-full bg-white text-black font-bold shadow-md transition active:scale-95';
+    btnVault.className = 'px-4 py-1.5 rounded-full text-gray-300 hover:text-white transition active:scale-95';
+    if (frame) frame.src = `/v/${slug}`;
+  });
+
+  btnVault?.addEventListener('click', () => {
+    btnVault.className = 'px-4 py-1.5 rounded-full bg-white text-black font-bold shadow-md transition active:scale-95';
+    btnInvitation.className = 'px-4 py-1.5 rounded-full text-gray-300 hover:text-white transition active:scale-95';
+    if (frame) frame.src = `/a/${slug}?pin=${pin}`;
+  });
+</script>
