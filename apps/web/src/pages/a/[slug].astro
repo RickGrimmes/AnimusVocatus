@@ -12,27 +12,24 @@ import VoiceNotesWall from '../../components/VoiceNotesWall.astro';
 export function getStaticPaths() {
   return [
     { params: { slug: 'boda-carlos-y-sofia' } },
+    { params: { slug: 'boda-ricardo-y-kiara' } },
   ];
 }
 
 const { slug } = Astro.params;
 const eventSlug = slug || 'boda-carlos-y-sofia';
+const coupleDisplayName = eventSlug === 'boda-ricardo-y-kiara' ? 'Ricardo & Kiara' : 'Carlos & Sofía';
 ---
 
-<Layout title="Bóveda de Recuerdos — Aevum" theme="dark">
+<Layout title={`Bóveda de Recuerdos — ${coupleDisplayName}`} description={`Bóveda colaborativa de fotos y recuerdos de ${coupleDisplayName}`} theme="dark">
   
   <!-- Barra superior fija -->
   <header class="sticky top-0 z-30 flex items-center justify-between border-b border-white/10 bg-[#16181d]/95 px-4 py-3 backdrop-blur-md">
-    <a href={`/v/${eventSlug}`} class="flex items-center gap-1.5 text-xs font-medium text-gray-300 hover:text-white transition active:scale-95">
-      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
-      <span>Invitación</span>
-    </a>
+    <div class="w-8"></div>
 
     <div class="text-center">
-      <span class="block text-[10px] font-semibold tracking-widest text-gray-400 uppercase">[AE] Bóveda</span>
-      <h1 class="text-xs font-bold text-white tracking-wide">Carlos & Sofía</h1>
+      <span class="block text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Bóveda</span>
+      <h1 class="text-xs font-bold text-white tracking-wide">{coupleDisplayName}</h1>
     </div>
 
     <!-- Accion rapida: recargar feed -->

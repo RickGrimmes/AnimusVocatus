@@ -1,0 +1,427 @@
+---
+// Widget de música para la invitación
+// Soporta múltiples pistas, selector de lista y reproducción fluida
+---
+
+<div id="music-player-container" class="fixed bottom-6 right-4 z-40 transition-all duration-300 sm:bottom-6 sm:right-6">
+  
+  <!-- Botón flotante colapsado (Badge de vinilo) -->
+  <div
+    id="music-pill"
+    class="group flex items-center gap-2.5 rounded-full border border-gray-900/10 bg-white/95 px-3.5 py-2.5 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-105 hover:shadow-xl select-none"
+  >
+    <!-- Vinilo giratorio (sin barritas, gira centrado y suave) -->
+    <button
+      id="btn-vinyl-toggle"
+      type="button"
+      class="relative flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 transition-transform active:scale-90"
+      aria-label="Abrir lista de canciones"
+    >
+      <div id="vinyl-disc" class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 transition-transform">
+        <div class="h-3 w-3 rounded-full border-2 border-white bg-gray-800"></div>
+      </div>
+    </button>
+
+    <!-- Información y acceso a la lista -->
+    <button
+      id="btn-pill-info"
+      type="button"
+      class="text-left pr-1 cursor-pointer"
+      aria-label="Abrir panel de música"
+    >
+      <span class="block text-[9px] font-semibold tracking-widest text-gray-400 uppercase">Música</span>
+      <span id="current-track-mini-label" class="block max-w-[110px] truncate font-serif text-xs font-medium text-gray-900">
+        Canon in D
+      </span>
+    </button>
+
+    <!-- Botón directo de Play / Pause -->
+    <button
+      id="btn-pill-play-pause"
+      type="button"
+      class="rounded-full bg-gray-100 p-1.5 text-gray-800 transition hover:bg-gray-900 hover:text-white active:scale-90"
+      aria-label="Reproducir o pausar música"
+    >
+      <svg id="icon-mini-play" class="h-4 w-4 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+      <svg id="icon-mini-pause" class="hidden h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Panel desplegable con controles y selección de canciones -->
+  <div
+    id="music-detail-panel"
+    class="pointer-events-none absolute bottom-14 right-0 w-80 translate-y-3 opacity-0 rounded-2xl border border-gray-200/90 bg-white/95 p-5 shadow-2xl backdrop-blur-md transition-all duration-300"
+  >
+    <!-- Cabecera del panel -->
+    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+      <div class="flex items-center gap-2">
+        <svg class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+        </svg>
+        <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">Música Seleccionada</span>
+      </div>
+      <button
+        id="btn-close-music-panel"
+        type="button"
+        class="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition"
+        aria-label="Cerrar panel de música"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Información de pista actual -->
+    <div class="mt-4 text-center">
+      <div id="panel-vinyl-disc" class="relative mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-gray-950 via-gray-800 to-gray-700 shadow-inner transition-transform">
+        <div class="h-16 w-16 rounded-full border border-gray-600/40"></div>
+        <div class="absolute h-10 w-10 rounded-full border border-gray-600/40"></div>
+        <div class="absolute h-6 w-6 rounded-full bg-white shadow-sm flex items-center justify-center">
+          <div class="h-2 w-2 rounded-full bg-gray-900"></div>
+        </div>
+      </div>
+
+      <h4 id="panel-track-title" class="mt-3 font-serif text-base font-bold text-gray-900">
+        Canon in D
+      </h4>
+      <p id="panel-track-artist" class="text-xs text-gray-500">
+        Johann Pachelbel (Piano & Cello)
+      </p>
+    </div>
+
+    <!-- Barra de progreso interactiva -->
+    <div class="mt-4">
+      <div id="panel-progress-bar-wrap" class="relative h-1.5 w-full cursor-pointer overflow-hidden rounded-full bg-gray-100">
+        <div id="panel-track-progress" class="h-full w-0 bg-gray-900 transition-all duration-150"></div>
+      </div>
+      <div class="mt-1 flex justify-between text-[10px] text-gray-400 font-mono">
+        <span id="panel-time-current">0:00</span>
+        <span id="panel-time-duration">0:20</span>
+      </div>
+    </div>
+
+    <!-- Controles de reproducción -->
+    <div class="mt-3 flex items-center justify-center gap-5">
+      <!-- Pista anterior -->
+      <button
+        id="btn-prev-track"
+        type="button"
+        class="rounded-full p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-950 transition active:scale-90"
+        aria-label="Pista anterior"
+      >
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.334 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z" />
+        </svg>
+      </button>
+
+      <!-- Reproducir / Pausar -->
+      <button
+        id="btn-play-pause-panel"
+        type="button"
+        class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-950 text-white shadow-md transition hover:bg-black active:scale-95"
+        aria-label="Reproducir o pausar"
+      >
+        <svg id="panel-icon-play" class="h-5 w-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+        <svg id="panel-icon-pause" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+      </button>
+
+      <!-- Siguiente pista -->
+      <button
+        id="btn-next-track"
+        type="button"
+        class="rounded-full p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-950 transition active:scale-90"
+        aria-label="Siguiente pista"
+      >
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Lista de canciones disponibles -->
+    <div class="mt-4 border-t border-gray-100 pt-3">
+      <span class="block text-[10px] font-semibold tracking-wider text-gray-400 uppercase">Lista de canciones</span>
+      <div id="playlist-container" class="mt-2 space-y-1">
+        <!-- Renderizado dinámicamente con JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Elemento de audio nativo -->
+  <audio id="wedding-audio-element" preload="auto"></audio>
+</div>
+
+<script>
+  // =========================================================================
+  // LISTA DE CANCIONES CONFIGURABLE:
+  // Puedes colocar tus archivos (.mp3 o .wav) en: apps/web/public/music/
+  // y agregarlos aquí abajo con la ruta: /music/nombre-del-archivo.mp3
+  // =========================================================================
+  const tracks = [
+    {
+      title: 'Canon in D',
+      artist: 'Johann Pachelbel (Piano & Cuerdas)',
+      duration: '0:20',
+      src: '/music/canon-in-d.wav',
+    },
+    {
+      title: 'Acoustic Romance',
+      artist: 'Guitarra Acústica & Piano',
+      duration: '0:13',
+      src: '/music/acoustic-romance.wav',
+    },
+    {
+      title: 'Clair de Lune',
+      artist: 'Claude Debussy (Piano Solo)',
+      duration: '0:13',
+      src: '/music/clair-de-lune.wav',
+    },
+  ];
+
+  let currentTrackIndex = 0;
+  let isPlaying = false;
+  let isPanelOpen = false;
+
+  const audio = document.getElementById('wedding-audio-element');
+  const btnVinylToggle = document.getElementById('btn-vinyl-toggle');
+  const btnPillInfo = document.getElementById('btn-pill-info');
+  const btnPillPlayPause = document.getElementById('btn-pill-play-pause');
+
+  const detailPanel = document.getElementById('music-detail-panel');
+  const closePanelBtn = document.getElementById('btn-close-music-panel');
+  const vinylDisc = document.getElementById('vinyl-disc');
+  const panelVinylDisc = document.getElementById('panel-vinyl-disc');
+
+  const miniTitle = document.getElementById('current-track-mini-label');
+  const miniIconPlay = document.getElementById('icon-mini-play');
+  const miniIconPause = document.getElementById('icon-mini-pause');
+
+  const panelTitle = document.getElementById('panel-track-title');
+  const panelArtist = document.getElementById('panel-track-artist');
+  const panelProgress = document.getElementById('panel-track-progress');
+  const panelProgressBarWrap = document.getElementById('panel-progress-bar-wrap');
+  const panelTimeCurrent = document.getElementById('panel-time-current');
+  const panelTimeDuration = document.getElementById('panel-time-duration');
+  const panelPlayPauseBtn = document.getElementById('btn-play-pause-panel');
+  const panelIconPlay = document.getElementById('panel-icon-play');
+  const panelIconPause = document.getElementById('panel-icon-pause');
+  const btnPrev = document.getElementById('btn-prev-track');
+  const btnNext = document.getElementById('btn-next-track');
+  const playlistContainer = document.getElementById('playlist-container');
+
+  function renderPlaylist() {
+    if (!playlistContainer) return;
+    playlistContainer.innerHTML = '';
+    tracks.forEach((track, idx) => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      const isActive = idx === currentTrackIndex;
+      item.className = `w-full text-left flex items-center justify-between p-2 rounded-xl text-xs transition ${
+        isActive
+          ? 'bg-gray-900 text-white font-medium shadow-xs'
+          : 'text-gray-700 hover:bg-gray-100'
+      }`;
+      item.innerHTML = `
+        <span class="truncate pr-2">${idx + 1}. ${track.title}</span>
+        <span class="text-[10px] opacity-75 font-mono">${track.duration}</span>
+      `;
+      item.addEventListener('click', () => {
+        selectTrack(idx, true);
+      });
+      playlistContainer.appendChild(item);
+    });
+  }
+
+  function loadTrack(index) {
+    currentTrackIndex = index;
+    const track = tracks[currentTrackIndex];
+    if (audio) {
+      audio.src = track.src;
+      audio.load();
+    }
+    if (miniTitle) miniTitle.textContent = track.title;
+    if (panelTitle) panelTitle.textContent = track.title;
+    if (panelArtist) panelArtist.textContent = track.artist;
+    if (panelTimeDuration) panelTimeDuration.textContent = track.duration;
+    if (panelProgress) panelProgress.style.width = '0%';
+    if (panelTimeCurrent) panelTimeCurrent.textContent = '0:00';
+    renderPlaylist();
+  }
+
+  function selectTrack(index, autoPlay = true) {
+    loadTrack(index);
+    if (autoPlay) {
+      playAudio();
+    }
+  }
+
+  function updatePlayState(playing) {
+    isPlaying = playing;
+    if (playing) {
+      vinylDisc?.classList.add('animate-spin');
+      panelVinylDisc?.classList.add('animate-spin');
+      miniIconPlay?.classList.add('hidden');
+      miniIconPause?.classList.remove('hidden');
+      panelIconPlay?.classList.add('hidden');
+      panelIconPause?.classList.remove('hidden');
+    } else {
+      vinylDisc?.classList.remove('animate-spin');
+      panelVinylDisc?.classList.remove('animate-spin');
+      miniIconPlay?.classList.remove('hidden');
+      miniIconPause?.classList.add('hidden');
+      panelIconPlay?.classList.remove('hidden');
+      panelIconPause?.classList.add('hidden');
+    }
+  }
+
+  function playAudio() {
+    if (!audio) return;
+    if (!audio.src || audio.src === '') {
+      audio.src = tracks[currentTrackIndex].src;
+    }
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        updatePlayState(true);
+      }).catch((err) => {
+        console.warn('Interacción requerida para reproducir audio:', err);
+        updatePlayState(false);
+      });
+    }
+  }
+
+  function pauseAudio() {
+    if (!audio) return;
+    audio.pause();
+    updatePlayState(false);
+  }
+
+  function togglePlay() {
+    if (isPlaying) {
+      pauseAudio();
+    } else {
+      playAudio();
+    }
+  }
+
+  function openPanel() {
+    isPanelOpen = true;
+    detailPanel?.classList.remove('pointer-events-none', 'opacity-0', 'translate-y-3');
+    detailPanel?.classList.add('pointer-events-auto', 'opacity-100', 'translate-y-0');
+  }
+
+  function closePanel() {
+    isPanelOpen = false;
+    detailPanel?.classList.add('pointer-events-none', 'opacity-0', 'translate-y-3');
+    detailPanel?.classList.remove('pointer-events-auto', 'opacity-100', 'translate-y-0');
+  }
+
+  function togglePanel() {
+    if (isPanelOpen) {
+      closePanel();
+    } else {
+      openPanel();
+    }
+  }
+
+  // Clic en el botón Play/Pause directo en la pastilla
+  btnPillPlayPause?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    togglePlay();
+  });
+
+  // Clic en el disco vinilo de la pastilla abre el panel
+  btnVinylToggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    togglePanel();
+    if (!isPlaying) {
+      playAudio();
+    }
+  });
+
+  // Clic en el texto de la pastilla abre el panel
+  btnPillInfo?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    togglePanel();
+  });
+
+  closePanelBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closePanel();
+  });
+
+  panelPlayPauseBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    togglePlay();
+  });
+
+  btnPrev?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const prev = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+    selectTrack(prev, true);
+  });
+
+  btnNext?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const next = (currentTrackIndex + 1) % tracks.length;
+    selectTrack(next, true);
+  });
+
+  // Progreso interactivo al hacer clic en la barra
+  panelProgressBarWrap?.addEventListener('click', (e) => {
+    if (!audio || !audio.duration) return;
+    const rect = panelProgressBarWrap.getBoundingClientRect();
+    const clickPos = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = clickPos * audio.duration;
+  });
+
+  // Eventos de audio nativo
+  if (audio) {
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration || isNaN(audio.duration)) return;
+      const progress = (audio.currentTime / audio.duration) * 100;
+      if (panelProgress) panelProgress.style.width = `${progress}%`;
+      if (panelTimeCurrent) {
+        const mins = Math.floor(audio.currentTime / 60);
+        const secs = Math.floor(audio.currentTime % 60);
+        panelTimeCurrent.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      }
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+      if (audio.duration && !isNaN(audio.duration)) {
+        const mins = Math.floor(audio.duration / 60);
+        const secs = Math.floor(audio.duration % 60);
+        if (panelTimeDuration) {
+          panelTimeDuration.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      // Avanzar a la siguiente pista automáticamente
+      const next = (currentTrackIndex + 1) % tracks.length;
+      selectTrack(next, true);
+    });
+
+    audio.addEventListener('pause', () => {
+      updatePlayState(false);
+    });
+
+    audio.addEventListener('play', () => {
+      updatePlayState(true);
+    });
+  }
+
+  // Inicializar primera pista
+  loadTrack(0);
+</script>

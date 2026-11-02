@@ -1,172 +1,520 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import RSVPModal from '../../components/RSVPModal.astro';
-import { fetchEventVocatus, DEMO_VOCATUS_EVENT } from '../../lib/api';
+import MusicPlayerWidget from '../../components/MusicPlayerWidget.astro';
+import CoupleGallery from '../../components/CoupleGallery.astro';
+import { fetchEventVocatus } from '../../lib/api';
 
 export function getStaticPaths() {
   return [
     { params: { slug: 'boda-carlos-y-sofia' } },
+    { params: { slug: 'boda-ricardo-y-kiara' } },
   ];
 }
 
 const { slug } = Astro.params;
-const event = await fetchEventVocatus(slug || 'boda-carlos-y-sofia');
+const currentSlug = slug || 'boda-carlos-y-sofia';
+const event = await fetchEventVocatus(currentSlug);
 
-const itineraryItems = event.itinerary
-  ? event.itinerary.split('|').map((item) => item.trim())
-  : ['18:00 Ceremonia Religiosa', '19:30 Cóctel', '21:00 Recepción'];
+const isRicardoKiara = currentSlug === 'boda-ricardo-y-kiara';
+
+const coupleNames = isRicardoKiara
+  ? {
+      groom: 'MARTÍN RICARDO CABELLO RODRÍGUEZ',
+      bride: 'KIARA DELGADILLO TORRES',
+      shortTitle: 'Ricardo & Kiara',
+      formalDate: 'Sábado, 28 de Noviembre de 2026',
+      targetIsoDate: '2026-11-28T17:00:00',
+    }
+  : {
+      groom: 'CARLOS MORALES',
+      bride: 'SOFÍA GARZA',
+      shortTitle: event.title,
+      formalDate: 'Domingo, 25 de Octubre de 2026',
+      targetIsoDate: event.event_date || '2026-10-25T18:00:00',
+    };
+
+// Mensaje predeterminado para WhatsApp
+const waText = encodeURIComponent(
+  `Hola ${coupleNames.shortTitle}, confirmo con mucho gusto mi asistencia a su boda.`
+);
+const waPhone = '528112345678';
+const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
+
+// Itinerario
+const itineraryList = isRicardoKiara
+  ? [
+      { time: '16:30 hrs', title: 'Llegada de Invitados', desc: 'Recepción y bienvenida en la parroquia' },
+      { time: '17:00 hrs', title: 'Ceremonia Religiosa', desc: 'Solemne misa de matrimonio' },
+      { time: '19:00 hrs', title: 'Cóctel de Bienvenida', desc: 'Música en vivo y brindis de honor' },
+      { time: '20:30 hrs', title: 'Banquete & Cena', desc: 'Cena formal de cuatro tiempos' },
+      { time: '22:30 hrs', title: 'Apertura de Pista', desc: 'Vals nupcial y celebración con los novios' },
+    ]
+  : [
+      { time: '18:00 hrs', title: 'Ceremonia Religiosa', desc: 'Capilla Principal' },
+      { time: '19:30 hrs', title: 'Cóctel de Bienvenida', desc: 'Jardín Central' },
+      { time: '21:00 hrs', title: 'Recepción y Cena', desc: 'Salón Principal' },
+      { time: '23:00 hrs', title: 'Fiesta', desc: 'Celebración' },
+    ];
 ---
 
-<Layout title={`${event.title} — Invitación`} theme="editorial">
-  
-  <!-- Banner dinámico Time-Aware (Enlace a Animus Bóveda) -->
-  <aside class="sticky top-0 z-40 bg-black px-4 py-2.5 text-center text-xs font-semibold tracking-wider text-white uppercase">
-    <a href={`/a/${event.slug}`} class="inline-flex items-center gap-2 hover:underline">
-      <span>Bóveda de fotos y recuerdos del evento</span>
-      <span class="rounded bg-white/20 px-1.5 py-0.5 text-[10px]">Animus</span>
-      <span>&rarr;</span>
-    </a>
-  </aside>
+<Layout title={`${coupleNames.shortTitle} — Invitación de Boda`} theme="editorial">
 
-  <!-- Contenedor centralizado para emulación móvil y editorial -->
-  <main class="mx-auto max-w-lg px-5 pt-8 pb-32">
+  <!-- Contenedor centralizado para la invitación -->
+  <main class="mx-auto max-w-lg px-5 pt-14 pb-20">
     
-    <!-- Hero Editorial -->
+    <!-- Hero Editorial de Alta Gama -->
     <header class="text-center">
-      <span class="text-xs font-semibold tracking-[0.3em] text-gray-500 uppercase">
-        {event.event_type === 'boda' ? 'Nuestra Boda' : 'Invitación Formal'}
+      <span class="text-[11px] font-semibold tracking-[0.35em] text-gray-400 uppercase">
+        Nuestra Boda
       </span>
-      <h1 class="mt-3 font-serif text-4xl font-normal tracking-tight text-gray-950 sm:text-5xl">
-        {event.title}
-      </h1>
-      <div class="mx-auto mt-4 h-px w-16 bg-gray-300"></div>
-      <p class="mt-4 font-serif text-lg italic text-gray-600">
-        Tenemos el honor de invitarte a compartir este día tan especial con nosotros.
+
+      <!-- Nombres de los Novios -->
+      <div class="mt-6 space-y-2">
+        <h1 class="font-serif text-2xl font-normal tracking-wide text-gray-950 uppercase sm:text-3xl leading-relaxed">
+          {coupleNames.groom}
+        </h1>
+        <div class="flex items-center justify-center gap-3 py-1">
+          <div class="h-px w-12 bg-gray-300"></div>
+          <span class="font-serif text-xl italic text-gray-400">&</span>
+          <div class="h-px w-12 bg-gray-300"></div>
+        </div>
+        <h2 class="font-serif text-2xl font-normal tracking-wide text-gray-950 uppercase sm:text-3xl leading-relaxed">
+          {coupleNames.bride}
+        </h2>
+      </div>
+
+      <!-- Fecha formal -->
+      <p class="mt-6 font-serif text-base italic text-gray-700">
+        {coupleNames.formalDate}
       </p>
+
+      <!-- Mensaje de honor -->
+      <div class="mx-auto mt-6 max-w-sm border-t border-b border-gray-200/80 py-5">
+        <p class="font-serif text-sm leading-relaxed text-gray-600 italic">
+          "Con la bendición de Dios y de nuestras familias, tenemos el honor de invitarte a celebrar con nosotros el inicio de nuestro matrimonio."
+        </p>
+      </div>
     </header>
 
-    <!-- Cuenta Regresiva -->
-    <section class="mt-10 rounded-2xl border border-gray-200/80 bg-white/60 p-6 text-center shadow-sm backdrop-blur-sm">
-      <span class="text-[11px] font-semibold tracking-widest text-gray-400 uppercase">Cuenta Regresiva</span>
-      <div id="countdown-grid" class="mt-4 grid grid-cols-4 gap-2">
-        <div class="rounded-xl bg-gray-50 p-2.5">
-          <span id="cd-days" class="font-serif text-2xl font-bold text-gray-900">00</span>
-          <span class="block text-[10px] tracking-wider text-gray-500 uppercase">Días</span>
+    <!-- Cuenta Regresiva de Lujo -->
+    <section class="mt-10 rounded-2xl border border-gray-200/90 bg-white/70 p-6 text-center shadow-xs backdrop-blur-sm">
+      <span class="text-[10px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Faltan Sólo</span>
+      <div id="countdown-grid" class="mt-4 grid grid-cols-4 gap-2.5">
+        <div class="rounded-xl border border-gray-100 bg-gray-50/80 p-3">
+          <span id="cd-days" class="font-serif text-2xl font-semibold text-gray-950">00</span>
+          <span class="block mt-0.5 text-[9px] font-medium tracking-widest text-gray-500 uppercase">Días</span>
         </div>
-        <div class="rounded-xl bg-gray-50 p-2.5">
-          <span id="cd-hours" class="font-serif text-2xl font-bold text-gray-900">00</span>
-          <span class="block text-[10px] tracking-wider text-gray-500 uppercase">Horas</span>
+        <div class="rounded-xl border border-gray-100 bg-gray-50/80 p-3">
+          <span id="cd-hours" class="font-serif text-2xl font-semibold text-gray-950">00</span>
+          <span class="block mt-0.5 text-[9px] font-medium tracking-widest text-gray-500 uppercase">Horas</span>
         </div>
-        <div class="rounded-xl bg-gray-50 p-2.5">
-          <span id="cd-minutes" class="font-serif text-2xl font-bold text-gray-900">00</span>
-          <span class="block text-[10px] tracking-wider text-gray-500 uppercase">Min</span>
+        <div class="rounded-xl border border-gray-100 bg-gray-50/80 p-3">
+          <span id="cd-minutes" class="font-serif text-2xl font-semibold text-gray-950">00</span>
+          <span class="block mt-0.5 text-[9px] font-medium tracking-widest text-gray-500 uppercase">Min</span>
         </div>
-        <div class="rounded-xl bg-gray-50 p-2.5">
-          <span id="cd-seconds" class="font-serif text-2xl font-bold text-gray-900">00</span>
-          <span class="block text-[10px] tracking-wider text-gray-500 uppercase">Seg</span>
+        <div class="rounded-xl border border-gray-100 bg-gray-50/80 p-3">
+          <span id="cd-seconds" class="font-serif text-2xl font-semibold text-gray-950">00</span>
+          <span class="block mt-0.5 text-[9px] font-medium tracking-widest text-gray-500 uppercase">Seg</span>
         </div>
       </div>
     </section>
 
-    <!-- Ficha de Ubicación y GPS -->
-    <section class="mt-8 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-sm">
-      <div class="flex items-center gap-2 text-xs font-semibold tracking-widest text-gray-400 uppercase">
-        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <span>Lugar de Recepción</span>
-      </div>
-      <h2 class="mt-3 font-serif text-2xl font-bold text-gray-900">{event.location_name}</h2>
-      <p class="mt-1 text-sm text-gray-600">{event.location_address}</p>
+    <!-- Galería Editorial de Fotos -->
+    <CoupleGallery />
 
-      <div class="mt-5 grid grid-cols-2 gap-3">
-        {event.location_maps_url && (
+    <!-- Ubicación: Iglesia (Ceremonia Religiosa) -->
+    <section class="mt-12 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-xs">
+      <!-- Imagen de la iglesia via Street View estático -->
+      <div class="relative h-44 w-full overflow-hidden bg-gray-100">
+        <img
+          src="https://maps.googleapis.com/maps/api/streetview?size=640x320&location=25.5659072,-103.4318185&heading=90&pitch=5&fov=90&key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFmBWY"
+          alt="Vista de la Parroquia de San Pedro Apóstol"
+          class="h-full w-full object-cover"
+          onerror="this.style.display='none'; this.parentElement.classList.add('flex','items-center','justify-center'); this.parentElement.innerHTML='<span class=\'text-xs text-gray-400\'>Torreón, Coahuila</span>'"
+        />
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/25"></div>
+      </div>
+
+      <div class="p-6">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div class="flex items-center gap-2">
+            <svg class="h-4 w-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span class="text-[11px] font-semibold tracking-widest text-gray-400 uppercase">Ceremonia Religiosa</span>
+          </div>
+          <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-[11px] font-semibold text-gray-800">17:00 hrs</span>
+        </div>
+
+        <h3 class="mt-4 font-serif text-xl font-bold text-gray-950">
+          Parroquia de San Pedro Apóstol
+        </h3>
+        <p class="mt-1 text-xs text-gray-500 leading-relaxed">
+          Calzada Mónaco 485, Torreón, Coahuila, 27100.
+        </p>
+
+        <!-- Mini mapa estático via OpenStreetMap -->
+        <a
+          href="https://maps.app.goo.gl/JTh9BtxJdsrYgC7s5"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-4 block overflow-hidden rounded-xl border border-gray-200 transition hover:opacity-90 active:scale-[0.99]"
+          aria-label="Abrir en Google Maps"
+        >
+          <img
+            src="https://staticmap.openstreetmap.de/staticmap.php?center=25.5659072,-103.4318185&zoom=16&size=640x200&markers=25.5659072,-103.4318185,red-pushpin"
+            alt="Mapa de la Parroquia de San Pedro Apóstol"
+            class="h-36 w-full object-cover"
+            onerror="this.outerHTML='<div class=\'h-36 w-full flex items-center justify-center bg-gray-50 text-xs text-gray-400\'>Ver en Google Maps</div>'"
+          />
+          <div class="flex items-center justify-between bg-gray-50 px-3 py-2">
+            <span class="text-[11px] text-gray-500">Calzada Mónaco 485, Torreón, Coah.</span>
+            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </div>
+        </a>
+
+        <div class="mt-3 grid grid-cols-2 gap-3">
           <a
-            href={event.location_maps_url}
+            href="https://maps.app.goo.gl/JTh9BtxJdsrYgC7s5"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-gray-50 py-3 text-xs font-semibold text-gray-800 transition hover:bg-gray-100"
+            class="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-xs font-semibold text-gray-800 transition hover:bg-gray-100 active:scale-95"
           >
+            <svg class="h-4 w-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+            </svg>
             <span>Google Maps</span>
           </a>
-        )}
-        {event.location_waze_url && (
           <a
-            href={event.location_waze_url}
+            href="https://waze.com/ul?ll=25.5659072,-103.4318185&navigate=yes"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-gray-50 py-3 text-xs font-semibold text-gray-800 transition hover:bg-gray-100"
+            class="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-xs font-semibold text-gray-800 transition hover:bg-gray-100 active:scale-95"
           >
+            <svg class="h-4 w-4 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2a9 9 0 0 0-9 9c0 3.3 1.7 6.2 4.4 7.8-.1.5-.4 1.8-.5 2.2 0 0 0 .2.1.2.1 0 .3 0 .4-.1.7-.5 1.7-1.1 2.4-1.6.8.3 1.7.5 2.6.5 5 0 9-4 9-9s-4-9-9-9z" />
+            </svg>
             <span>Waze</span>
           </a>
-        )}
+        </div>
       </div>
     </section>
 
-    <!-- Itinerario -->
-    <section class="mt-8 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-sm">
-      <span class="text-xs font-semibold tracking-widest text-gray-400 uppercase">Itinerario del Evento</span>
-      <ol class="mt-5 space-y-4 border-l border-gray-200 pl-4">
-        {itineraryItems.map((item) => (
+    <!-- Ubicación: Recepción (Fiesta & Banquete) -->
+    <section class="mt-6 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-xs">
+      <!-- Imagen de la recepción via Street View estático -->
+      <div class="relative h-44 w-full overflow-hidden bg-gray-100">
+        <img
+          src="https://maps.googleapis.com/maps/api/streetview?size=640x320&location=25.5546346,-103.4324767&heading=180&pitch=5&fov=90&key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFmBWY"
+          alt="Vista del Centro de Convenciones San Ángel"
+          class="h-full w-full object-cover"
+          onerror="this.style.display='none'; this.parentElement.classList.add('flex','items-center','justify-center'); this.parentElement.innerHTML='<span class=\'text-xs text-gray-400\'>Torreón, Coahuila</span>'"
+        />
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/25"></div>
+      </div>
+
+      <div class="p-6">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+          <div class="flex items-center gap-2">
+            <svg class="h-4 w-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="text-[11px] font-semibold tracking-widest text-gray-400 uppercase">Recepción & Fiesta</span>
+          </div>
+          <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-[11px] font-semibold text-gray-800">19:00 hrs</span>
+        </div>
+
+        <h3 class="mt-4 font-serif text-xl font-bold text-gray-950">
+          Centro de Convenciones San Ángel
+        </h3>
+        <p class="mt-1 text-xs text-gray-500 leading-relaxed">
+          Av. Lerdo de Tejada, Torreón, Coahuila, 27100.
+        </p>
+
+        <!-- Mini mapa estático via OpenStreetMap -->
+        <a
+          href="https://maps.app.goo.gl/YqPAXaNvbj2CnKM49"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-4 block overflow-hidden rounded-xl border border-gray-200 transition hover:opacity-90 active:scale-[0.99]"
+          aria-label="Abrir en Google Maps"
+        >
+          <img
+            src="https://staticmap.openstreetmap.de/staticmap.php?center=25.5546346,-103.4324767&zoom=16&size=640x200&markers=25.5546346,-103.4324767,red-pushpin"
+            alt="Mapa del Centro de Convenciones San Ángel"
+            class="h-36 w-full object-cover"
+            onerror="this.outerHTML='<div class=\'h-36 w-full flex items-center justify-center bg-gray-50 text-xs text-gray-400\'>Ver en Google Maps</div>'"
+          />
+          <div class="flex items-center justify-between bg-gray-50 px-3 py-2">
+            <span class="text-[11px] text-gray-500">Av. Lerdo de Tejada, Torreón, Coah.</span>
+            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </div>
+        </a>
+
+        <div class="mt-3 grid grid-cols-2 gap-3">
+          <a
+            href="https://maps.app.goo.gl/YqPAXaNvbj2CnKM49"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-xs font-semibold text-gray-800 transition hover:bg-gray-100 active:scale-95"
+          >
+            <svg class="h-4 w-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+            </svg>
+            <span>Google Maps</span>
+        </a>
+        <a
+          href="https://waze.com/ul?ll=25.5546346,-103.4324767&navigate=yes"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-xs font-semibold text-gray-800 transition hover:bg-gray-100 active:scale-95"
+        >
+          <svg class="h-4 w-4 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2a9 9 0 0 0-9 9c0 3.3 1.7 6.2 4.4 7.8-.1.5-.4 1.8-.5 2.2 0 0 0 .2.1.2.1 0 .3 0 .4-.1.7-.5 1.7-1.1 2.4-1.6.8.3 1.7.5 2.6.5 5 0 9-4 9-9s-4-9-9-9z" />
+          </svg>
+          <span>Waze</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Itinerario / Horarios -->
+    <section class="mt-12 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs">
+      <div class="text-center">
+        <span class="text-[11px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Itinerario</span>
+        <h3 class="mt-1 font-serif text-2xl font-normal text-gray-950">El Programa del Día</h3>
+        <div class="mx-auto mt-2 h-px w-10 bg-gray-200"></div>
+      </div>
+
+      <ol class="relative mt-8 space-y-6 border-l border-gray-200 ml-4 pl-6">
+        {itineraryList.map((item) => (
           <li class="relative">
-            <span class="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-gray-900"></span>
-            <p class="text-sm font-medium text-gray-900">{item}</p>
+            <!-- Marcador circular -->
+            <span class="absolute -left-[31px] top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-gray-900 shadow-xs">
+              <span class="h-1.5 w-1.5 rounded-full bg-white"></span>
+            </span>
+            <span class="text-[11px] font-bold tracking-wider text-gray-400 uppercase">{item.time}</span>
+            <h4 class="mt-0.5 font-serif text-base font-bold text-gray-900">{item.title}</h4>
+            <p class="mt-0.5 text-xs text-gray-500">{item.desc}</p>
           </li>
         ))}
       </ol>
     </section>
 
-    <!-- Código de Vestimenta y Mesa de Regalos -->
-    <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-      <section class="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm">
-        <span class="text-[11px] font-semibold tracking-widest text-gray-400 uppercase">Código de Vestimenta</span>
-        <p class="mt-2 font-serif text-lg font-bold text-gray-900">{event.dress_code || 'Formal'}</p>
-      </section>
+    <!-- Código de Vestimenta con Muestrario de Color -->
+    <section class="mt-12 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs">
+      <div class="text-center">
+        <span class="text-[11px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Etiqueta</span>
+        <h3 class="mt-1 font-serif text-2xl font-normal text-gray-950">Código de Vestimenta</h3>
+        <div class="mx-auto mt-2 h-px w-10 bg-gray-200"></div>
+      </div>
 
-      <section class="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-sm">
-        <span class="text-[11px] font-semibold tracking-widest text-gray-400 uppercase">Mesa de Regalos</span>
-        <p class="mt-2 text-xs font-medium leading-relaxed text-gray-700">{event.gift_registry_info || 'Agradecemos tu presencia y cariño.'}</p>
-      </section>
-    </div>
+      <div class="mt-5 text-center">
+        <p class="font-serif text-lg font-bold text-gray-900">
+          {event.dress_code || 'Rigurosa Etiqueta / Formal'}
+        </p>
+        <p class="mt-2 text-xs text-gray-600 leading-relaxed max-w-sm mx-auto">
+          Damas: Vestido largo de noche.<br />
+          Caballeros: Traje formal oscuro o esmoquin.
+        </p>
+      </div>
+
+      <!-- Paleta de colores recomendada -->
+      <div class="mt-6 border-t border-gray-100 pt-5">
+        <span class="block text-center text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
+          Paleta de Inspiración
+        </span>
+        <div class="mt-3 flex justify-center gap-3">
+          <div class="group flex flex-col items-center">
+            <span class="h-8 w-8 rounded-full bg-[#18181b] shadow-xs border border-white"></span>
+            <span class="mt-1 text-[9px] text-gray-500">Negro</span>
+          </div>
+          <div class="group flex flex-col items-center">
+            <span class="h-8 w-8 rounded-full bg-[#27382B] shadow-xs border border-white"></span>
+            <span class="mt-1 text-[9px] text-gray-500">Olivo</span>
+          </div>
+          <div class="group flex flex-col items-center">
+            <span class="h-8 w-8 rounded-full bg-[#8C4A32] shadow-xs border border-white"></span>
+            <span class="mt-1 text-[9px] text-gray-500">Terracota</span>
+          </div>
+          <div class="group flex flex-col items-center">
+            <span class="h-8 w-8 rounded-full bg-[#1C2D42] shadow-xs border border-white"></span>
+            <span class="mt-1 text-[9px] text-gray-500">Azul</span>
+          </div>
+          <div class="group flex flex-col items-center">
+            <span class="h-8 w-8 rounded-full bg-[#E5D7C3] shadow-xs border border-white"></span>
+            <span class="mt-1 text-[9px] text-gray-500">Champaña</span>
+          </div>
+        </div>
+        <p class="mt-4 text-center text-[11px] font-serif italic text-gray-500">
+          Rogamos amablemente reservar el color blanco para la novia.
+        </p>
+      </div>
+    </section>
+
+    <!-- Protocolo: Evento Sólo Adultos (No Niños) -->
+    <section class="mt-8 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs text-center">
+      <div class="flex items-center justify-center gap-2">
+        <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <span class="text-[11px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Aviso de Recepción</span>
+      </div>
+      <h3 class="mt-2 font-serif text-xl font-normal text-gray-950">Evento Sólo para Adultos</h3>
+      <div class="mx-auto mt-2 h-px w-10 bg-gray-200"></div>
+      <p class="mt-3 text-xs leading-relaxed text-gray-600 max-w-sm mx-auto">
+        Amamos a sus pequeños, sin embargo, para que todos podamos disfrutar al máximo y celebrar esta velada con tranquilidad, nuestra boda será un evento exclusivamente para adultos (no niños).
+      </p>
+      <p class="mt-2 text-[11px] font-serif italic text-gray-500">
+        Agradecemos profundamente su comprensión y cariño.
+      </p>
+    </section>
+
+    <!-- Mesa de Regalos Interactiva -->
+    <section class="mt-12 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs">
+      <div class="text-center">
+        <span class="text-[11px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Mesa de Regalos</span>
+        <h3 class="mt-1 font-serif text-2xl font-normal text-gray-950">Muestras de Cariño</h3>
+        <div class="mx-auto mt-2 h-px w-10 bg-gray-200"></div>
+        <p class="mt-3 text-xs text-gray-600 leading-relaxed">
+          Tu presencia es nuestro mayor regalo. Si deseas tener un detalle con nosotros, ponemos a tu disposición nuestras opciones:
+        </p>
+      </div>
+
+      <!-- Tarjetas de tiendas -->
+      <div class="mt-6 space-y-3">
+        <!-- Liverpool -->
+        <div class="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/70 p-4 transition hover:bg-gray-50">
+          <div>
+            <span class="font-serif text-base font-bold text-gray-900">Liverpool</span>
+            <p class="text-xs text-gray-500">Evento: <span class="font-mono font-medium text-gray-800">5139481</span></p>
+          </div>
+          <a
+            href="https://mesaderegalos.liverpool.com.mx/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="rounded-lg bg-gray-900 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-black active:scale-95"
+          >
+            Ver Mesa
+          </a>
+        </div>
+
+        <!-- Amazon -->
+        <div class="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/70 p-4 transition hover:bg-gray-50">
+          <div>
+            <span class="font-serif text-base font-bold text-gray-900">Amazon México</span>
+            <p class="text-xs text-gray-500">Mesa: <span class="font-medium text-gray-800">{coupleNames.shortTitle}</span></p>
+          </div>
+          <a
+            href="https://www.amazon.com.mx/baby-reg/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="rounded-lg bg-gray-900 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-black active:scale-95"
+          >
+            Ver Mesa
+          </a>
+        </div>
+
+        <!-- Datos Bancarios / Transferencia -->
+        <div class="rounded-xl border border-dashed border-gray-300 bg-amber-50/30 p-4">
+          <div class="flex items-center justify-between">
+            <span class="font-serif text-sm font-bold text-gray-900">Transferencia Bancaria</span>
+            <span class="rounded bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">BBVA</span>
+          </div>
+          <p class="mt-1 text-xs text-gray-600">
+            Beneficiario: <span class="font-medium text-gray-900">Martín Ricardo Cabello</span>
+          </p>
+          <div class="mt-2.5 flex items-center justify-between rounded-lg bg-white p-2.5 border border-gray-200">
+            <span id="clabe-number" class="font-mono text-xs text-gray-800 tracking-wider">012 180 01548291029 4</span>
+            <button
+              id="btn-copy-clabe"
+              type="button"
+              class="flex items-center gap-1 text-[11px] font-bold text-gray-900 hover:text-black uppercase tracking-wider"
+            >
+              <svg class="h-3.5 w-3.5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <span>Copiar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Confirmación de Asistencia por WhatsApp (Integrada dentro de la Invitación) -->
+    <section class="mt-12 rounded-2xl border border-gray-200/80 bg-white p-7 shadow-xs text-center">
+      <span class="text-[11px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Confirmación</span>
+      <h3 class="mt-1 font-serif text-2xl font-normal text-gray-950">Acompáñanos en Nuestro Día</h3>
+      <div class="mx-auto mt-2 h-px w-10 bg-gray-200"></div>
+      
+      <p class="mt-4 text-xs leading-relaxed text-gray-600 max-w-sm mx-auto">
+        Tu presencia es fundamental para nosotros. Por favor ayúdanos confirmando tu asistencia antes del 1 de Noviembre de 2026. Recepción exclusivamente para adultos.
+      </p>
+
+      <div class="mt-6 flex justify-center">
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#25D366] px-8 py-3.5 text-xs font-bold tracking-wider text-white uppercase shadow-sm transition hover:bg-[#20ba59] active:scale-95"
+        >
+          <svg class="h-4 w-4 fill-white" viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.074-1.115-.062-.258-.083-.591-.194-1.014-.378-1.785-.776-2.951-2.587-3.04-2.705-.089-.118-.727-.968-.727-1.846 0-.878.46-1.309.624-1.488.164-.179.358-.224.478-.224.12 0 .239.002.343.007.109.005.257-.042.401.305.148.358.508 1.238.552 1.328.045.09.075.194.015.313-.06.12-.089.194-.179.299-.089.105-.187.234-.268.314-.089.09-.182.188-.078.367.104.179.463.764.994 1.237.683.609 1.259.797 1.439.887.179.089.283.074.388-.045.104-.119.447-.522.566-.701.119-.179.239-.149.398-.09.16.06 1.015.478 1.189.565.174.088.291.133.334.208.043.075.043.434-.101.839z" />
+          </svg>
+          <span>Confirmar Asistencia por WhatsApp</span>
+        </a>
+      </div>
+
+      <p class="mt-3 text-[11px] text-gray-400">
+        Se abrirá una conversación directa con los novios
+      </p>
+    </section>
 
   </main>
 
-  <!-- Botón Flotante Inferior de RSVP -->
-  <div class="fixed inset-x-0 bottom-0 z-30 border-t border-gray-200/80 bg-white/90 p-4 backdrop-blur-md">
-    <div class="mx-auto max-w-lg">
-      <button
-        id="trigger-open-rsvp"
-        type="button"
-        class="w-full rounded-2xl bg-gray-950 py-4 text-center text-xs font-bold tracking-widest text-white uppercase shadow-lg transition active:scale-[0.98] hover:bg-black"
-      >
-        Confirmar Asistencia (RSVP)
-      </button>
-    </div>
-  </div>
-
-  <!-- Modal de confirmación -->
-  <RSVPModal slug={event.slug} />
+  <!-- Widget de Música Flotante -->
+  <MusicPlayerWidget />
 
 </Layout>
 
-<script define:vars={{ eventDateStr: event.event_date }}>
-  // Manejador del botón flotante
-  document.getElementById('trigger-open-rsvp')?.addEventListener('click', () => {
-    window.dispatchEvent(new CustomEvent('open-rsvp-modal'));
+<script define:vars={{ targetIsoDate: coupleNames.targetIsoDate }}>
+  // Copiar CLABE al portapapeles
+  document.getElementById('btn-copy-clabe')?.addEventListener('click', () => {
+    const clabe = '012180015482910294';
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(clabe).then(() => {
+        if (window.showInAppToast) {
+          window.showInAppToast('CLABE copiada al portapapeles con éxito', 'success');
+        } else {
+          alert('CLABE copiada al portapapeles');
+        }
+      }).catch(() => {
+        if (window.showInAppToast) {
+          window.showInAppToast('No se pudo copiar automáticamente', 'error');
+        }
+      });
+    }
   });
 
-  // Cuenta regresiva
+  // Cuenta regresiva precisa
   function updateCountdown() {
-    const target = new Date(eventDateStr).getTime();
+    const target = new Date(targetIsoDate).getTime();
     const now = new Date().getTime();
     const diff = target - now;
 
     if (diff <= 0) {
-      document.getElementById('cd-days').textContent = '00';
-      document.getElementById('cd-hours').textContent = '00';
-      document.getElementById('cd-minutes').textContent = '00';
-      document.getElementById('cd-seconds').textContent = '00';
+      const elD = document.getElementById('cd-days');
+      const elH = document.getElementById('cd-hours');
+      const elM = document.getElementById('cd-minutes');
+      const elS = document.getElementById('cd-seconds');
+      if (elD) elD.textContent = '00';
+      if (elH) elH.textContent = '00';
+      if (elM) elM.textContent = '00';
+      if (elS) elS.textContent = '00';
       return;
     }
 
@@ -176,10 +524,14 @@ const itineraryItems = event.itinerary
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
     const pad = (n) => String(n).padStart(2, '0');
-    document.getElementById('cd-days').textContent = pad(days);
-    document.getElementById('cd-hours').textContent = pad(hours);
-    document.getElementById('cd-minutes').textContent = pad(minutes);
-    document.getElementById('cd-seconds').textContent = pad(seconds);
+    const elD = document.getElementById('cd-days');
+    const elH = document.getElementById('cd-hours');
+    const elM = document.getElementById('cd-minutes');
+    const elS = document.getElementById('cd-seconds');
+    if (elD) elD.textContent = pad(days);
+    if (elH) elH.textContent = pad(hours);
+    if (elM) elM.textContent = pad(minutes);
+    if (elS) elS.textContent = pad(seconds);
   }
 
   updateCountdown();
