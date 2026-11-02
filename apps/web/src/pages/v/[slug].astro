@@ -22,8 +22,8 @@ const coupleNames = isRicardoKiara
       groom: 'MARTÍN RICARDO CABELLO RODRÍGUEZ',
       bride: 'KIARA DELGADILLO TORRES',
       shortTitle: 'Ricardo & Kiara',
-      formalDate: 'Sábado, 28 de Noviembre de 2026',
-      targetIsoDate: '2026-11-28T17:00:00',
+      formalDate: 'Viernes, 2 de Abril de 2027',
+      targetIsoDate: '2027-04-02T17:00:00',
     }
   : {
       groom: 'CARLOS MORALES',
@@ -39,6 +39,32 @@ const waText = encodeURIComponent(
 );
 const waPhone = '528112345678';
 const waUrl = `https://wa.me/${waPhone}?text=${waText}`;
+
+// Enlace directo a Google Calendar (Viernes 2 de Abril de 2027, 17:00 hrs a 02:00 hrs)
+const gcalTitle = encodeURIComponent(`Boda de ${coupleNames.shortTitle}`);
+const gcalDetails = encodeURIComponent(
+  `Ceremonia Religiosa (17:00 hrs): Parroquia de San Pedro Apóstol, Calzada Mónaco 485, Torreón.\nRecepción (19:00 hrs): Centro de Convenciones San Ángel, Av. Lerdo de Tejada, Torreón.`
+);
+const gcalLocation = encodeURIComponent('Parroquia de San Pedro Apóstol, Calzada Mónaco 485, Torreón, Coahuila');
+const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gcalTitle}&dates=20270402T170000/20270403T020000&details=${gcalDetails}&location=${gcalLocation}&ctz=America/Monterrey`;
+
+// Fotografías principales de portada (3 fotos con difuminado automático)
+// Para usar tus propias fotos, guárdalas en: apps/web/public/images/
+// y cambia estas rutas por '/images/portada-1.jpg', '/images/portada-2.jpg', '/images/portada-3.jpg'
+const heroSlides = [
+  {
+    src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=85',
+    alt: 'Ricardo y Kiara — Portada 1',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=85',
+    alt: 'Ricardo y Kiara — Portada 2',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=85',
+    alt: 'Ricardo y Kiara — Portada 3',
+  },
+];
 
 // Itinerario
 const itineraryList = isRicardoKiara
@@ -60,129 +86,237 @@ const itineraryList = isRicardoKiara
 <Layout title={`${coupleNames.shortTitle} — Invitación de Boda`} theme="editorial">
 
   <!-- Contenedor centralizado para la invitación -->
-  <main class="mx-auto max-w-lg px-5 pt-14 pb-20">
+  <main class="mx-auto max-w-lg pb-20">
     
+    <!-- Portada Fotográfica con Transición Suave (3 Fotos + Difuminado Inferior) -->
+    <div class="relative h-[460px] sm:h-[520px] w-full overflow-hidden bg-editorial-bg">
+      {heroSlides.map((slide, index) => (
+        <img
+          src={slide.src}
+          alt={slide.alt}
+          data-hero-slide={index}
+          class:list={[
+            'hero-crossfade-slide absolute inset-0 h-full w-full object-cover object-center transition-all duration-[1800ms] ease-in-out will-change-[opacity,transform]',
+            index === 0 ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0',
+          ]}
+        />
+      ))}
+
+      <!-- Sutil velo superior para profundidad -->
+      <div class="pointer-events-none absolute inset-x-0 top-0 z-20 h-20 bg-gradient-to-b from-black/15 to-transparent"></div>
+
+      <!-- Difuminado inferior blanco/crema que conecta con el texto de abajo -->
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-44 bg-gradient-to-t from-[#fcfbf9] via-[#fcfbf9]/85 to-transparent"></div>
+    </div>
+
+    <div class="px-5">
     <!-- Hero Editorial de Alta Gama -->
-    <header class="text-center">
-      <span class="text-[11px] font-semibold tracking-[0.35em] text-gray-400 uppercase">
+    <header class="inv-reveal relative z-30 -mt-8 text-center">
+      <span class="text-xs sm:text-sm font-semibold tracking-[0.35em] text-gray-500 uppercase">
         Nuestra Boda
       </span>
 
       <!-- Nombres de los Novios -->
-      <div class="mt-6 space-y-2">
-        <h1 class="font-serif text-2xl font-normal tracking-wide text-gray-950 uppercase sm:text-3xl leading-relaxed">
+      <div class="mt-6 space-y-2.5">
+        <h1 class="font-serif text-3xl font-normal tracking-wide text-gray-950 uppercase sm:text-4xl leading-snug">
           {coupleNames.groom}
         </h1>
-        <div class="flex items-center justify-center gap-3 py-1">
-          <div class="h-px w-12 bg-gray-300"></div>
-          <span class="font-serif text-xl italic text-gray-400">&</span>
-          <div class="h-px w-12 bg-gray-300"></div>
+        <div class="flex items-center justify-center gap-3 py-1.5">
+          <div class="inv-line-grow h-px w-14 bg-gray-300"></div>
+          <span class="font-serif text-2xl italic text-gray-400">&</span>
+          <div class="inv-line-grow h-px w-14 bg-gray-300"></div>
         </div>
-        <h2 class="font-serif text-2xl font-normal tracking-wide text-gray-950 uppercase sm:text-3xl leading-relaxed">
+        <h2 class="font-serif text-3xl font-normal tracking-wide text-gray-950 uppercase sm:text-4xl leading-snug">
           {coupleNames.bride}
         </h2>
       </div>
 
       <!-- Fecha formal -->
-      <p class="mt-6 font-serif text-base italic text-gray-700">
+      <p class="mt-7 font-serif text-xl sm:text-2xl italic text-gray-800">
         {coupleNames.formalDate}
       </p>
 
       <!-- Mensaje de honor -->
-      <div class="mx-auto mt-6 max-w-sm border-t border-b border-gray-200/80 py-5">
-        <p class="font-serif text-sm leading-relaxed text-gray-600 italic">
+      <div class="mx-auto mt-7 max-w-md border-t border-b border-gray-200/90 py-6 px-2">
+        <p class="font-serif text-lg sm:text-xl leading-relaxed text-gray-700 italic">
           "Con la bendición de Dios y de nuestras familias, tenemos el honor de invitarte a celebrar con nosotros el inicio de nuestro matrimonio."
         </p>
       </div>
     </header>
 
-    <!-- Cuenta Regresiva de Lujo -->
-    <section class="mt-10 rounded-2xl border border-gray-200/90 bg-white/70 p-6 text-center shadow-xs backdrop-blur-sm">
-      <span class="text-[10px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Faltan Sólo</span>
-      <div id="countdown-grid" class="mt-4 grid grid-cols-4 gap-2.5">
-        <div class="rounded-xl border border-gray-100 bg-gray-50/80 p-3">
-          <span id="cd-days" class="font-serif text-2xl font-semibold text-gray-950">00</span>
-          <span class="block mt-0.5 text-[9px] font-medium tracking-widest text-gray-500 uppercase">Días</span>
+    <!-- Cuenta Regresiva de Alto Impacto + Agendar en Calendario -->
+    <section class="inv-reveal mt-10 relative overflow-hidden rounded-3xl bg-[#141416] p-1.5 shadow-xl ring-1 ring-black/10">
+      <!-- Fotografía sutil de fondo con velo oscuro y destello cálido -->
+      <div class="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
+        <img
+          src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=900&q=80"
+          alt=""
+          class="h-full w-full object-cover opacity-20 scale-105"
+          loading="lazy"
+        />
+        <div class="absolute inset-0 bg-gradient-to-b from-[#141416]/90 via-[#141416]/85 to-[#141416]/95"></div>
+      </div>
+
+      <!-- Marco interior con borde champaña/dorado -->
+      <div class="relative z-10 rounded-[20px] border border-amber-200/25 px-5 py-8 text-center">
+        
+        <div class="flex items-center justify-center gap-3">
+          <div class="inv-line-grow h-px w-10 bg-amber-200/40"></div>
+          <span class="text-xs font-semibold tracking-[0.35em] text-amber-200/90 uppercase">
+            Reserva la Fecha
+          </span>
+          <div class="inv-line-grow h-px w-10 bg-amber-200/40"></div>
         </div>
-        <div class="rounded-xl border border-gray-100 bg-gray-50/80 p-3">
-          <span id="cd-hours" class="font-serif text-2xl font-semibold text-gray-950">00</span>
-          <span class="block mt-0.5 text-[9px] font-medium tracking-widest text-gray-500 uppercase">Horas</span>
+
+        <h3 class="mt-2 font-serif text-2xl sm:text-3xl font-normal text-white">
+          Faltan Sólo
+        </h3>
+        <p class="mt-1 font-serif text-sm sm:text-base italic text-white/70">
+          Para el inicio de nuestro para siempre
+        </p>
+
+        <!-- Tarjetas de Tiempo con Efecto Cristal y Borde Dorado -->
+        <div id="countdown-grid" class="mt-6 grid grid-cols-4 gap-2.5">
+          <div class="inv-stagger-item flex flex-col items-center justify-center rounded-2xl border border-amber-200/20 bg-white/[0.07] py-4 px-1.5 backdrop-blur-md shadow-inner" style="transition-delay: 80ms;">
+            <span id="cd-days" class="font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-white">00</span>
+            <span class="mt-1.5 text-[10px] font-semibold tracking-[0.2em] text-amber-200/80 uppercase">Días</span>
+          </div>
+          <div class="inv-stagger-item flex flex-col items-center justify-center rounded-2xl border border-amber-200/20 bg-white/[0.07] py-4 px-1.5 backdrop-blur-md shadow-inner" style="transition-delay: 160ms;">
+            <span id="cd-hours" class="font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-white">00</span>
+            <span class="mt-1.5 text-[10px] font-semibold tracking-[0.2em] text-amber-200/80 uppercase">Horas</span>
+          </div>
+          <div class="inv-stagger-item flex flex-col items-center justify-center rounded-2xl border border-amber-200/20 bg-white/[0.07] py-4 px-1.5 backdrop-blur-md shadow-inner" style="transition-delay: 240ms;">
+            <span id="cd-minutes" class="font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-white">00</span>
+            <span class="mt-1.5 text-[10px] font-semibold tracking-[0.2em] text-amber-200/80 uppercase">Min</span>
+          </div>
+          <div class="inv-stagger-item flex flex-col items-center justify-center rounded-2xl border border-amber-200/20 bg-white/[0.07] py-4 px-1.5 backdrop-blur-md shadow-inner" style="transition-delay: 320ms;">
+            <span id="cd-seconds" class="font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-amber-200">00</span>
+            <span class="mt-1.5 text-[10px] font-semibold tracking-[0.2em] text-amber-200/80 uppercase">Seg</span>
+          </div>
         </div>
-        <div class="rounded-xl border border-gray-100 bg-gray-50/80 p-3">
-          <span id="cd-minutes" class="font-serif text-2xl font-semibold text-gray-950">00</span>
-          <span class="block mt-0.5 text-[9px] font-medium tracking-widest text-gray-500 uppercase">Min</span>
+
+        <!-- Botón de Calendario Destacado -->
+        <div class="mt-7 pt-6 border-t border-white/10">
+          <button
+            id="btn-toggle-calendar"
+            type="button"
+            class="inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-[#e6d3b3] via-[#f3e5cc] to-[#e6d3b3] px-7 py-3.5 text-xs font-bold tracking-[0.2em] text-gray-950 uppercase shadow-md transition duration-300 hover:brightness-105 active:scale-95"
+          >
+            <svg class="h-4 w-4 text-gray-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Agendar en mi Calendario</span>
+          </button>
+
+          <!-- Opciones desplegables (Google Calendar / Apple & Celular) -->
+          <div
+            id="calendar-options-panel"
+            class="hidden mt-3.5 grid-cols-2 gap-2.5 pt-1 transition-all duration-300"
+          >
+            <a
+              href={googleCalendarUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 py-3 px-3 text-xs font-semibold text-white backdrop-blur-xs transition hover:bg-white/20 active:scale-95"
+            >
+              <svg class="h-4 w-4 text-amber-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>Google Calendar</span>
+            </a>
+            <button
+              id="btn-download-ics"
+              type="button"
+              class="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 py-3 px-3 text-xs font-semibold text-white backdrop-blur-xs transition hover:bg-white/20 active:scale-95"
+            >
+              <svg class="h-4 w-4 text-amber-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              <span>Apple / Celular</span>
+            </button>
+          </div>
         </div>
-        <div class="rounded-xl border border-gray-100 bg-gray-50/80 p-3">
-          <span id="cd-seconds" class="font-serif text-2xl font-semibold text-gray-950">00</span>
-          <span class="block mt-0.5 text-[9px] font-medium tracking-widest text-gray-500 uppercase">Seg</span>
-        </div>
+
       </div>
     </section>
 
     <!-- Galería Editorial de Fotos -->
     <CoupleGallery />
 
+    <!-- Separador Ornamental Editorial -->
+    <div class="inv-reveal my-10 flex items-center justify-center gap-3 opacity-60">
+      <div class="inv-line-grow h-px w-16 bg-gray-300"></div>
+      <span class="h-1.5 w-1.5 rotate-45 bg-gray-400"></span>
+      <div class="inv-line-grow h-px w-16 bg-gray-300"></div>
+    </div>
+
     <!-- Ubicación: Iglesia (Ceremonia Religiosa) -->
-    <section class="mt-12 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-xs">
-      <!-- Imagen de la iglesia via Street View estático -->
-      <div class="relative h-44 w-full overflow-hidden bg-gray-100">
+    <section class="inv-reveal overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-xs transition-shadow duration-500 hover:shadow-md">
+      <!-- Fotografía del lugar (Puedes reemplazarla poniendo tu foto en public/images/iglesia.jpg) -->
+      <div class="relative h-52 w-full overflow-hidden bg-gray-900">
         <img
-          src="https://maps.googleapis.com/maps/api/streetview?size=640x320&location=25.5659072,-103.4318185&heading=90&pitch=5&fov=90&key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFmBWY"
-          alt="Vista de la Parroquia de San Pedro Apóstol"
-          class="h-full w-full object-cover"
-          onerror="this.style.display='none'; this.parentElement.classList.add('flex','items-center','justify-center'); this.parentElement.innerHTML='<span class=\'text-xs text-gray-400\'>Torreón, Coahuila</span>'"
+          src="https://images.unsplash.com/photo-1548625361-195fe57724e3?auto=format&fit=crop&w=900&q=85"
+          alt="Parroquia de San Pedro Apóstol"
+          class="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+          loading="lazy"
         />
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/25"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+        <div class="absolute bottom-4 left-5 right-5 flex items-end justify-between">
+          <div>
+            <span class="block text-[10px] font-semibold tracking-[0.25em] text-white/80 uppercase">
+              Ceremonia Religiosa
+            </span>
+            <h3 class="mt-0.5 font-serif text-xl font-normal text-white">
+              Parroquia de San Pedro Apóstol
+            </h3>
+          </div>
+          <span class="rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold text-gray-900 shadow-xs backdrop-blur-xs">
+            17:00 hrs
+          </span>
+        </div>
       </div>
 
       <div class="p-6">
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-          <div class="flex items-center gap-2">
-            <svg class="h-4 w-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-            <span class="text-[11px] font-semibold tracking-widest text-gray-400 uppercase">Ceremonia Religiosa</span>
-          </div>
-          <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-[11px] font-semibold text-gray-800">17:00 hrs</span>
+        <div class="flex items-start gap-2.5 text-gray-600">
+          <svg class="mt-0.5 h-4 w-4 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <p class="text-xs leading-relaxed text-gray-600">
+            Calzada Mónaco 485, Residencial San Isidro, Torreón, Coahuila, C.P. 27100.
+          </p>
         </div>
 
-        <h3 class="mt-4 font-serif text-xl font-bold text-gray-950">
-          Parroquia de San Pedro Apóstol
-        </h3>
-        <p class="mt-1 text-xs text-gray-500 leading-relaxed">
-          Calzada Mónaco 485, Torreón, Coahuila, 27100.
-        </p>
-
-        <!-- Mini mapa estático via OpenStreetMap -->
-        <a
-          href="https://maps.app.goo.gl/JTh9BtxJdsrYgC7s5"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="mt-4 block overflow-hidden rounded-xl border border-gray-200 transition hover:opacity-90 active:scale-[0.99]"
-          aria-label="Abrir en Google Maps"
-        >
-          <img
-            src="https://staticmap.openstreetmap.de/staticmap.php?center=25.5659072,-103.4318185&zoom=16&size=640x200&markers=25.5659072,-103.4318185,red-pushpin"
-            alt="Mapa de la Parroquia de San Pedro Apóstol"
-            class="h-36 w-full object-cover"
-            onerror="this.outerHTML='<div class=\'h-36 w-full flex items-center justify-center bg-gray-50 text-xs text-gray-400\'>Ver en Google Maps</div>'"
-          />
-          <div class="flex items-center justify-between bg-gray-50 px-3 py-2">
-            <span class="text-[11px] text-gray-500">Calzada Mónaco 485, Torreón, Coah.</span>
-            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </div>
-        </a>
-
-        <div class="mt-3 grid grid-cols-2 gap-3">
+        <!-- Mini mapa interactivo de Google Maps -->
+        <div class="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-2xs">
+          <iframe
+            title="Mapa Parroquia de San Pedro Apóstol"
+            src="https://maps.google.com/maps?q=Parroquia+de+San+Pedro+Apostol+Torreon+25.5659072,-103.4318185&t=&z=16&ie=UTF8&iwloc=&output=embed"
+            class="h-44 w-full border-0"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
           <a
             href="https://maps.app.goo.gl/JTh9BtxJdsrYgC7s5"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-xs font-semibold text-gray-800 transition hover:bg-gray-100 active:scale-95"
+            class="flex items-center justify-between border-t border-gray-200/80 bg-gray-50/90 px-3.5 py-2.5 text-[11px] font-medium text-gray-600 transition hover:bg-gray-100"
           >
-            <svg class="h-4 w-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+            <span>Ver ubicación exacta en Google Maps</span>
+            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          <a
+            href="https://maps.app.goo.gl/JTh9BtxJdsrYgC7s5"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-center gap-2 rounded-xl bg-gray-900 py-2.5 text-xs font-semibold text-white transition hover:bg-black active:scale-95"
+          >
+            <svg class="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
             </svg>
             <span>Google Maps</span>
@@ -196,128 +330,134 @@ const itineraryList = isRicardoKiara
             <svg class="h-4 w-4 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2a9 9 0 0 0-9 9c0 3.3 1.7 6.2 4.4 7.8-.1.5-.4 1.8-.5 2.2 0 0 0 .2.1.2.1 0 .3 0 .4-.1.7-.5 1.7-1.1 2.4-1.6.8.3 1.7.5 2.6.5 5 0 9-4 9-9s-4-9-9-9z" />
             </svg>
-            <span>Waze</span>
+            <span>Abrir en Waze</span>
           </a>
         </div>
       </div>
     </section>
 
     <!-- Ubicación: Recepción (Fiesta & Banquete) -->
-    <section class="mt-6 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-xs">
-      <!-- Imagen de la recepción via Street View estático -->
-      <div class="relative h-44 w-full overflow-hidden bg-gray-100">
+    <section class="inv-reveal mt-8 overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-xs transition-shadow duration-500 hover:shadow-md">
+      <!-- Fotografía del lugar (Puedes reemplazarla poniendo tu foto en public/images/recepcion.jpg) -->
+      <div class="relative h-52 w-full overflow-hidden bg-gray-900">
         <img
-          src="https://maps.googleapis.com/maps/api/streetview?size=640x320&location=25.5546346,-103.4324767&heading=180&pitch=5&fov=90&key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFmBWY"
-          alt="Vista del Centro de Convenciones San Ángel"
-          class="h-full w-full object-cover"
-          onerror="this.style.display='none'; this.parentElement.classList.add('flex','items-center','justify-center'); this.parentElement.innerHTML='<span class=\'text-xs text-gray-400\'>Torreón, Coahuila</span>'"
+          src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=900&q=85"
+          alt="Centro de Convenciones San Ángel"
+          class="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+          loading="lazy"
         />
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/25"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+        <div class="absolute bottom-4 left-5 right-5 flex items-end justify-between">
+          <div>
+            <span class="block text-[10px] font-semibold tracking-[0.25em] text-white/80 uppercase">
+              Recepción & Banquete
+            </span>
+            <h3 class="mt-0.5 font-serif text-xl font-normal text-white">
+              Centro de Convenciones San Ángel
+            </h3>
+          </div>
+          <span class="rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold text-gray-900 shadow-xs backdrop-blur-xs">
+            19:00 hrs
+          </span>
+        </div>
       </div>
 
       <div class="p-6">
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
-          <div class="flex items-center gap-2">
-            <svg class="h-4 w-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span class="text-[11px] font-semibold tracking-widest text-gray-400 uppercase">Recepción & Fiesta</span>
-          </div>
-          <span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-[11px] font-semibold text-gray-800">19:00 hrs</span>
+        <div class="flex items-start gap-2.5 text-gray-600">
+          <svg class="mt-0.5 h-4 w-4 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <p class="text-xs leading-relaxed text-gray-600">
+            Av. Lerdo de Tejada, Centro, Torreón, Coahuila, C.P. 27100.
+          </p>
         </div>
 
-        <h3 class="mt-4 font-serif text-xl font-bold text-gray-950">
-          Centro de Convenciones San Ángel
-        </h3>
-        <p class="mt-1 text-xs text-gray-500 leading-relaxed">
-          Av. Lerdo de Tejada, Torreón, Coahuila, 27100.
-        </p>
-
-        <!-- Mini mapa estático via OpenStreetMap -->
-        <a
-          href="https://maps.app.goo.gl/YqPAXaNvbj2CnKM49"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="mt-4 block overflow-hidden rounded-xl border border-gray-200 transition hover:opacity-90 active:scale-[0.99]"
-          aria-label="Abrir en Google Maps"
-        >
-          <img
-            src="https://staticmap.openstreetmap.de/staticmap.php?center=25.5546346,-103.4324767&zoom=16&size=640x200&markers=25.5546346,-103.4324767,red-pushpin"
-            alt="Mapa del Centro de Convenciones San Ángel"
-            class="h-36 w-full object-cover"
-            onerror="this.outerHTML='<div class=\'h-36 w-full flex items-center justify-center bg-gray-50 text-xs text-gray-400\'>Ver en Google Maps</div>'"
-          />
-          <div class="flex items-center justify-between bg-gray-50 px-3 py-2">
-            <span class="text-[11px] text-gray-500">Av. Lerdo de Tejada, Torreón, Coah.</span>
-            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </div>
-        </a>
-
-        <div class="mt-3 grid grid-cols-2 gap-3">
+        <!-- Mini mapa interactivo de Google Maps -->
+        <div class="mt-4 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 shadow-2xs">
+          <iframe
+            title="Mapa Centro de Convenciones San Ángel"
+            src="https://maps.google.com/maps?q=25.5546346,-103.4324767&t=&z=16&ie=UTF8&iwloc=&output=embed"
+            class="h-44 w-full border-0"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
           <a
             href="https://maps.app.goo.gl/YqPAXaNvbj2CnKM49"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-xs font-semibold text-gray-800 transition hover:bg-gray-100 active:scale-95"
+            class="flex items-center justify-between border-t border-gray-200/80 bg-gray-50/90 px-3.5 py-2.5 text-[11px] font-medium text-gray-600 transition hover:bg-gray-100"
           >
-            <svg class="h-4 w-4 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+            <span>Ver ubicación exacta en Google Maps</span>
+            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          <a
+            href="https://maps.app.goo.gl/YqPAXaNvbj2CnKM49"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-center gap-2 rounded-xl bg-gray-900 py-2.5 text-xs font-semibold text-white transition hover:bg-black active:scale-95"
+          >
+            <svg class="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
             </svg>
             <span>Google Maps</span>
-        </a>
-        <a
-          href="https://waze.com/ul?ll=25.5546346,-103.4324767&navigate=yes"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-xs font-semibold text-gray-800 transition hover:bg-gray-100 active:scale-95"
-        >
-          <svg class="h-4 w-4 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2a9 9 0 0 0-9 9c0 3.3 1.7 6.2 4.4 7.8-.1.5-.4 1.8-.5 2.2 0 0 0 .2.1.2.1 0 .3 0 .4-.1.7-.5 1.7-1.1 2.4-1.6.8.3 1.7.5 2.6.5 5 0 9-4 9-9s-4-9-9-9z" />
-          </svg>
-          <span>Waze</span>
-        </a>
+          </a>
+          <a
+            href="https://waze.com/ul?ll=25.5546346,-103.4324767&navigate=yes"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50 py-2.5 text-xs font-semibold text-gray-800 transition hover:bg-gray-100 active:scale-95"
+          >
+            <svg class="h-4 w-4 text-sky-600" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2a9 9 0 0 0-9 9c0 3.3 1.7 6.2 4.4 7.8-.1.5-.4 1.8-.5 2.2 0 0 0 .2.1.2.1 0 .3 0 .4-.1.7-.5 1.7-1.1 2.4-1.6.8.3 1.7.5 2.6.5 5 0 9-4 9-9s-4-9-9-9z" />
+            </svg>
+            <span>Abrir en Waze</span>
+          </a>
+        </div>
       </div>
     </section>
 
     <!-- Itinerario / Horarios -->
-    <section class="mt-12 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs">
+    <section class="inv-reveal mt-12 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs">
       <div class="text-center">
-        <span class="text-[11px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Itinerario</span>
-        <h3 class="mt-1 font-serif text-2xl font-normal text-gray-950">El Programa del Día</h3>
-        <div class="mx-auto mt-2 h-px w-10 bg-gray-200"></div>
+        <span class="text-xs font-semibold tracking-[0.25em] text-gray-400 uppercase">Itinerario</span>
+        <h3 class="mt-1.5 font-serif text-2xl sm:text-3xl font-normal text-gray-950">El Programa del Día</h3>
+        <div class="inv-line-grow mx-auto mt-2.5 h-px w-12 bg-gray-300"></div>
       </div>
 
       <ol class="relative mt-8 space-y-6 border-l border-gray-200 ml-4 pl-6">
-        {itineraryList.map((item) => (
-          <li class="relative">
+        {itineraryList.map((item, idx) => (
+          <li class="inv-stagger-item relative" style={`transition-delay: ${idx * 120}ms;`}>
             <!-- Marcador circular -->
-            <span class="absolute -left-[31px] top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-gray-900 shadow-xs">
+            <span class="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-gray-900 shadow-xs transition-transform duration-300 hover:scale-125">
               <span class="h-1.5 w-1.5 rounded-full bg-white"></span>
             </span>
-            <span class="text-[11px] font-bold tracking-wider text-gray-400 uppercase">{item.time}</span>
-            <h4 class="mt-0.5 font-serif text-base font-bold text-gray-900">{item.title}</h4>
-            <p class="mt-0.5 text-xs text-gray-500">{item.desc}</p>
+            <span class="text-xs font-bold tracking-wider text-gray-400 uppercase">{item.time}</span>
+            <h4 class="mt-0.5 font-serif text-lg sm:text-xl font-bold text-gray-900">{item.title}</h4>
+            <p class="mt-0.5 text-sm text-gray-600">{item.desc}</p>
           </li>
         ))}
       </ol>
     </section>
 
     <!-- Código de Vestimenta con Muestrario de Color -->
-    <section class="mt-12 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs">
+    <section class="inv-reveal mt-12 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs">
       <div class="text-center">
-        <span class="text-[11px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Etiqueta</span>
-        <h3 class="mt-1 font-serif text-2xl font-normal text-gray-950">Código de Vestimenta</h3>
-        <div class="mx-auto mt-2 h-px w-10 bg-gray-200"></div>
+        <span class="text-xs font-semibold tracking-[0.25em] text-gray-400 uppercase">Etiqueta</span>
+        <h3 class="mt-1.5 font-serif text-2xl sm:text-3xl font-normal text-gray-950">Código de Vestimenta</h3>
+        <div class="inv-line-grow mx-auto mt-2.5 h-px w-12 bg-gray-300"></div>
       </div>
 
       <div class="mt-5 text-center">
-        <p class="font-serif text-lg font-bold text-gray-900">
+        <p class="font-serif text-xl sm:text-2xl font-bold text-gray-900">
           {event.dress_code || 'Rigurosa Etiqueta / Formal'}
         </p>
-        <p class="mt-2 text-xs text-gray-600 leading-relaxed max-w-sm mx-auto">
+        <p class="mt-2.5 text-sm sm:text-base text-gray-600 leading-relaxed max-w-sm mx-auto">
           Damas: Vestido largo de noche.<br />
           Caballeros: Traje formal oscuro o esmoquin.
         </p>
@@ -325,62 +465,62 @@ const itineraryList = isRicardoKiara
 
       <!-- Paleta de colores recomendada -->
       <div class="mt-6 border-t border-gray-100 pt-5">
-        <span class="block text-center text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
+        <span class="block text-center text-xs font-semibold tracking-wider text-gray-400 uppercase">
           Paleta de Inspiración
         </span>
-        <div class="mt-3 flex justify-center gap-3">
-          <div class="group flex flex-col items-center">
-            <span class="h-8 w-8 rounded-full bg-[#18181b] shadow-xs border border-white"></span>
-            <span class="mt-1 text-[9px] text-gray-500">Negro</span>
+        <div class="mt-3.5 flex justify-center gap-3.5">
+          <div class="inv-stagger-item group flex flex-col items-center" style="transition-delay: 80ms;">
+            <span class="h-9 w-9 rounded-full bg-[#18181b] shadow-xs border border-white transition-transform duration-300 group-hover:scale-110"></span>
+            <span class="mt-1.5 text-[11px] text-gray-600">Negro</span>
           </div>
-          <div class="group flex flex-col items-center">
-            <span class="h-8 w-8 rounded-full bg-[#27382B] shadow-xs border border-white"></span>
-            <span class="mt-1 text-[9px] text-gray-500">Olivo</span>
+          <div class="inv-stagger-item group flex flex-col items-center" style="transition-delay: 150ms;">
+            <span class="h-9 w-9 rounded-full bg-[#27382B] shadow-xs border border-white transition-transform duration-300 group-hover:scale-110"></span>
+            <span class="mt-1.5 text-[11px] text-gray-600">Olivo</span>
           </div>
-          <div class="group flex flex-col items-center">
-            <span class="h-8 w-8 rounded-full bg-[#8C4A32] shadow-xs border border-white"></span>
-            <span class="mt-1 text-[9px] text-gray-500">Terracota</span>
+          <div class="inv-stagger-item group flex flex-col items-center" style="transition-delay: 220ms;">
+            <span class="h-9 w-9 rounded-full bg-[#8C4A32] shadow-xs border border-white transition-transform duration-300 group-hover:scale-110"></span>
+            <span class="mt-1.5 text-[11px] text-gray-600">Terracota</span>
           </div>
-          <div class="group flex flex-col items-center">
-            <span class="h-8 w-8 rounded-full bg-[#1C2D42] shadow-xs border border-white"></span>
-            <span class="mt-1 text-[9px] text-gray-500">Azul</span>
+          <div class="inv-stagger-item group flex flex-col items-center" style="transition-delay: 290ms;">
+            <span class="h-9 w-9 rounded-full bg-[#1C2D42] shadow-xs border border-white transition-transform duration-300 group-hover:scale-110"></span>
+            <span class="mt-1.5 text-[11px] text-gray-600">Azul</span>
           </div>
-          <div class="group flex flex-col items-center">
-            <span class="h-8 w-8 rounded-full bg-[#E5D7C3] shadow-xs border border-white"></span>
-            <span class="mt-1 text-[9px] text-gray-500">Champaña</span>
+          <div class="inv-stagger-item group flex flex-col items-center" style="transition-delay: 360ms;">
+            <span class="h-9 w-9 rounded-full bg-[#E5D7C3] shadow-xs border border-white transition-transform duration-300 group-hover:scale-110"></span>
+            <span class="mt-1.5 text-[11px] text-gray-600">Champaña</span>
           </div>
         </div>
-        <p class="mt-4 text-center text-[11px] font-serif italic text-gray-500">
+        <p class="mt-5 text-center text-sm sm:text-base font-serif italic text-gray-600">
           Rogamos amablemente reservar el color blanco para la novia.
         </p>
       </div>
     </section>
 
     <!-- Protocolo: Evento Sólo Adultos (No Niños) -->
-    <section class="mt-8 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs text-center">
+    <section class="inv-reveal mt-8 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs text-center">
       <div class="flex items-center justify-center gap-2">
         <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
-        <span class="text-[11px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Aviso de Recepción</span>
+        <span class="text-xs font-semibold tracking-[0.25em] text-gray-400 uppercase">Aviso de Recepción</span>
       </div>
-      <h3 class="mt-2 font-serif text-xl font-normal text-gray-950">Evento Sólo para Adultos</h3>
-      <div class="mx-auto mt-2 h-px w-10 bg-gray-200"></div>
-      <p class="mt-3 text-xs leading-relaxed text-gray-600 max-w-sm mx-auto">
+      <h3 class="mt-2 font-serif text-2xl sm:text-3xl font-normal text-gray-950">Evento Sólo para Adultos</h3>
+      <div class="inv-line-grow mx-auto mt-2.5 h-px w-12 bg-gray-300"></div>
+      <p class="mt-3.5 text-sm sm:text-base leading-relaxed text-gray-600 max-w-sm mx-auto">
         Amamos a sus pequeños, sin embargo, para que todos podamos disfrutar al máximo y celebrar esta velada con tranquilidad, nuestra boda será un evento exclusivamente para adultos (no niños).
       </p>
-      <p class="mt-2 text-[11px] font-serif italic text-gray-500">
+      <p class="mt-3 text-sm sm:text-base font-serif italic text-gray-600">
         Agradecemos profundamente su comprensión y cariño.
       </p>
     </section>
 
     <!-- Mesa de Regalos Interactiva -->
-    <section class="mt-12 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs">
+    <section class="inv-reveal mt-12 rounded-2xl border border-gray-200/80 bg-white p-6 shadow-xs">
       <div class="text-center">
-        <span class="text-[11px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Mesa de Regalos</span>
-        <h3 class="mt-1 font-serif text-2xl font-normal text-gray-950">Muestras de Cariño</h3>
-        <div class="mx-auto mt-2 h-px w-10 bg-gray-200"></div>
-        <p class="mt-3 text-xs text-gray-600 leading-relaxed">
+        <span class="text-xs font-semibold tracking-[0.25em] text-gray-400 uppercase">Mesa de Regalos</span>
+        <h3 class="mt-1.5 font-serif text-2xl sm:text-3xl font-normal text-gray-950">Muestras de Cariño</h3>
+        <div class="inv-line-grow mx-auto mt-2.5 h-px w-12 bg-gray-300"></div>
+        <p class="mt-3.5 text-sm sm:text-base text-gray-600 leading-relaxed">
           Tu presencia es nuestro mayor regalo. Si deseas tener un detalle con nosotros, ponemos a tu disposición nuestras opciones:
         </p>
       </div>
@@ -388,7 +528,7 @@ const itineraryList = isRicardoKiara
       <!-- Tarjetas de tiendas -->
       <div class="mt-6 space-y-3">
         <!-- Liverpool -->
-        <div class="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/70 p-4 transition hover:bg-gray-50">
+        <div class="inv-stagger-item flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/70 p-4 transition duration-300 hover:bg-gray-50 hover:shadow-2xs" style="transition-delay: 80ms;">
           <div>
             <span class="font-serif text-base font-bold text-gray-900">Liverpool</span>
             <p class="text-xs text-gray-500">Evento: <span class="font-mono font-medium text-gray-800">5139481</span></p>
@@ -404,7 +544,7 @@ const itineraryList = isRicardoKiara
         </div>
 
         <!-- Amazon -->
-        <div class="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/70 p-4 transition hover:bg-gray-50">
+        <div class="inv-stagger-item flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/70 p-4 transition duration-300 hover:bg-gray-50 hover:shadow-2xs" style="transition-delay: 160ms;">
           <div>
             <span class="font-serif text-base font-bold text-gray-900">Amazon México</span>
             <p class="text-xs text-gray-500">Mesa: <span class="font-medium text-gray-800">{coupleNames.shortTitle}</span></p>
@@ -420,7 +560,7 @@ const itineraryList = isRicardoKiara
         </div>
 
         <!-- Datos Bancarios / Transferencia -->
-        <div class="rounded-xl border border-dashed border-gray-300 bg-amber-50/30 p-4">
+        <div class="inv-stagger-item rounded-xl border border-dashed border-gray-300 bg-amber-50/30 p-4" style="transition-delay: 240ms;">
           <div class="flex items-center justify-between">
             <span class="font-serif text-sm font-bold text-gray-900">Transferencia Bancaria</span>
             <span class="rounded bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">BBVA</span>
@@ -446,13 +586,13 @@ const itineraryList = isRicardoKiara
     </section>
 
     <!-- Confirmación de Asistencia por WhatsApp (Integrada dentro de la Invitación) -->
-    <section class="mt-12 rounded-2xl border border-gray-200/80 bg-white p-7 shadow-xs text-center">
-      <span class="text-[11px] font-semibold tracking-[0.25em] text-gray-400 uppercase">Confirmación</span>
-      <h3 class="mt-1 font-serif text-2xl font-normal text-gray-950">Acompáñanos en Nuestro Día</h3>
-      <div class="mx-auto mt-2 h-px w-10 bg-gray-200"></div>
+    <section class="inv-reveal mt-12 rounded-2xl border border-gray-200/80 bg-white p-7 shadow-xs text-center">
+      <span class="text-xs font-semibold tracking-[0.25em] text-gray-400 uppercase">Confirmación</span>
+      <h3 class="mt-1.5 font-serif text-2xl sm:text-3xl font-normal text-gray-950">Acompáñanos en Nuestro Día</h3>
+      <div class="inv-line-grow mx-auto mt-2.5 h-px w-12 bg-gray-300"></div>
       
-      <p class="mt-4 text-xs leading-relaxed text-gray-600 max-w-sm mx-auto">
-        Tu presencia es fundamental para nosotros. Por favor ayúdanos confirmando tu asistencia antes del 1 de Noviembre de 2026. Recepción exclusivamente para adultos.
+      <p class="mt-4 text-sm sm:text-base leading-relaxed text-gray-600 max-w-sm mx-auto">
+        Tu presencia es fundamental para nosotros. Por favor ayúdanos confirmando tu asistencia antes del 1 de Marzo de 2027. Recepción exclusivamente para adultos.
       </p>
 
       <div class="mt-6 flex justify-center">
@@ -460,7 +600,7 @@ const itineraryList = isRicardoKiara
           href={waUrl}
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#25D366] px-8 py-3.5 text-xs font-bold tracking-wider text-white uppercase shadow-sm transition hover:bg-[#20ba59] active:scale-95"
+          class="btn-whatsapp-glow inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#25D366] px-8 py-4 text-xs sm:text-sm font-bold tracking-wider text-white uppercase shadow-sm transition hover:bg-[#20ba59] active:scale-95"
         >
           <svg class="h-4 w-4 fill-white" viewBox="0 0 24 24">
             <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.074-1.115-.062-.258-.083-.591-.194-1.014-.378-1.785-.776-2.951-2.587-3.04-2.705-.089-.118-.727-.968-.727-1.846 0-.878.46-1.309.624-1.488.164-.179.358-.224.478-.224.12 0 .239.002.343.007.109.005.257-.042.401.305.148.358.508 1.238.552 1.328.045.09.075.194.015.313-.06.12-.089.194-.179.299-.089.105-.187.234-.268.314-.089.09-.182.188-.078.367.104.179.463.764.994 1.237.683.609 1.259.797 1.439.887.179.089.283.074.388-.045.104-.119.447-.522.566-.701.119-.179.239-.149.398-.09.16.06 1.015.478 1.189.565.174.088.291.133.334.208.043.075.043.434-.101.839z" />
@@ -469,10 +609,11 @@ const itineraryList = isRicardoKiara
         </a>
       </div>
 
-      <p class="mt-3 text-[11px] text-gray-400">
+      <p class="mt-3 text-xs text-gray-400">
         Se abrirá una conversación directa con los novios
       </p>
     </section>
+    </div>
 
   </main>
 
@@ -482,6 +623,114 @@ const itineraryList = isRicardoKiara
 </Layout>
 
 <script define:vars={{ targetIsoDate: coupleNames.targetIsoDate }}>
+  // Animación de aparición suave conforme bajas (espera a que bajes más para lucir frente a tus ojos)
+  const revealElements = document.querySelectorAll('.inv-reveal');
+  if ('IntersectionObserver' in window) {
+    // El encabezado principal aparece al instante al abrir la invitación
+    const heroHeader = document.querySelector('header.inv-reveal');
+    if (heroHeader) {
+      requestAnimationFrame(() => heroHeader.classList.add('is-visible'));
+    }
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.28,
+        rootMargin: '0px 0px -18% 0px',
+      }
+    );
+
+    revealElements.forEach((el) => {
+      if (el !== heroHeader) {
+        revealObserver.observe(el);
+      }
+    });
+  } else {
+    revealElements.forEach((el) => el.classList.add('is-visible'));
+  }
+
+  // Animación de difuminado suave entre las 3 fotos principales de portada
+  const heroSlidesEls = document.querySelectorAll('.hero-crossfade-slide');
+  if (heroSlidesEls.length > 1) {
+    let currentHeroIndex = 0;
+    setInterval(() => {
+      const prevEl = heroSlidesEls[currentHeroIndex];
+      currentHeroIndex = (currentHeroIndex + 1) % heroSlidesEls.length;
+      const nextEl = heroSlidesEls[currentHeroIndex];
+
+      if (prevEl) {
+        prevEl.classList.remove('opacity-100', 'scale-100', 'z-10');
+        prevEl.classList.add('opacity-0', 'scale-105', 'z-0');
+      }
+      if (nextEl) {
+        nextEl.classList.remove('opacity-0', 'scale-105', 'z-0');
+        nextEl.classList.add('opacity-100', 'scale-100', 'z-10');
+      }
+    }, 4500);
+  }
+
+  // Mostrar / ocultar opciones de calendario y descargar archivo .ics para iPhone / Calendario nativo
+  const btnToggleCal = document.getElementById('btn-toggle-calendar');
+  const calPanel = document.getElementById('calendar-options-panel');
+  const btnDownloadIcs = document.getElementById('btn-download-ics');
+
+  btnToggleCal?.addEventListener('click', () => {
+    if (!calPanel) return;
+    if (calPanel.classList.contains('hidden')) {
+      calPanel.classList.remove('hidden');
+      calPanel.classList.add('grid');
+    } else {
+      calPanel.classList.add('hidden');
+      calPanel.classList.remove('grid');
+    }
+  });
+
+  btnDownloadIcs?.addEventListener('click', () => {
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Ricardo y Kiara//Invitacion de Boda//ES',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      'UID:boda-ricardo-y-kiara-2027@invitacion',
+      'SUMMARY:Boda de Ricardo & Kiara',
+      'DTSTART:20270402T170000',
+      'DTEND:20270403T020000',
+      'LOCATION:Parroquia de San Pedro Apóstol, Calzada Mónaco 485, Torreón, Coahuila',
+      'DESCRIPTION:Ceremonia Religiosa (17:00 hrs): Parroquia de San Pedro Apóstol. Recepción (19:00 hrs): Centro de Convenciones San Ángel, Torreón.',
+      'STATUS:CONFIRMED',
+      'BEGIN:VALARM',
+      'TRIGGER:-P1D',
+      'ACTION:DISPLAY',
+      'DESCRIPTION:Mañana es la Boda de Ricardo & Kiara',
+      'END:VALARM',
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'boda-ricardo-y-kiara.ics');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    if (window.showInAppToast) {
+      window.showInAppToast('Evento listo para guardar en tu calendario', 'success');
+    }
+  });
+
   // Copiar CLABE al portapapeles
   document.getElementById('btn-copy-clabe')?.addEventListener('click', () => {
     const clabe = '012180015482910294';
