@@ -31,7 +31,7 @@ const { slug } = Astro.props;
         <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="pin-digit h-12 w-12 rounded-xl border border-white/20 bg-white/5 text-center text-xl font-bold text-white focus:border-white focus:bg-white/10 focus:outline-none" />
       </div>
 
-      <p id="pin-error" class="mt-4 hidden text-xs font-semibold text-insta-red"></p>
+      <p id="pin-error" class="mt-4 hidden text-xs font-semibold text-red-400"></p>
 
       <button
         type="submit"
@@ -55,11 +55,15 @@ const { slug } = Astro.props;
 
   // Verificar si ya existe token previo guardado
   const existingToken = localStorage.getItem(STORAGE_KEY);
-  if (existingToken) {
-    pinGate.classList.add('hidden');
+  if (existingToken && !existingToken.startsWith('demo-')) {
+    pinGate?.classList.add('hidden');
     window.dispatchEvent(new CustomEvent('animus-authenticated', { detail: { token: existingToken } }));
   } else {
-    // Si la URL trae el PIN como parámetro (?pin=4821), auto-login
+    // Si era token simulado antiguo, limpiar para autenticar con backend real
+    localStorage.removeItem(STORAGE_KEY);
+    pinGate?.classList.remove('hidden');
+
+    // Si la URL trae el PIN como parametro (?pin=4821), auto-login
     const urlParams = new URLSearchParams(window.location.search);
     const pinParam = urlParams.get('pin');
     if (pinParam && pinParam.length === 4) {
@@ -67,7 +71,7 @@ const { slug } = Astro.props;
     }
   }
 
-  // Manejador de avance automático en los 4 dígitos
+  // Manejador de avance automatico en los 4 digitos
   pinDigits.forEach((input, index) => {
     input.addEventListener('input', (e) => {
       const val = e.target.value.replace(/[^0-9]/g, '');
@@ -76,7 +80,7 @@ const { slug } = Astro.props;
         pinDigits[index + 1].focus();
       }
       if (index === pinDigits.length - 1 && val) {
-        pinForm.requestSubmit();
+        pinForm?.requestSubmit();
       }
     });
 
@@ -88,6 +92,7 @@ const { slug } = Astro.props;
   });
 
   async function attemptEnter(pin) {
+    if (!pinError || !pinSubmitBtn) return;
     pinError.classList.add('hidden');
     pinSubmitBtn.disabled = true;
     pinSubmitBtn.textContent = 'Verificando...';
@@ -106,24 +111,16 @@ const { slug } = Astro.props;
 
       const data = await res.json();
       localStorage.setItem(STORAGE_KEY, data.access_token);
-      pinGate.classList.add('hidden');
+      pinGate?.classList.add('hidden');
       window.dispatchEvent(new CustomEvent('animus-authenticated', { detail: { token: data.access_token } }));
     } catch (err) {
-      // Fallback si la API local no está levantada pero el PIN ingresado es el demo oficial (4821)
-      if (pin === '4821') {
-        const demoToken = 'demo-guest-token-4821';
-        localStorage.setItem(STORAGE_KEY, demoToken);
-        pinGate.classList.add('hidden');
-        window.dispatchEvent(new CustomEvent('animus-authenticated', { detail: { token: demoToken } }));
-        return;
-      }
-
+      localStorage.removeItem(STORAGE_KEY);
       pinError.textContent = err.message === 'Failed to fetch' 
-        ? 'PIN incorrecto o servidor desconectado. (PIN demo: 4821)' 
+        ? 'No se pudo conectar con el servidor (revisa que uvicorn este activo en el puerto 8000).' 
         : (err.message || 'PIN incorrecto. Revisa el centro de mesa.');
       pinError.classList.remove('hidden');
       pinDigits.forEach((d) => (d.value = ''));
-      pinDigits[0].focus();
+      pinDigits[0]?.focus();
     } finally {
       pinSubmitBtn.disabled = false;
       pinSubmitBtn.textContent = 'Entrar';
@@ -139,8 +136,10 @@ const { slug } = Astro.props;
     e.preventDefault();
     const pin = pinDigits.map((d) => d.value).join('');
     if (pin.length < 4) {
-      pinError.textContent = 'Ingresa los 4 dígitos completos.';
-      pinError.classList.remove('hidden');
+      if (pinError) {
+        pinError.textContent = 'Ingresa los 4 dígitos completos.';
+        pinError.classList.remove('hidden');
+      }
       return;
     }
     await attemptEnter(pin);

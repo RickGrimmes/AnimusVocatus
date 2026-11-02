@@ -258,3 +258,23 @@ class AdminDashboardMetrics(BaseModel):
     storage_used_bytes: int
     storage_limit_bytes: int
     storage_usage_percent: float
+
+
+# ---------------------------------------------------------
+# LIBRO DE FIRMAS / DEDICATORIAS
+# ---------------------------------------------------------
+
+class GuestbookMessageCreate(BaseModel):
+    author_name: str = Field(..., min_length=1, max_length=255)
+    message: str = Field(..., min_length=1, max_length=1000)
+
+
+class GuestbookMessageRead(BaseModel):
+    id: uuid.UUID
+    event_id: uuid.UUID
+    author_name: str
+    message: str
+    moderation_status: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+

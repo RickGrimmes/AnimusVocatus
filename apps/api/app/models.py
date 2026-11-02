@@ -167,6 +167,11 @@ class Event(Base):
         back_populates="event",
         cascade="all, delete-orphan",
     )
+    guestbook_messages: Mapped[List["GuestbookMessage"]] = relationship(
+        "GuestbookMessage",
+        back_populates="event",
+        cascade="all, delete-orphan",
+    )
 
 
 class RSVPGuest(Base):
@@ -338,3 +343,44 @@ class ZipJob(Base):
         "Event",
         back_populates="zip_jobs",
     )
+
+
+class GuestbookMessage(Base):
+    __tablename__ = "guestbook_messages"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid,
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+    event_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid,
+        ForeignKey("events.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    author_name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+    message: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+    )
+    moderation_status: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="approved",  # approved, hidden, rejected
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+
+    # Relaciones
+    event: Mapped["Event"] = relationship(
+        "Event",
+        back_populates="guestbook_messages",
+    )
+

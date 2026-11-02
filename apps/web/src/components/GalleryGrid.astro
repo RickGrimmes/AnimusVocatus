@@ -6,16 +6,41 @@ interface Props {
 const { slug } = Astro.props;
 ---
 
-<div id="gallery-container" class="pb-24">
+<div id="gallery-container" class="pb-28">
   
-  <!-- Encabezado estilo Galería Nativa de Teléfono -->
-  <div class="sticky top-0 z-20 flex items-center justify-between border-b border-white/10 bg-[#14161b]/95 px-4 py-3.5 backdrop-blur-md">
-    <div>
-      <h2 id="gallery-counter" class="text-sm font-bold text-white">Cargando galería...</h2>
+  <!-- Encabezado con Contador y Filtros de tipo de medio -->
+  <div class="sticky top-0 z-20 border-b border-white/10 bg-[#14161b]/95 px-4 py-3 backdrop-blur-md">
+    <div class="flex items-center justify-between">
+      <h2 id="gallery-counter" class="text-xs font-bold text-white tracking-wide">Cargando recuerdos...</h2>
+      
+      <button
+        id="btn-play-reels"
+        type="button"
+        class="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white transition hover:bg-white/20 active:scale-95"
+      >
+        <svg class="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <span>Ver Reels</span>
+      </button>
+    </div>
+
+    <!-- Filtros de Contenido (Todos, Fotos, Videos, Voces) -->
+    <div class="mt-2.5 flex items-center gap-1.5 overflow-x-auto text-[11px] pb-1 no-scrollbar">
+      <button type="button" data-filter="" class="filter-btn active rounded-full bg-white px-3 py-1 font-semibold text-black transition">
+        Todos
+      </button>
+      <button type="button" data-filter="photo" class="filter-btn rounded-full bg-white/5 px-3 py-1 font-medium text-gray-400 transition hover:text-white hover:bg-white/10">
+        Fotos
+      </button>
+      <button type="button" data-filter="video" class="filter-btn rounded-full bg-white/5 px-3 py-1 font-medium text-gray-400 transition hover:text-white hover:bg-white/10">
+        Videos
+      </button>
+      <button type="button" data-filter="audio" class="filter-btn rounded-full bg-white/5 px-3 py-1 font-medium text-gray-400 transition hover:text-white hover:bg-white/10">
+        Voces
+      </button>
     </div>
   </div>
 
-  <!-- Cuadrícula 3 columnas estilo galería de fotos de teléfono -->
+  <!-- Cuadrícula 3 columnas estilo galería de fotos -->
   <div id="gallery-grid" class="grid grid-cols-3 gap-0.5 sm:gap-1">
     <!-- Rellenado dinámicamente con JavaScript -->
   </div>
@@ -27,94 +52,58 @@ const { slug } = Astro.props;
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     </div>
-    <h3 class="mt-4 text-sm font-bold text-white">La bóveda está vacía</h3>
-    <p class="mt-1 text-xs text-gray-500">Sé el primero de tu mesa en subir una foto o video.</p>
+    <h3 class="mt-4 text-sm font-bold text-white">No hay recuerdos en esta sección</h3>
+    <p class="mt-1 text-xs text-gray-500">Sé el primero de tu mesa en compartir uno.</p>
   </div>
 
 </div>
 
 <script define:vars={{ slug }}>
   let mediaList = [];
+  let currentFilter = '';
+
   const grid = document.getElementById('gallery-grid');
   const counter = document.getElementById('gallery-counter');
   const emptyState = document.getElementById('gallery-empty');
   const playReelsBtn = document.getElementById('btn-play-reels');
+  const filterBtns = document.querySelectorAll('.filter-btn');
 
-  // Datos mock de demostración si la API aún no tiene fotos subidas
-  const DEMO_MEDIA = [
-    {
-      id: 'demo-1',
-      filename: 'ceremonia.jpg',
-      content_type: 'image/jpeg',
-      guest_author: 'Carlos M.',
-      created_at: 'hace 5 min',
-      url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&auto=format&fit=crop&q=80',
-      thumb_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&auto=format&fit=crop&q=80',
-    },
-    {
-      id: 'demo-2',
-      filename: 'novios_brindis.jpg',
-      content_type: 'image/jpeg',
-      guest_author: 'Sofía G.',
-      created_at: 'hace 12 min',
-      url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1200&auto=format&fit=crop&q=80',
-      thumb_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&auto=format&fit=crop&q=80',
-    },
-    {
-      id: 'demo-3',
-      filename: 'baile.jpg',
-      content_type: 'image/jpeg',
-      guest_author: 'Tía Carmen',
-      created_at: 'hace 20 min',
-      url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1200&auto=format&fit=crop&q=80',
-      thumb_url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=400&auto=format&fit=crop&q=80',
-    },
-    {
-      id: 'demo-4',
-      filename: 'recepcion.jpg',
-      content_type: 'image/jpeg',
-      guest_author: 'Alejandro',
-      created_at: 'hace 35 min',
-      url: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=1200&auto=format&fit=crop&q=80',
-      thumb_url: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?w=400&auto=format&fit=crop&q=80',
-    },
-    {
-      id: 'demo-5',
-      filename: 'anillos.jpg',
-      content_type: 'image/jpeg',
-      guest_author: 'Familia Morales',
-      created_at: 'hace 40 min',
-      url: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=1200&auto=format&fit=crop&q=80',
-      thumb_url: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=400&auto=format&fit=crop&q=80',
-    },
-    {
-      id: 'demo-6',
-      filename: 'pastel.jpg',
-      content_type: 'image/jpeg',
-      guest_author: 'Roberto',
-      created_at: 'hace 1 hora',
-      url: 'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=1200&auto=format&fit=crop&q=80',
-      thumb_url: 'https://images.unsplash.com/photo-1535295972055-1c762f4483e5?w=400&auto=format&fit=crop&q=80',
-    },
-  ];
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach((b) => {
+        b.classList.remove('bg-white', 'text-black', 'font-semibold');
+        b.classList.add('bg-white/5', 'text-gray-400', 'font-medium');
+      });
+      btn.classList.remove('bg-white/5', 'text-gray-400', 'font-medium');
+      btn.classList.add('bg-white', 'text-black', 'font-semibold');
+
+      currentFilter = btn.getAttribute('data-filter') || '';
+      loadFeed();
+    });
+  });
 
   async function loadFeed() {
     try {
-      const res = await fetch(`http://localhost:8000/api/a/${slug}/feed`);
+      const url = currentFilter
+        ? `http://localhost:8000/api/a/${slug}/feed?media_type=${currentFilter}`
+        : `http://localhost:8000/api/a/${slug}/feed`;
+
+      const res = await fetch(url);
       if (res.ok) {
-        const data = await res.json();
-        mediaList = data.length > 0 ? data : DEMO_MEDIA;
+        mediaList = await res.json();
       } else {
-        mediaList = DEMO_MEDIA;
+        mediaList = [];
       }
     } catch {
-      mediaList = DEMO_MEDIA;
+      mediaList = [];
     }
     renderGrid();
   }
 
   function renderGrid() {
+    if (!grid || !counter || !emptyState) return;
     grid.innerHTML = '';
+
     if (mediaList.length === 0) {
       emptyState.classList.remove('hidden');
       counter.textContent = '0 recuerdos';
@@ -126,39 +115,72 @@ const { slug } = Astro.props;
 
     mediaList.forEach((item, index) => {
       const cell = document.createElement('div');
-      cell.className = 'relative aspect-square cursor-pointer overflow-hidden bg-white/5 active:opacity-75';
-
-      const fallbackUrl = DEMO_MEDIA[index % DEMO_MEDIA.length]?.thumb_url || DEMO_MEDIA[0].thumb_url;
-      const imgSrc = (item.thumb_url && !item.thumb_url.includes('mock-r2.local'))
-        ? item.thumb_url
-        : (item.url && !item.url.includes('mock-r2.local'))
-          ? item.url
-          : fallbackUrl;
-
       const isVideo = item.content_type && item.content_type.startsWith('video/');
+      const isAudio = item.content_type && item.content_type.startsWith('audio/');
 
-      cell.innerHTML = `
-        <img src="${imgSrc}" alt="${item.filename}" loading="lazy" onerror="this.src='${fallbackUrl}'" class="h-full w-full object-cover transition duration-300 hover:scale-105" />
-        ${
-          isVideo
-            ? `<div class="absolute right-1.5 top-1.5 rounded-full bg-black/60 p-1 text-white backdrop-blur-sm">
-                <svg class="h-3 w-3 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-               </div>`
-            : ''
+      if (isAudio) {
+        // Celda especial para Notas de Voz
+        cell.className = 'relative aspect-square cursor-pointer overflow-hidden bg-gradient-to-br from-[#2a2418] to-[#121316] border border-amber-500/20 p-2.5 flex flex-col justify-between active:opacity-75 transition hover:border-amber-500/40';
+        cell.innerHTML = `
+          <div class="flex items-center justify-between text-amber-400">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+            </svg>
+            <span class="text-[8px] uppercase font-bold tracking-wider bg-amber-400/20 px-1 py-0.5 rounded text-amber-300">Voz</span>
+          </div>
+          <div class="min-w-0">
+            <p class="text-[10px] font-bold text-white truncate">${item.guest_author || 'Invitado'}</p>
+            <div class="mt-1 flex items-center gap-1 text-[9px] text-amber-300/80">
+              <svg class="h-2.5 w-2.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              <span>Escuchar</span>
+            </div>
+          </div>
+        `;
+
+        cell.addEventListener('click', () => {
+          const audio = new Audio(item.url);
+          audio.play();
+        });
+
+      } else {
+        // Celda de Fotos o Videos
+        cell.className = 'relative aspect-square cursor-pointer overflow-hidden bg-white/5 active:opacity-75';
+
+        if (isVideo) {
+          // Si tiene miniatura WebP generada usar img; si no, video nativo en fotograma 0.5s
+          const mediaHtml = item.thumb_url
+            ? `<img src="${item.thumb_url}" alt="${item.filename}" loading="lazy" class="h-full w-full object-cover transition duration-300 hover:scale-105" />`
+            : `<video src="${item.url}#t=0.5" preload="metadata" muted playsinline class="h-full w-full object-cover pointer-events-none"></video>`;
+
+          cell.innerHTML = `
+            ${mediaHtml}
+            <div class="absolute right-1.5 top-1.5 rounded-full bg-black/60 p-1 text-white backdrop-blur-sm">
+              <svg class="h-3 w-3 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          `;
+        } else {
+          const imgSrc = item.thumb_url || item.url || '';
+          cell.innerHTML = `
+            <img src="${imgSrc}" alt="${item.filename}" loading="lazy" class="h-full w-full object-cover transition duration-300 hover:scale-105" />
+          `;
         }
-      `;
 
-      cell.addEventListener('click', () => {
-        window.dispatchEvent(new CustomEvent('open-reels-viewer', { detail: { mediaList, startIndex: index } }));
-      });
+        cell.addEventListener('click', () => {
+          // Filtrar solo fotos y videos para el reproductor Reels
+          const visualList = mediaList.filter((m) => !m.content_type.startsWith('audio/'));
+          const visualIndex = visualList.findIndex((m) => m.id === item.id);
+          window.dispatchEvent(new CustomEvent('open-reels-viewer', { detail: { mediaList: visualList, startIndex: Math.max(0, visualIndex) } }));
+        });
+      }
 
       grid.appendChild(cell);
     });
   }
 
   playReelsBtn?.addEventListener('click', () => {
-    if (mediaList.length > 0) {
-      window.dispatchEvent(new CustomEvent('open-reels-viewer', { detail: { mediaList, startIndex: 0 } }));
+    const visualList = mediaList.filter((m) => !m.content_type.startsWith('audio/'));
+    if (visualList.length > 0) {
+      window.dispatchEvent(new CustomEvent('open-reels-viewer', { detail: { mediaList: visualList, startIndex: 0 } }));
     }
   });
 

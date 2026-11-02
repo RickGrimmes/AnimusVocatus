@@ -6,185 +6,287 @@ interface Props {
 const { slug } = Astro.props;
 ---
 
-<!-- Botón Flotante de Subida estilo -->
-<button
-  id="open-uploader-fab"
-  type="button"
-  class="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white text-black shadow-2xl transition active:scale-90 hover:bg-gray-200"
-  aria-label="Subir foto o video"
->
-  <svg class="h-6 w-6 stroke-black fill-none" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-  </svg>
-</button>
+<!-- Input de archivos oculto para activacion inmediata -->
+<input
+  type="file"
+  id="global-file-input"
+  multiple
+  accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"
+  class="hidden"
+/>
 
-<!-- Modal de Subida de Fotos y Videos -->
-<div id="uploader-modal" class="fixed inset-0 z-50 hidden bg-black/80 p-4 backdrop-blur-md flex items-end sm:items-center justify-center">
-  <div class="w-full max-w-sm rounded-3xl border border-insta-border bg-insta-dark p-6 shadow-2xl">
-    
-    <div class="flex items-center justify-between border-b border-white/10 pb-4">
-      <div>
-        <span class="text-xs font-semibold tracking-widest text-gray-400 uppercase">Subir Archivos</span>
-        <h3 class="text-base font-bold text-white">Compartir Fotos</h3>
+<!-- Tarjeta Flotante de Estado en Esquina Inferior Derecha (Estilo Momentiia) -->
+<div
+  id="bg-upload-card"
+  data-slug={slug}
+  class="fixed bottom-24 right-4 sm:right-6 z-40 hidden w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-white/10 bg-[#16181d]/95 p-3.5 shadow-2xl backdrop-blur-md text-white transition-all duration-200"
+>
+  <!-- Encabezado de la tarjeta -->
+  <div class="flex items-center justify-between gap-2 cursor-pointer select-none" id="card-header-toggle">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <!-- Indicador animado o icono de completado -->
+      <div id="card-status-icon" class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 text-white">
+        <svg class="h-4 w-4 animate-spin" id="card-spinner" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+        <svg class="h-4 w-4 text-emerald-400 hidden" id="card-check" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+        </svg>
       </div>
-      <button id="close-uploader-btn" type="button" class="rounded-full p-1.5 text-gray-400 hover:text-white">
-        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+
+      <div class="min-w-0">
+        <h4 id="card-summary-title" class="text-xs font-semibold truncate">Subiendo recuerdos...</h4>
+        <div class="mt-1 h-1.5 w-32 rounded-full bg-white/10 overflow-hidden">
+          <div id="card-global-progress" class="h-full bg-white transition-all duration-200" style="width: 10%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-1 shrink-0">
+      <button id="toggle-card-details-btn" type="button" class="rounded p-1 text-gray-400 hover:text-white" aria-label="Expandir">
+        <svg id="card-chevron" class="h-4 w-4 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <button id="close-card-btn" type="button" class="rounded p-1 text-gray-400 hover:text-white" aria-label="Cerrar">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
+  </div>
 
-    <form id="uploader-form" class="mt-4 space-y-4">
-      <div>
-        <label for="author-input" class="block text-xs font-medium text-gray-400">Tu nombre o número de mesa</label>
-        <input
-          type="text"
-          id="author-input"
-          placeholder="Ej: Daniel (Mesa 5)"
-          class="mt-1 w-full rounded-xl border border-white/20 bg-white/5 px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:border-white focus:outline-none"
-        />
-      </div>
+  <!-- Lista desplegable de archivos individuales -->
+  <div id="card-items-list" class="mt-3 max-h-48 overflow-y-auto space-y-2 border-t border-white/5 pt-2.5"></div>
+</div>
 
-      <!-- Zona de arrastre / selección -->
-      <div id="drop-zone" class="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/20 bg-white/5 p-6 text-center cursor-pointer transition hover:border-white/40">
-        <svg class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span class="mt-2 text-xs font-semibold text-white">Toca aquí para seleccionar fotos o videos</span>
-        <span class="mt-1 text-[11px] text-gray-400">Hasta 25 MB por foto y 150 MB por video</span>
-        <input
-          type="file"
-          id="file-input"
-          multiple
-          accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime"
-          class="hidden"
-        />
-      </div>
+<!-- Modal Elegante para Preguntar Nombre de Autor (Solo se muestra si nunca se ha configurado) -->
+<div id="author-prompt-modal" class="fixed inset-0 z-50 hidden bg-black/80 p-4 backdrop-blur-md flex items-center justify-center">
+  <div class="w-full max-w-xs rounded-2xl border border-white/10 bg-[#16181d] p-5 shadow-2xl text-center">
+    <div class="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white">
+      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+    </div>
 
-      <!-- Vista previa de archivos seleccionados -->
-      <div id="selected-files-list" class="max-h-28 overflow-y-auto space-y-1 text-xs text-gray-300"></div>
+    <h3 class="mt-3 text-sm font-bold text-white">¿Quién toma la foto?</h3>
+    <p class="mt-1 text-xs text-gray-400">
+      Tu nombre o número de mesa aparecerá en tus fotos para los anfitriones.
+    </p>
 
-      <!-- Barra de progreso -->
-      <div id="upload-progress-wrapper" class="hidden">
-        <div class="flex justify-between text-[11px] text-gray-400 mb-1">
-          <span id="upload-status-text">Subiendo recuerdos...</span>
-          <span id="upload-percent">0%</span>
-        </div>
-        <div class="h-2 w-full rounded-full bg-white/10 overflow-hidden">
-          <div id="upload-progress-bar" class="h-full bg-white transition-all duration-200" style="width: 0%"></div>
-        </div>
-      </div>
+    <div class="mt-4">
+      <input
+        type="text"
+        id="prompt-author-input"
+        placeholder="Ej: Daniel (Mesa 4)"
+        class="w-full rounded-xl border border-white/20 bg-white/5 px-3 py-2 text-xs text-white placeholder-gray-500 focus:border-white focus:outline-none"
+      />
+    </div>
 
-      <div id="uploader-error-alert" class="hidden rounded-xl bg-red-950/60 border border-red-500/40 p-3 text-xs text-red-300"></div>
+    <div class="mt-4 space-y-2">
+      <button
+        type="button"
+        id="save-author-btn"
+        class="w-full rounded-xl bg-white py-2.5 text-xs font-bold tracking-wider text-black uppercase transition active:scale-95 hover:bg-gray-200"
+      >
+        Guardar y Elegir Fotos
+      </button>
 
       <button
-        type="submit"
-        id="btn-start-upload"
-        disabled
-        class="w-full rounded-xl bg-white py-3 text-xs font-bold tracking-wider text-black uppercase transition active:scale-95 disabled:opacity-30 disabled:pointer-events-none hover:bg-gray-200"
+        type="button"
+        id="skip-author-btn"
+        class="w-full rounded-xl border border-white/10 bg-white/5 py-2 text-xs text-gray-400 transition hover:bg-white/10 hover:text-white"
       >
-        Subir a la Bóveda
+        Subir sin nombre (por 6 horas)
       </button>
-    </form>
-
+    </div>
   </div>
 </div>
 
-<script define:vars={{ slug }}>
-  import { generateClientThumbnail } from '../../lib/canvasThumb';
+<script>
+  import { generateClientThumbnail, generateVideoThumbnail, getVideoDuration } from '../lib/canvasThumb';
 
-  const uploaderModal = document.getElementById('uploader-modal');
-  const openFab = document.getElementById('open-uploader-fab');
-  const closeBtn = document.getElementById('close-uploader-btn');
-  const dropZone = document.getElementById('drop-zone');
-  const fileInput = document.getElementById('file-input');
-  const filesList = document.getElementById('selected-files-list');
-  const authorInput = document.getElementById('author-input');
-  const startBtn = document.getElementById('btn-start-upload');
-  const progressWrapper = document.getElementById('upload-progress-wrapper');
-  const progressBar = document.getElementById('upload-progress-bar');
-  const statusText = document.getElementById('upload-status-text');
-  const percentText = document.getElementById('upload-percent');
-  const errorAlert = document.getElementById('uploader-error-alert');
+  const globalFileInput = document.getElementById('global-file-input') as HTMLInputElement | null;
 
-  let selectedFiles = [];
-
-  // Recuperar autor guardado
-  const savedAuthor = localStorage.getItem('animus_guest_author');
-  if (savedAuthor && authorInput) {
-    authorInput.value = savedAuthor;
+  function notify(msg: string, type: 'info' | 'error' | 'warning' | 'success' = 'info') {
+    if (typeof (window as any).showInAppToast === 'function') {
+      (window as any).showInAppToast(msg, type);
+    }
   }
 
-  openFab?.addEventListener('click', () => {
-    uploaderModal.classList.remove('hidden');
+  const uploadCard = document.getElementById('bg-upload-card');
+  const cardSlug = uploadCard?.getAttribute('data-slug') || 'boda-carlos-y-sofia';
+  const cardSummaryTitle = document.getElementById('card-summary-title');
+  const cardGlobalProgress = document.getElementById('card-global-progress');
+  const cardSpinner = document.getElementById('card-spinner');
+  const cardCheck = document.getElementById('card-check');
+  const cardChevron = document.getElementById('card-chevron');
+  const cardItemsList = document.getElementById('card-items-list');
+  const toggleCardBtn = document.getElementById('toggle-card-details-btn');
+  const closeCardBtn = document.getElementById('close-card-btn');
+  const cardHeaderToggle = document.getElementById('card-header-toggle');
+
+  const authorModal = document.getElementById('author-prompt-modal');
+  const authorInput = document.getElementById('prompt-author-input') as HTMLInputElement | null;
+  const saveAuthorBtn = document.getElementById('save-author-btn');
+  const skipAuthorBtn = document.getElementById('skip-author-btn');
+
+  let isDetailsExpanded = false;
+
+  // 2. Colapso / Expansion de la tarjeta flotante
+  function toggleCardDetails() {
+    isDetailsExpanded = !isDetailsExpanded;
+    if (cardItemsList && cardChevron) {
+      if (isDetailsExpanded) {
+        cardItemsList.classList.remove('hidden');
+        cardChevron.classList.add('rotate-180');
+      } else {
+        cardItemsList.classList.add('hidden');
+        cardChevron.classList.remove('rotate-180');
+      }
+    }
+  }
+
+  toggleCardBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleCardDetails();
   });
 
-  closeBtn?.addEventListener('click', () => {
-    uploaderModal.classList.add('hidden');
+  cardHeaderToggle?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('#close-card-btn')) return;
+    toggleCardDetails();
   });
 
-  dropZone?.addEventListener('click', () => {
-    fileInput.click();
+  closeCardBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    uploadCard?.classList.add('hidden');
   });
 
-  fileInput?.addEventListener('change', (e) => {
-    selectedFiles = Array.from(e.target.files);
-    renderSelectedFiles();
+  // 3. Verificacion de Autor y Apertura de Archivos
+  function canUploadImmediately(): boolean {
+    const savedAuthor = localStorage.getItem('animus_guest_author');
+    if (savedAuthor && savedAuthor.trim().length > 0) {
+      return true;
+    }
+    const anonUntil = localStorage.getItem('animus_anonymous_until');
+    if (anonUntil) {
+      const expiresAt = Number(anonUntil);
+      if (!isNaN(expiresAt) && Date.now() < expiresAt) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function triggerUploadFlow() {
+    // Si ya tiene autor o preferencia anonima valida, abre el selector directo
+    if (canUploadImmediately()) {
+      globalFileInput?.click();
+    } else {
+      authorModal?.classList.remove('hidden');
+      authorInput?.focus();
+    }
+  }
+
+  window.addEventListener('animus-trigger-upload', triggerUploadFlow);
+
+  saveAuthorBtn?.addEventListener('click', () => {
+    const name = authorInput?.value.trim() || 'Invitado';
+    localStorage.setItem('animus_guest_author', name);
+    authorModal?.classList.add('hidden');
+    globalFileInput?.click();
   });
 
-  function renderSelectedFiles() {
-    filesList.innerHTML = '';
-    if (selectedFiles.length === 0) {
-      startBtn.disabled = true;
+  skipAuthorBtn?.addEventListener('click', () => {
+    // Guardar preferencia anonima por 6 horas
+    const sixHoursMs = 6 * 60 * 60 * 1000;
+    localStorage.setItem('animus_anonymous_until', String(Date.now() + sixHoursMs));
+    localStorage.removeItem('animus_guest_author');
+    authorModal?.classList.add('hidden');
+    globalFileInput?.click();
+  });
+
+  // 4. Procesamiento y Subida en Segundo Plano (Estilo Momentiia)
+  globalFileInput?.addEventListener('change', async (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    if (!target.files || target.files.length === 0) return;
+
+    let files = Array.from(target.files);
+    target.value = ''; // Reset para permitir seleccionar los mismos archivos de nuevo
+
+    // Validacion de videos: maximo 30 segundos para Reels
+    const validFiles: File[] = [];
+    for (const f of files) {
+      if (f.type.startsWith('video/')) {
+        const dur = await getVideoDuration(f);
+        if (dur > 30.5) {
+          notify(`El video "${f.name}" dura ${Math.round(dur)}s. El límite para Reels es de máximo 30 segundos.`, 'warning');
+          continue;
+        }
+      }
+      validFiles.push(f);
+    }
+
+    if (validFiles.length === 0) return;
+    files = validFiles;
+
+    const token = localStorage.getItem(`animus_token_${cardSlug}`);
+    if (!token || token.startsWith('demo-')) {
+      const pinGate = document.getElementById('pin-gate');
+      pinGate?.classList.remove('hidden');
       return;
     }
 
-    startBtn.disabled = false;
-    selectedFiles.forEach((file) => {
-      const item = document.createElement('div');
-      item.className = 'flex justify-between items-center py-1 border-b border-white/5';
-      item.innerHTML = `
-        <span class="truncate max-w-[200px]">${file.name}</span>
-        <span class="text-[10px] text-gray-500">${(file.size / (1024 * 1024)).toFixed(1)} MB</span>
-      `;
-      filesList.appendChild(item);
-    });
-  }
+    const currentAuthor = localStorage.getItem('animus_guest_author') || 'Invitado';
 
-  document.getElementById('uploader-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (selectedFiles.length === 0) return;
+    // Mostrar aviso en pila superior y widget de progreso inferior
+    notify('Puedes seguir navegando: la subida continúa sola', 'info');
+    uploadCard?.classList.remove('hidden');
+    if (cardSpinner) cardSpinner.classList.remove('hidden');
+    if (cardCheck) cardCheck.classList.add('hidden');
+    if (cardSummaryTitle) cardSummaryTitle.textContent = `${files.length} ${files.length === 1 ? 'subida en curso...' : 'subidas en curso...'}`;
+    if (cardGlobalProgress) cardGlobalProgress.style.width = '10%';
 
-    errorAlert.classList.add('hidden');
-    startBtn.disabled = true;
-    progressWrapper.classList.remove('hidden');
+    // Poblar lista visual con miniaturas inmediatas
+    if (cardItemsList) {
+      cardItemsList.innerHTML = '';
+      files.forEach((file, index) => {
+        const itemRow = document.createElement('div');
+        itemRow.id = `upload-row-${index}`;
+        itemRow.className = 'flex items-center gap-2.5 text-xs';
 
-    const author = authorInput.value.trim() || 'Invitado';
-    localStorage.setItem('animus_guest_author', author);
+        const previewSrc = file.type.startsWith('image/') ? URL.createObjectURL(file) : '';
+        const previewHtml = previewSrc
+          ? `<img src="${previewSrc}" class="h-8 w-8 rounded-lg object-cover bg-white/10 shrink-0" />`
+          : `<div class="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0 text-gray-400 font-bold text-[10px]">VID</div>`;
 
-    const token = localStorage.getItem(`animus_token_${slug}`);
-    if (!token) {
-      errorAlert.textContent = 'Debes ingresar el PIN de la mesa primero.';
-      errorAlert.classList.remove('hidden');
-      startBtn.disabled = false;
-      return;
+        itemRow.innerHTML = `
+          ${previewHtml}
+          <div class="min-w-0 flex-1">
+            <div class="flex justify-between items-center text-[11px] mb-1">
+              <span class="truncate max-w-[150px] font-medium text-gray-200">${file.name}</span>
+              <span id="row-status-${index}" class="text-[10px] text-gray-400">Subiendo...</span>
+            </div>
+            <div class="h-1 w-full rounded-full bg-white/10 overflow-hidden">
+              <div id="row-progress-${index}" class="h-full bg-amber-400 transition-all duration-200" style="width: 15%"></div>
+            </div>
+          </div>
+        `;
+        cardItemsList.appendChild(itemRow);
+      });
     }
 
     try {
-      statusText.textContent = 'Generando miniaturas en cliente...';
-      percentText.textContent = '10%';
-      progressBar.style.width = '10%';
-
-      // 1. Preparar lista de archivos y miniaturas WebP
-      const filePayloads = selectedFiles.map((f) => ({
+      // 1. Preparar lista de metadatos
+      const filePayloads = files.map((f) => ({
         filename: f.name,
         size_bytes: f.size,
         content_type: f.type,
       }));
 
-      // 2. Pedir URLs prefirmadas a FastAPI
-      statusText.textContent = 'Solicitando enlaces seguros a R2...';
-      const presignedRes = await fetch(`http://localhost:8000/api/a/${slug}/batch-presigned`, {
+      // 2. Solicitar enlace de subida
+      const presignedRes = await fetch(`http://localhost:8000/api/a/${cardSlug}/batch-presigned`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -194,90 +296,131 @@ const { slug } = Astro.props;
       });
 
       if (!presignedRes.ok) {
-        const err = await presignedRes.json().catch(() => ({ detail: 'Error solicitando subida' }));
-        throw new Error(err.detail || 'Fallo al solicitar almacenamiento');
+        throw new Error('No fue posible preparar la subida a la bóveda');
       }
 
       const { items } = await presignedRes.json();
 
-      // 3. Subir cada archivo directamente a R2 via HTTP PUT
-      for (let i = 0; i < selectedFiles.length; i++) {
-        const file = selectedFiles[i];
-        const presignedItem = items[i];
+      // 3. Subir mediante cola concurrente (2 archivos en paralelo) con Cache-Control
+      const CONCURRENCY_LIMIT = 2;
+      let completedCount = 0;
 
-        statusText.textContent = `Subiendo archivo ${i + 1} de ${selectedFiles.length}...`;
-        const percent = Math.round(20 + ((i + 1) / selectedFiles.length) * 60);
-        percentText.textContent = `${percent}%`;
-        progressBar.style.width = `${percent}%`;
+      async function uploadSingleFile(index: number) {
+        const file = files[index];
+        const presigned = items[index];
+        const rowProgress = document.getElementById(`row-progress-${index}`);
+        const rowStatus = document.getElementById(`row-status-${index}`);
 
-        // Subir archivo original
-        await fetch(presignedItem.upload_url, {
+        if (rowProgress) rowProgress.style.width = '30%';
+
+        // Subir archivo original directamente con almacenamiento permanente
+        await fetch(presigned.upload_url, {
           method: 'PUT',
-          headers: { 'Content-Type': file.type },
+          headers: {
+            'Content-Type': file.type,
+            'Cache-Control': 'public, max-age=31536000, immutable',
+          },
           body: file,
         });
 
-        // Subir miniatura WebP si es imagen
-        if (file.type.startsWith('image/') && presignedItem.thumb_upload_url) {
+        if (rowProgress) rowProgress.style.width = '65%';
+
+        // Generar y subir miniatura WebP tanto para fotos como para videos
+        if (presigned.thumb_upload_url) {
           try {
-            const thumbBlob = await generateClientThumbnail(file, 400, 0.8);
-            await fetch(presignedItem.thumb_upload_url, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'image/webp' },
-              body: thumbBlob,
-            });
+            let thumbBlob: Blob | null = null;
+            if (file.type.startsWith('image/')) {
+              thumbBlob = await generateClientThumbnail(file, 400, 0.8);
+            } else if (file.type.startsWith('video/')) {
+              thumbBlob = await generateVideoThumbnail(file, 400, 0.8);
+            }
+
+            if (thumbBlob) {
+              await fetch(presigned.thumb_upload_url, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'image/webp',
+                  'Cache-Control': 'public, max-age=31536000, immutable',
+                },
+                body: thumbBlob,
+              });
+            }
           } catch (tErr) {
             console.warn('Miniatura omitida:', tErr);
           }
         }
 
-        // 4. Asentar en la base de datos
-        await fetch(`http://localhost:8000/api/a/${slug}/media/confirm`, {
+        if (rowProgress) rowProgress.style.width = '85%';
+
+        // Confirmar en la base de datos
+        await fetch(`http://localhost:8000/api/a/${cardSlug}/media/confirm`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            id: presignedItem.file_id,
-            r2_key: presignedItem.r2_key,
-            thumb_r2_key: presignedItem.thumb_r2_key,
+            id: presigned.file_id,
+            r2_key: presigned.r2_key,
+            thumb_r2_key: presigned.thumb_r2_key,
             filename: file.name,
             content_type: file.type,
             size_bytes: file.size,
-            guest_author: author,
+            guest_author: currentAuthor,
           }),
         });
+
+        if (rowProgress) {
+          rowProgress.style.width = '100%';
+          rowProgress.classList.remove('bg-amber-400');
+          rowProgress.classList.add('bg-emerald-400');
+        }
+        if (rowStatus) {
+          rowStatus.textContent = 'Listo';
+          rowStatus.classList.add('text-emerald-400');
+        }
+
+        completedCount++;
+        const globalPct = Math.round((completedCount / files.length) * 100);
+        if (cardGlobalProgress) cardGlobalProgress.style.width = `${globalPct}%`;
+        if (cardSummaryTitle) {
+          cardSummaryTitle.textContent = `${completedCount} de ${files.length} completadas...`;
+        }
       }
 
-      // Finalizado
-      progressBar.style.width = '100%';
-      percentText.textContent = '100%';
-      statusText.textContent = 'Recuerdos compartidos exitosamente!';
+      // Ejecutar trabajadores en paralelo
+      const queue = files.map((_, idx) => idx);
+      const workers = Array.from({ length: Math.min(CONCURRENCY_LIMIT, files.length) }, async () => {
+        while (queue.length > 0) {
+          const nextIndex = queue.shift();
+          if (nextIndex !== undefined) {
+            await uploadSingleFile(nextIndex);
+          }
+        }
+      });
 
+      await Promise.all(workers);
+
+      // Finalizado exitoso
+      if (cardSpinner) cardSpinner.classList.add('hidden');
+      if (cardCheck) cardCheck.classList.remove('hidden');
+      if (cardSummaryTitle) cardSummaryTitle.textContent = `${files.length} ${files.length === 1 ? 'subida completada' : 'subidas completadas'}`;
+
+      notify(`${files.length} ${files.length === 1 ? 'recuerdo guardado' : 'recuerdos guardados'} en la bóveda`, 'success');
+
+      // Notificar a la galeria para refrescar sin recargar la pagina
+      window.dispatchEvent(new CustomEvent('animus-media-uploaded'));
+
+      // Auto-ocultar la tarjeta tras 5 segundos de exito
       setTimeout(() => {
-        uploaderModal.classList.add('hidden');
-        progressWrapper.classList.add('hidden');
-        selectedFiles = [];
-        renderSelectedFiles();
-        window.dispatchEvent(new CustomEvent('animus-media-uploaded'));
-      }, 1000);
+        uploadCard?.classList.add('hidden');
+      }, 5000);
 
     } catch (err) {
-      console.warn('Simulando subida local para prueba de interfaz:', err);
-      // Fallback para permitir probar la UI aun sin Cloudflare R2 real conectado
-      progressBar.style.width = '100%';
-      percentText.textContent = '100%';
-      statusText.textContent = 'Subida simulada con exito!';
-      setTimeout(() => {
-        uploaderModal.classList.add('hidden');
-        progressWrapper.classList.add('hidden');
-        selectedFiles = [];
-        renderSelectedFiles();
-        window.dispatchEvent(new CustomEvent('animus-media-uploaded'));
-      }, 800);
-    } finally {
-      startBtn.disabled = false;
+      console.error('Detalle durante la subida en segundo plano:', err);
+      if (cardSummaryTitle) cardSummaryTitle.textContent = 'Hubo un detalle al subir recuerdos';
+      if (cardSpinner) cardSpinner.classList.add('hidden');
+      notify('No se pudieron subir algunos recuerdos. Por favor intenta de nuevo.', 'error');
     }
   });
 </script>

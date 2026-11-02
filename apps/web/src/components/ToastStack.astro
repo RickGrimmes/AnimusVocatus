@@ -1,0 +1,234 @@
+---
+// apps/web/src/components/ToastStack.astro
+// Sistema de notificaciones en pila (Stacked Toast Deck) estilo Momentiia
+// Muestra hasta 3 mensajes superpuestos uno encima del otro con efecto de profundidad y tarjetas apiladas.
+---
+
+<div
+  id="animus-toast-container"
+  class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] pointer-events-none flex flex-col items-center w-full max-w-sm px-4 select-none"
+  aria-live="polite"
+>
+  <div id="animus-toast-stack" class="relative w-full flex flex-col items-center h-14">
+    <!-- Las tarjetas se generan dinámicamente y se apilan con transformaciones CSS -->
+  </div>
+</div>
+
+<style is:global>
+  .animus-toast-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    pointer-events: auto;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: top center;
+    will-change: transform, opacity;
+  }
+</style>
+
+<script>
+  interface ToastItem {
+    id: string;
+    message: string;
+    type: 'error' | 'warning' | 'success' | 'info';
+    duration: number;
+    timer?: ReturnType<typeof setTimeout>;
+    element?: HTMLElement;
+  }
+
+  const MAX_VISIBLE_TOASTS = 3;
+  const activeToasts: ToastItem[] = [];
+
+  function getToastContainer(): HTMLElement | null {
+    return document.getElementById('animus-toast-stack');
+  }
+
+  function getIconHtml(type: ToastItem['type']): string {
+    switch (type) {
+      case 'error':
+      case 'warning':
+        return `
+          <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-500 text-white shadow-sm">
+            <svg class="h-3 w-3 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 18c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+        `;
+      case 'success':
+        return `
+          <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
+            <svg class="h-3 w-3 stroke-[3]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        `;
+      case 'info':
+      default:
+        return `
+          <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-400 text-black shadow-sm">
+            <svg class="h-3 w-3 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        `;
+    }
+  }
+
+  function getCardClasses(type: ToastItem['type']): string {
+    switch (type) {
+      case 'error':
+        return 'bg-[#211115]/95 text-rose-100 border-rose-500/30 shadow-[0_12px_30px_-5px_rgba(244,63,94,0.25)]';
+      case 'warning':
+        return 'bg-[#241a12]/95 text-amber-100 border-amber-500/30 shadow-[0_12px_30px_-5px_rgba(245,158,11,0.25)]';
+      case 'success':
+        return 'bg-[#102219]/95 text-emerald-100 border-emerald-500/30 shadow-[0_12px_30px_-5px_rgba(16,185,129,0.25)]';
+      case 'info':
+      default:
+        return 'bg-[#1b1d24]/95 text-gray-100 border-white/15 shadow-[0_12px_30px_-5px_rgba(0,0,0,0.5)]';
+    }
+  }
+
+  function updateStackPositions() {
+    const stack = getToastContainer();
+    if (!stack) return;
+
+    activeToasts.forEach((item, index) => {
+      if (!item.element) return;
+
+      if (index >= MAX_VISIBLE_TOASTS) {
+        // Fuera de los 3 visibles: ocultar y preparar eliminación
+        item.element.style.transform = `translateY(${index * 12}px) scale(${1 - index * 0.05})`;
+        item.element.style.opacity = '0';
+        item.element.style.pointerEvents = 'none';
+        item.element.style.zIndex = '1';
+        return;
+      }
+
+      // Efecto de tarjetas apiladas (Deck)
+      // index 0: frente (más reciente)
+      // index 1: segundo plano
+      // index 2: tercer plano
+      const translateY = index * 10; // 0px, 10px, 20px
+      const scale = 1 - index * 0.05; // 1.0, 0.95, 0.90
+      const opacity = 1 - index * 0.18; // 1.0, 0.82, 0.64
+      const zIndex = 30 - index * 10; // 30, 20, 10
+
+      item.element.style.transform = `translateY(${translateY}px) scale(${scale})`;
+      item.element.style.opacity = String(opacity);
+      item.element.style.zIndex = String(zIndex);
+      item.element.style.pointerEvents = index === 0 ? 'auto' : 'none';
+    });
+  }
+
+  function removeToast(id: string) {
+    const idx = activeToasts.findIndex((t) => t.id === id);
+    if (idx === -1) return;
+
+    const item = activeToasts[idx];
+    if (item.timer) clearTimeout(item.timer);
+
+    if (item.element) {
+      item.element.style.transform = 'translateY(-16px) scale(0.92)';
+      item.element.style.opacity = '0';
+      setTimeout(() => {
+        item.element?.remove();
+      }, 350);
+    }
+
+    activeToasts.splice(idx, 1);
+    updateStackPositions();
+  }
+
+  function addToast(message: string, type: ToastItem['type'] = 'info', duration = 4500) {
+    const stack = getToastContainer();
+    if (!stack) return;
+
+    const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const cardEl = document.createElement('div');
+    cardEl.id = id;
+    cardEl.className = `animus-toast-card flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-xs font-medium backdrop-blur-xl ${getCardClasses(type)}`;
+
+    cardEl.innerHTML = `
+      <div class="flex items-center gap-2.5 min-w-0 flex-1">
+        ${getIconHtml(type)}
+        <span class="truncate-2-lines leading-snug">${message}</span>
+      </div>
+      <button
+        type="button"
+        class="ml-2 rounded-full p-1 opacity-60 transition hover:opacity-100 hover:bg-white/10 shrink-0"
+        aria-label="Cerrar"
+      >
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    `;
+
+    // Clic para cerrar manualmente
+    const closeBtn = cardEl.querySelector('button');
+    closeBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeToast(id);
+    });
+
+    const toastItem: ToastItem = {
+      id,
+      message,
+      type,
+      duration,
+      element: cardEl,
+      timer: setTimeout(() => {
+        removeToast(id);
+      }, duration),
+    };
+
+    // Añadir al inicio de la pila (el más reciente siempre va al frente)
+    activeToasts.unshift(toastItem);
+
+    // Insertar en el DOM
+    stack.appendChild(cardEl);
+
+    // Ajustar posiciones de toda la pila
+    updateStackPositions();
+
+    // Si excede el límite máximo de memoria, limpiar los más antiguos
+    while (activeToasts.length > MAX_VISIBLE_TOASTS + 1) {
+      const oldest = activeToasts.pop();
+      if (oldest) {
+        if (oldest.timer) clearTimeout(oldest.timer);
+        oldest.element?.remove();
+      }
+    }
+  }
+
+  // Interfaz pública accesible globalmente
+  (window as any).showInAppToast = addToast;
+
+  // Compatibilidad universal con llamadas existentes
+  (window as any).showInAppNotice = function (msg: string, isErrorOrDuration?: boolean | number, typeStr?: string) {
+    let type: ToastItem['type'] = 'info';
+    let duration = 4500;
+
+    if (typeof isErrorOrDuration === 'boolean') {
+      type = isErrorOrDuration ? 'error' : 'info';
+    } else if (typeof isErrorOrDuration === 'number') {
+      duration = isErrorOrDuration;
+    }
+
+    if (typeStr && ['error', 'warning', 'success', 'info'].includes(typeStr)) {
+      type = typeStr as ToastItem['type'];
+    }
+
+    addToast(msg, type, duration);
+  };
+
+  // Listener para eventos del sistema
+  window.addEventListener('animus-toast', ((e: CustomEvent) => {
+    if (e.detail && e.detail.message) {
+      addToast(e.detail.message, e.detail.type || 'info', e.detail.duration || 4500);
+    }
+  }) as EventListener);
+</script>

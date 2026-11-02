@@ -64,6 +64,7 @@ class StorageService:
                 "Bucket": settings.R2_BUCKET_NAME,
                 "Key": r2_key,
                 "ContentType": content_type,
+                "CacheControl": "public, max-age=31536000, immutable",
             },
             ExpiresIn=expires_in,
         )

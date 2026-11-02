@@ -43,3 +43,9 @@ Esta skill define los patrones de interfaz de usuario, animaciones, estilos y co
 ## 4. Optimizacion de Rendimiento Movil
 - Generar miniatura en `OffscreenCanvas` antes de subir.
 - Mantener en memoria solo las diapositivas contiguas (+1 y -1) del visor de Reels para prevenir consumo excesivo de RAM en Safari iOS / Chrome Android.
+
+## 5. Experiencia de Mensajería y Lenguaje de Producto
+- Todos los mensajes, avisos, estados de carga y validaciones deben presentarse de forma visual dentro de la propia interfaz (toasts flotantes, banners superiores o modales integrados).
+- Queda estrictamente prohibido el uso de ventanas de alerta nativas del navegador (`alert`, `confirm`) o mensajes con jerga técnica o nombres de infraestructura externa.
+- La comunicación se formula siempre desde la perspectiva del producto y la experiencia del invitado: recuerdos, fotos, videos, notas de voz, la bóveda y dedicatorias.
+- Prohibición absoluta de emojis en cualquier componente, interfaz, mensaje o documentación.

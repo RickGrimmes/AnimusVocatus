@@ -1,0 +1,106 @@
+---
+interface Props {
+  activeTab?: string;
+}
+
+const { activeTab = 'home' } = Astro.props;
+---
+
+<!-- Barra de navegacion inferior fija estilo Momentiia / Instagram -->
+<nav
+  id="vault-dock-bar"
+  class="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-[#16181d]/95 backdrop-blur-md px-2 py-1.5 transition-transform duration-200"
+  aria-label="Navegación principal de la bóveda"
+>
+  <div class="mx-auto flex max-w-md items-center justify-around">
+    
+    <!-- 1. Inicio -->
+    <button
+      type="button"
+      data-tab="home"
+      class="dock-item flex flex-col items-center justify-center py-1 px-2.5 text-white transition active:scale-95"
+    >
+      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+      <span class="mt-1 text-[10px] font-medium tracking-tight">Inicio</span>
+    </button>
+
+    <!-- 2. Álbum -->
+    <button
+      type="button"
+      data-tab="album"
+      class="dock-item flex flex-col items-center justify-center py-1 px-2.5 text-gray-400 transition hover:text-white active:scale-95"
+    >
+      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <span class="mt-1 text-[10px] font-medium tracking-tight">Álbum</span>
+    </button>
+
+    <!-- 3. Subir (+ Central Prominente) -->
+    <button
+      type="button"
+      id="dock-upload-btn"
+      class="flex -translate-y-3 flex-col items-center justify-center rounded-full bg-white p-3.5 text-black shadow-2xl transition active:scale-90 hover:bg-gray-200"
+      aria-label="Subir foto o video"
+    >
+      <svg class="h-6 w-6 stroke-black fill-none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+      </svg>
+    </button>
+
+    <!-- 4. Mensajes (Libro de firmas) -->
+    <button
+      type="button"
+      data-tab="messages"
+      class="dock-item flex flex-col items-center justify-center py-1 px-2.5 text-gray-400 transition hover:text-white active:scale-95"
+    >
+      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+      </svg>
+      <span class="mt-1 text-[10px] font-medium tracking-tight">Mensajes</span>
+    </button>
+
+    <!-- 5. Voces (Notas de audio) -->
+    <button
+      type="button"
+      data-tab="voices"
+      class="dock-item flex flex-col items-center justify-center py-1 px-2.5 text-gray-400 transition hover:text-white active:scale-95"
+    >
+      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+      </svg>
+      <span class="mt-1 text-[10px] font-medium tracking-tight">Voces</span>
+    </button>
+
+  </div>
+</nav>
+
+<script>
+  const dockItems = document.querySelectorAll('.dock-item');
+  const dockUploadBtn = document.getElementById('dock-upload-btn');
+
+  // Disparar flujo de subida desde el boton central del dock
+  dockUploadBtn?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('animus-trigger-upload'));
+  });
+
+  dockItems.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tab = btn.getAttribute('data-tab');
+      if (!tab) return;
+
+      // Actualizar estado activo en la barra
+      dockItems.forEach((b) => {
+        b.classList.remove('text-white');
+        b.classList.add('text-gray-400');
+      });
+      btn.classList.remove('text-gray-400');
+      btn.classList.add('text-white');
+
+      // Notificar cambio de tab a las secciones
+      window.dispatchEvent(new CustomEvent('animus-tab-changed', { detail: { tab } }));
+    });
+  });
+</script>

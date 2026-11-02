@@ -1,0 +1,457 @@
+---
+// apps/web/src/components/VoiceNotesWall.astro
+// Muro de Notas de Voz de Invitados (Aevum / Animus & Vocatus)
+// Diseno propio sobrio y editorial con reproduccion continua "Reproducir todas",
+// tarjetas individuales con ondas sonoras interactivas y reacciones.
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<div class="space-y-4 px-4 pt-2 pb-24 text-white" id="voice-notes-wall" data-slug={slug}>
+
+  <!-- 1. Boton Principal Prominente para Grabar Nota de Voz -->
+  <button
+    type="button"
+    id="wall-record-voice-btn"
+    class="w-full flex items-center justify-center gap-2.5 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 py-3.5 px-4 text-xs font-semibold tracking-wider text-white uppercase shadow-lg backdrop-blur-md transition-all active:scale-[0.98]"
+  >
+    <svg class="h-4 w-4 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+    </svg>
+    <span>Grabar Nota de Voz</span>
+  </button>
+
+  <!-- 2. Tarjeta Destacada "Reproducir todas" (Reproduccion Continua) -->
+  <div
+    id="play-all-card"
+    class="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-[#16181d]/90 p-3.5 backdrop-blur-md shadow-xl transition-all"
+  >
+    <div class="flex items-center gap-3 min-w-0">
+      <button
+        type="button"
+        id="btn-play-all-toggle"
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-black shadow-md transition active:scale-90 hover:bg-gray-200"
+        aria-label="Reproducir todas las notas de voz"
+      >
+        <!-- Icono Play -->
+        <svg id="play-all-icon-play" class="h-4 w-4 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+        <!-- Icono Pausa -->
+        <svg id="play-all-icon-pause" class="h-4 w-4 hidden" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+        </svg>
+      </button>
+
+      <div class="min-w-0">
+        <h4 id="play-all-label" class="text-xs font-bold text-white tracking-wide truncate">Reproducir todas</h4>
+        <span id="play-all-count" class="text-[11px] text-gray-400 font-mono">0 notas guardadas</span>
+      </div>
+    </div>
+
+    <!-- Indicador de reproduccion continua -->
+    <div id="play-all-live-badge" class="hidden items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[10px] font-medium text-emerald-400 shrink-0">
+      <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>Secuencia activa</span>
+    </div>
+  </div>
+
+  <!-- 3. Lista de Notas de Voz Individuales -->
+  <div id="voices-cards-container" class="space-y-3">
+    <!-- Estado de carga -->
+    <div class="py-12 text-center text-xs text-gray-400">
+      <svg class="h-5 w-5 animate-spin mx-auto text-gray-500 mb-2" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+      </svg>
+      <span>Cargando notas de voz de los invitados...</span>
+    </div>
+  </div>
+
+  <!-- Estado Vacio -->
+  <div id="voices-empty-state" class="hidden py-14 text-center rounded-2xl border border-white/5 bg-white/[0.02] p-6">
+    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white/5 text-gray-500 mb-3">
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+      </svg>
+    </div>
+    <h3 class="text-sm font-bold text-white">Sin notas de voz todavía</h3>
+    <p class="mt-1 text-xs text-gray-400 max-w-xs mx-auto">
+      Sé el primero de tu mesa en dejar una felicitación o mensaje de audio para los anfitriones.
+    </p>
+  </div>
+
+</div>
+
+<script define:vars={{ slug }}>
+  const wallContainer = document.getElementById('voice-notes-wall');
+  const cardsContainer = document.getElementById('voices-cards-container');
+  const emptyState = document.getElementById('voices-empty-state');
+  const playAllBtn = document.getElementById('btn-play-all-toggle');
+  const playAllIconPlay = document.getElementById('play-all-icon-play');
+  const playAllIconPause = document.getElementById('play-all-icon-pause');
+  const playAllCount = document.getElementById('play-all-count');
+  const playAllBadge = document.getElementById('play-all-live-badge');
+  const recordVoiceBtn = document.getElementById('wall-record-voice-btn');
+
+  let audioItems = [];
+  let isPlayingAll = false;
+  let currentPlayAllIndex = 0;
+  let currentlyPlayingAudio = null;
+
+  recordVoiceBtn?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-voice-recorder'));
+  });
+
+  // Generador de alturas de onda fija deterministica segun el id de audio
+  function getWavePattern(seedStr) {
+    const bars = 28;
+    const heights = [];
+    let hash = 0;
+    for (let i = 0; i < seedStr.length; i++) {
+      hash = (hash << 5) - hash + seedStr.charCodeAt(i);
+      hash |= 0;
+    }
+    for (let i = 0; i < bars; i++) {
+      const val = Math.abs(Math.sin(hash + i * 1.3)) * 18 + 4;
+      heights.push(Math.round(val));
+    }
+    return heights;
+  }
+
+  function formatTime(sec) {
+    if (isNaN(sec) || sec < 0) return '0:00';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  }
+
+  async function loadVoices() {
+    if (!cardsContainer) return;
+    try {
+      const res = await fetch(`http://localhost:8000/api/a/${slug}/feed?media_type=audio`);
+      if (res.ok) {
+        audioItems = await res.json();
+        renderVoiceCards();
+      } else {
+        renderVoiceCards();
+      }
+    } catch (err) {
+      console.warn('Error al cargar notas de voz:', err);
+      renderVoiceCards();
+    }
+  }
+
+  function renderVoiceCards() {
+    if (!cardsContainer || !emptyState) return;
+    cardsContainer.innerHTML = '';
+
+    if (!audioItems || audioItems.length === 0) {
+      emptyState.classList.remove('hidden');
+      if (playAllCount) playAllCount.textContent = '0 notas guardadas';
+      return;
+    }
+
+    emptyState.classList.add('hidden');
+    if (playAllCount) {
+      playAllCount.textContent = `${audioItems.length} ${audioItems.length === 1 ? 'nota guardada' : 'notas guardadas'}`;
+    }
+
+    audioItems.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.id = `voice-card-${item.id}`;
+      card.className = 'voice-note-card rounded-2xl border border-white/10 bg-[#16181d]/90 p-4 backdrop-blur-md transition-all space-y-3';
+
+      const author = item.guest_author || 'Invitado';
+      const initial = author.charAt(0).toUpperCase() || 'I';
+
+      const dateStr = item.created_at ? new Date(item.created_at).toLocaleDateString('es-MX', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }) : 'Recién grabado';
+
+      const wavePattern = getWavePattern(item.id || String(index));
+      const waveBarsHtml = wavePattern
+        .map((h, i) => `<span class="wave-bar-item inline-block w-1 rounded-full bg-white/20 transition-all duration-150" style="height: ${h}px;" data-bar="${i}"></span>`)
+        .join('');
+
+      card.innerHTML = `
+        <!-- Cabecera de la tarjeta: autor, fecha y agrado -->
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-400/10 border border-amber-400/25 text-amber-300 font-bold text-xs select-none">
+              ${initial}
+            </div>
+            <div class="min-w-0">
+              <h5 class="text-xs font-bold text-white truncate tracking-wide">${author}</h5>
+              <span class="text-[10px] text-gray-400 font-mono">${dateStr}</span>
+            </div>
+          </div>
+
+          <!-- Boton de Me Gusta -->
+          <button
+            type="button"
+            class="voice-like-btn flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium text-gray-400 border border-white/10 transition hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10 active:scale-95"
+          >
+            <svg class="h-3.5 w-3.5 text-rose-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <span class="like-counter">1</span>
+          </button>
+        </div>
+
+        <!-- Reproductor de audio con onda visual estilizada -->
+        <div class="flex items-center gap-3 pt-1">
+          <!-- Boton Play / Pause Individual -->
+          <button
+            type="button"
+            class="btn-toggle-note-audio flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition active:scale-90"
+            aria-label="Reproducir nota"
+          >
+            <svg class="icon-play h-4 w-4 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <svg class="icon-pause h-4 w-4 hidden" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+            </svg>
+          </button>
+
+          <!-- Barra de ondas sonoras -->
+          <div class="flex-1 flex items-center justify-between gap-0.5 h-7 px-1 cursor-pointer select-none wave-track">
+            ${waveBarsHtml}
+          </div>
+
+          <!-- Tiempo actual / duracion -->
+          <div class="text-right shrink-0">
+            <span class="note-time-label text-[10px] font-mono text-gray-400">0:00</span>
+          </div>
+        </div>
+
+        <!-- Elemento de audio nativo oculto -->
+        <audio src="${item.url}" preload="metadata" class="hidden-audio-el hidden"></audio>
+      `;
+
+      // Logica de reproduccion individual
+      const audioEl = card.querySelector('.hidden-audio-el');
+      const toggleBtn = card.querySelector('.btn-toggle-note-audio');
+      const iconPlay = card.querySelector('.icon-play');
+      const iconPause = card.querySelector('.icon-pause');
+      const timeLabel = card.querySelector('.note-time-label');
+      const waveBars = card.querySelectorAll('.wave-bar-item');
+      const likeBtn = card.querySelector('.voice-like-btn');
+      const waveTrack = card.querySelector('.wave-track');
+
+      // Accion de me gusta sin notificaciones emergentes
+      let isLiked = false;
+      likeBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        isLiked = !isLiked;
+        const countSpan = likeBtn.querySelector('.like-counter');
+        if (countSpan) countSpan.textContent = isLiked ? '2' : '1';
+        if (isLiked) {
+          likeBtn.classList.add('bg-rose-500/20', 'border-rose-500/40', 'text-rose-400');
+        } else {
+          likeBtn.classList.remove('bg-rose-500/20', 'border-rose-500/40', 'text-rose-400');
+        }
+      });
+
+      function getDuration() {
+        if (audioEl && audioEl.duration && isFinite(audioEl.duration) && audioEl.duration > 0) {
+          return audioEl.duration;
+        }
+        return 0;
+      }
+
+      function updateIdleTime() {
+        const dur = getDuration();
+        if (timeLabel) {
+          timeLabel.textContent = dur > 0 ? formatTime(dur) : '0:00';
+        }
+      }
+
+      // Metadatos de audio
+      audioEl?.addEventListener('loadedmetadata', () => {
+        if (audioEl.duration === Infinity) {
+          audioEl.currentTime = 1e101;
+          audioEl.ontimeupdate = () => {
+            audioEl.ontimeupdate = null;
+            audioEl.currentTime = 0;
+            updateIdleTime();
+          };
+        } else {
+          updateIdleTime();
+        }
+      });
+
+      // Progreso de audio sobre las ondas
+      audioEl?.addEventListener('timeupdate', () => {
+        const dur = getDuration();
+        if (!dur) return;
+        const pct = Math.min(audioEl.currentTime / dur, 1);
+        if (timeLabel) {
+          timeLabel.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(dur)}`;
+        }
+
+        const activeCount = Math.floor(pct * waveBars.length);
+        waveBars.forEach((bar, bIdx) => {
+          if (bIdx <= activeCount) {
+            bar.classList.remove('bg-white/20');
+            bar.classList.add('bg-amber-400');
+          } else {
+            bar.classList.remove('bg-amber-400');
+            bar.classList.add('bg-white/20');
+          }
+        });
+      });
+
+      // Fin de la reproduccion
+      audioEl?.addEventListener('ended', () => {
+        iconPlay?.classList.remove('hidden');
+        iconPause?.classList.add('hidden');
+        card.classList.remove('border-amber-400/40', 'bg-white/10');
+        waveBars.forEach((bar) => {
+          bar.classList.remove('bg-amber-400');
+          bar.classList.add('bg-white/20');
+        });
+        updateIdleTime();
+
+        // Si estamos en modo reproduccion continua, pasar al siguiente
+        if (isPlayingAll) {
+          playNextInSequence();
+        }
+      });
+
+      // Clic en la onda para adelantar o retroceder
+      waveTrack?.addEventListener('click', (e) => {
+        const dur = getDuration();
+        if (!dur) return;
+        const rect = waveTrack.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+        audioEl.currentTime = ratio * dur;
+      });
+
+      // Alternar Play/Pausa
+      function togglePlay() {
+        if (currentlyPlayingAudio && currentlyPlayingAudio !== audioEl) {
+          currentlyPlayingAudio.pause();
+          currentlyPlayingAudio.currentTime = 0;
+          document.querySelectorAll('.voice-note-card').forEach((c) => {
+            c.classList.remove('border-amber-400/40', 'bg-white/10');
+            c.querySelector('.icon-play')?.classList.remove('hidden');
+            c.querySelector('.icon-pause')?.classList.add('hidden');
+          });
+        }
+
+        if (audioEl.paused) {
+          audioEl.play().then(() => {
+            currentlyPlayingAudio = audioEl;
+            iconPlay?.classList.add('hidden');
+            iconPause?.classList.remove('hidden');
+            card.classList.add('border-amber-400/40', 'bg-white/10');
+          }).catch(() => {
+            if (typeof window.showInAppToast === 'function') {
+              window.showInAppToast('No se pudo reproducir este audio', 'error');
+            }
+          });
+        } else {
+          audioEl.pause();
+          currentlyPlayingAudio = null;
+          iconPlay?.classList.remove('hidden');
+          iconPause?.classList.add('hidden');
+          card.classList.remove('border-amber-400/40', 'bg-white/10');
+          updateIdleTime();
+        }
+      }
+
+      toggleBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // Si el usuario toca individualmente, detener la secuencia automatica
+        if (isPlayingAll) stopPlayAll();
+        togglePlay();
+      });
+
+      cardsContainer.appendChild(card);
+    });
+  }
+
+  // Logica de Secuencia "Reproducir todas"
+  function startPlayAll() {
+    if (!audioItems || audioItems.length === 0) return;
+    isPlayingAll = true;
+    currentPlayAllIndex = 0;
+    playAllIconPlay?.classList.add('hidden');
+    playAllIconPause?.classList.remove('hidden');
+    playAllBadge?.classList.remove('hidden');
+    playAllBadge?.classList.add('flex');
+    playCurrentInSequence();
+  }
+
+  function stopPlayAll() {
+    isPlayingAll = false;
+    playAllIconPlay?.classList.remove('hidden');
+    playAllIconPause?.classList.add('hidden');
+    playAllBadge?.classList.add('hidden');
+    playAllBadge?.classList.remove('flex');
+
+    if (currentlyPlayingAudio) {
+      currentlyPlayingAudio.pause();
+      currentlyPlayingAudio = null;
+    }
+
+    document.querySelectorAll('.voice-note-card').forEach((c) => {
+      c.classList.remove('border-amber-400/40', 'bg-white/10');
+      c.querySelector('.icon-play')?.classList.remove('hidden');
+      c.querySelector('.icon-pause')?.classList.add('hidden');
+    });
+  }
+
+  function playCurrentInSequence() {
+    if (currentPlayAllIndex >= audioItems.length) {
+      stopPlayAll();
+      if (typeof window.showInAppToast === 'function') {
+        window.showInAppToast('Secuencia de notas de voz finalizada', 'success');
+      }
+      return;
+    }
+
+    const currentItem = audioItems[currentPlayAllIndex];
+    const card = document.getElementById(`voice-card-${currentItem.id}`);
+    if (!card) {
+      playNextInSequence();
+      return;
+    }
+
+    const audioEl = card.querySelector('.hidden-audio-el');
+    const toggleBtn = card.querySelector('.btn-toggle-note-audio');
+    if (audioEl) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      toggleBtn?.click();
+    }
+  }
+
+  function playNextInSequence() {
+    currentPlayAllIndex++;
+    playCurrentInSequence();
+  }
+
+  playAllBtn?.addEventListener('click', () => {
+    if (isPlayingAll) {
+      stopPlayAll();
+    } else {
+      startPlayAll();
+    }
+  });
+
+  // Escuchar eventos globales de sincronizacion
+  window.addEventListener('animus-media-uploaded', loadVoices);
+  window.addEventListener('animus-authenticated', loadVoices);
+  window.addEventListener('refresh-voices', loadVoices);
+
+  loadVoices();
+</script>

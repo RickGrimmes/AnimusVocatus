@@ -1,187 +1,211 @@
 # Aevum
 
-> **Suite Web para Eventos Sociales de Alta Gama**  
-> *Aevum (latín): La era, el tiempo sin fin o la eternidad. La preservacion del momento presente y del recuerdo perdurable.*
+> **Suite Web Integral para Eventos Sociales de Alta Gama**  
+> *Aevum (latín): La era, el tiempo sin fin o la eternidad. La preservación del momento presente y del recuerdo perdurable.*
 
 ---
 
-## Vision General
+## 1. Visión General del Proyecto
 
-**Aevum** es la marca y empresa de tecnologia concebida para digitalizar y elevar la experiencia integral de eventos sociales exclusivos (bodas, XV anos, aniversarios, galas y graduaciones), bajo una linea visual sobria, moderna y de alta usabilidad (*Industrial / Editorial Minimalist*).
+**Aevum** es una plataforma tecnológica concebida para digitalizar, optimizar y elevar la experiencia de eventos sociales exclusivos (bodas, XV años, aniversarios, galas y graduaciones), bajo una dirección de diseño sobria, editorial y de alta usabilidad (*Industrial / Editorial Minimalist*).
 
-### Identidad Visual & Tipografia de Marca
+El sistema resuelve la fragmentación tradicional de los eventos sociales (donde las invitaciones se envían en formatos estáticos, las fotos se pierden en grupos de mensajería con compresión destructiva y los anfitriones carecen de métricas centralizadas) unificando todo el ciclo de vida en una única arquitectura monorepo.
+
+### Identidad Visual y Tipografía
 - **Isotipo Oficial:** `[AE]` entre corchetes.
-- **Tipografia Exclusiva de la Marca:** **`Bodoni Moda SC`** (Google Fonts). Esta tipografia se utiliza especificamente de manera obligatoria cada vez que se escribe o representa la palabra **Aevum** y su isotipo **`[AE]`** en la interfaz y materiales de difusion.
-- **Tipografias de Soporte:** `Playfair Display` para titulares editoriales, `Faculty Glyphic` / `Roboto` para cuerpo de texto y `Space Mono` para codigos PIN y metadatos.
-
-El catalogo de soluciones de **Aevum** desacopla la experiencia en sus productos especializados:
-
-1. **Vocatus ("El Llamado") - Fase Pre-Evento**
-   - Invitacion web interactiva y personalizada (`/v/[slug]`).
-   - Confirmacion de asistencia inteligente (**RSVP**) con control estricto de pases por invitado/familia y control de restricciones alimentarias.
-   - Itinerario interactivo, codigo de vestimenta, mesa de regalos y enlaces GPS directos a Google Maps y Waze.
-   - Cuenta regresiva dinamica y recordatorios.
-
-2. **Animus ("La Memoria") - Fase en Vivo y Post-Evento**
-   - Boveda colaborativa de fotos y videos (`/a/[slug]`) sin requerir descarga de apps ni registro de usuarios.
-   - **Acceso sin friccion:** Escaneo de codigo **QR** en centros de mesa con **PIN de 4 digitos** exclusivo.
-   - **Subida directa cliente-a-almacenamiento:** Subida via URLs prefirmadas a **Cloudflare R2** ($0 costo por transferencia/egreso), sin saturar el servidor central.
-   - **Miniaturas instantaneas en cliente:** Compresion y generacion de thumbnails WebP con `OffscreenCanvas` en el navegador del invitado (~40ms).
-   - **Visor Inmersivo estilo Reels:** Reproduccion vertical a pantalla completa con navegacion tactil.
-
-3. **Live Wall ("La Proyeccion") - Durante la Fiesta**
-   - Mural dinamico en tiempo real (`/live/[slug]`) para pantallas gigantes y proyectores del salon con transiciones automaticas y codigo QR en esquina.
-
-4. **Gestor & Panel de Administracion (`/admin`)**
-   - Consola de control para anfitriones y superadministradores, con contador regresivo en vivo, moderacion de fotos, empaquetador masivo ZIP asincrono, simulador de smartphone y generador de carteles de mesa listos para imprenta.
+- **Tipografía de Marca:** `Bodoni Moda SC` (Google Fonts). Obligatoria para la marca **Aevum** y su isotipo `[AE]`.
+- **Tipografías de Soporte:** `Playfair Display` para encabezados editoriales, `Faculty Glyphic` y `Roboto` para cuerpo de texto, y `Space Mono` para credenciales, códigos PIN y datos técnicos.
+- **Estilo:** Paletas crema cálido (`#faf6ed`), grafito profundo (`#0f0f11`), acentos dorados sutiles y transparencias en vidrio satinado (*glassmorphism*).
 
 ---
 
-## Arquitectura de Negocio: 3 Areas en 1 Solo Proyecto
+## 2. Los 4 Pilares Fundamentales del Sistema
 
-No se requieren repositorios separados. La plataforma **Aevum** centraliza toda la operacion en este unico monorepo:
+La arquitectura de **Aevum** está estructurada formalmente en cuatro pilares complementarios pero funcionalmente desacoplados:
 
 ```
-                                      PLATAFORMA AEVUM
-                                              │
-         ┌────────────────────────────────────┼────────────────────────────────────┐
-         ▼                                    ▼                                    ▼
-1. LANDING COMERCIAL                2. PANEL ADMINISTRATIVO             3. PRODUCTO MODULAR
-   Ruta: /                             Ruta: /admin                        Rutas: /v y /a
-   • Captacion de clientes             • Superadmin (Tu operacion):        • Vocatus: Invitacion
-   • Demos interactivos                  cotizaciones, alta de eventos,      con confirmacion RSVP
-   • Cotizador en linea                  activacion de modulos y cuotas.   • Animus: Boveda QR/PIN,
-   • Portafolio de plantillas          • Anfitrion (Tus clientes):           galeria tipo telefono
-                                         metricas RSVP, moderacion de        y reproductor Reels
-                                         fotos y descarga ZIP.
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                                PLATAFORMA AEVUM                                  │
+├────────────────────┬────────────────────┬───────────────────┬────────────────────┤
+│    PILAR 1         │    PILAR 2         │    PILAR 3        │    PILAR 4         │
+│ LANDING COMERCIAL  │  INVITACIONES Y    │ BÓVEDA DE RECUERDOS│ PANEL DE CONTROL   │
+│   Y CAPTACIÓN      │    RSVP (VOCATUS)  │ Y REELS (ANIMUS)  │ Y ADMINISTRACIÓN   │
+│   Ruta: /          │   Ruta: /v/[slug]  │ Ruta: /a/[slug]   │ Ruta: /admin       │
+└────────────────────┴────────────────────┴───────────────────┴────────────────────┘
 ```
 
-### Desacoplamiento de Modulos (Venta Flexible)
-Cada evento es 100% independiente con su propio `slug` y puede contratarse en tres modalidades:
+### Pilar 1: Landing Comercial y Portal de Captación (`/`)
+Es la vitrina pública de cara al mercado y a clientes potenciales. Diseñada para educar, generar confianza y convertir visitas en contrataciones.
+- **Hero Interactivo:** Titular dinámico con rotación de eventos y presentación de la propuesta de valor.
+- **Sección Antítesis de WhatsApp:** Comparativa directa frente a métodos tradicionales (pérdida de calidad, caos organizativo, aplicaciones nativas que nadie instala).
+- **Simulador Interactivo con QR en Vivo:** Demostración en tiempo real dentro de un marco de smartphone navegable que permite al visitante escanear el QR con su propio móvil y probar la experiencia de inmediato.
+- **Cotizador en Línea:** Calculadora interactiva de presupuestos basada en número de invitados, almacenamiento y módulos requeridos.
+- **Portafolio y Muestrario de Plantillas:** Presentación de estilos visuales adaptables por temática de evento.
 
-1. **Solo Vocatus (Invitaciones & RSVP):** Para eventos que solo requieren logistica e invitacion digital. Se desactiva la boveda Animus y no se muestra el banner de fotos.
-2. **Solo Animus (Boveda de Recuerdos & Reels):** Para graduaciones, cumpleanos o bodas donde ya entregaron invitaciones fisicas. Se entrega unicamente el codigo QR y PIN de mesa para subir fotos y videos.
-3. **Suite Completa (Vocatus + Animus):** Ambos modulos activos y sincronizados en el tiempo (*Time-Aware Routing*).
+### Pilar 2: Invitaciones Digitales y Control RSVP - Vocatus (`/v/[slug]`)
+Módulo pre-evento enfocado en la logística, comunicación y confirmación de asistencia inteligente.
+- **Experiencia Inmersiva:** Portada editorial personalizada, cuenta regresiva en tiempo real y detalles del protocolo.
+- **Logística Completa:** Itinerarios con hitos horarios, código de vestimenta con guía de colores, enlaces directos a Google Maps / Waze y mesa de regalos con datos bancarios / enlaces comerciales.
+- **Sistema RSVP Inteligente:** Búsqueda predictiva del invitado por nombre o pase familiar, validación estricta de boletos asignados vs. confirmados, restricciones dietéticas (alergias, menú infantil, vegetariano) y dedicatorias de felicitación.
+- **Enrutamiento Consciente del Tiempo (Time-Aware):** El enlace muta el día del evento mostrando un banner de acceso directo a la subida de fotos, y post-evento redirige al agradecimiento y descarga.
 
-### Motor de Plantillas Dinamicas (Theme Engine)
-Para evitar crear un proyecto de codigo por cada cliente, el sistema utiliza un **motor de plantillas dinamicas**:
-* **Mismo motor de datos:** Todos los eventos usan la misma API y base de datos (itinerario, pases, almacenamiento).
-* **Piel visual configurable:** En base de datos cada evento guarda su `template_id` y su `theme_config`:
-  - `editorial_minimalist`: Bodas elegantes y sobrias (tipografia serif clasica, fondo crema, detalles dorados o negros).
-  - `gold_luxury`: XV anos y aniversarios de gala (acentos dorados, brillos, video de bienvenida).
-  - `party_neon`: Cumpleanos y fiestas de noche (modo oscuro, colores vivos, enfoque en la fiesta).
-  - `botanical_soft`: Bautizos y primeras comuniones (tonos pastel, acuarelas florales suaves).
-  - `academic_gala`: Graduaciones y galas corporativas.
-* **Soporte VIP a la medida:** Si un cliente contrata un desarrollo 100% artesanal y exclusivo, Astro permite crear una pagina dedicada dentro del mismo proyecto (por ejemplo `src/pages/v/boda-vip.astro`) sin clonar repositorios ni alterar a otros clientes.
+### Pilar 3: Bóveda Colaborativa de Fotos y Videos - Animus (`/a/[slug]`)
+Módulo activo durante la fiesta y en la fase post-evento para recopilar recuerdos espontáneos en calidad original.
+- **Acceso Cero Fricción:** Acceso instantáneo mediante escaneo de código QR en centros de mesa con validación automática vía PIN de 4 dígitos. Sin registros de usuario ni descargas de tiendas de apps.
+- **Subida Directa a Almacenamiento (Zero Server Load):** Carga masiva de fotos y videos directamente a Cloudflare R2 mediante URLs prefirmadas en lote (`batch-presigned`), preservando el ancho de banda y la CPU del servidor central.
+- **Miniaturas en Cliente (Client-Side Canvas):** Procesamiento y compresión WebP ejecutados localmente en el navegador del invitado mediante `OffscreenCanvas` antes de subir (~40ms por imagen).
+- **Visor Inmersivo Estilo Reels / Stories:** Reproductor vertical a pantalla completa con navegación táctil fluida, indicador de autor y contador de favoritos.
+- **Muro en Vivo (Live Wall - `/live/[slug]`):** Vista optimizada para pantallas gigantes y proyectores del salón de eventos, con refresco automático de fotos aprobadas y código QR persistente en esquina.
+
+### Pilar 4: Panel Administrativo y de Gestión (`/admin` y `/admin/[slug]`)
+Consola centralizada tanto para el superadministrador como para los anfitriones del evento.
+- **Visión General y Métricas:** Control de días restantes, balance de almacenamiento en tiempo real (bytes usados vs. contratados) y resumen de confirmaciones RSVP.
+- **Simulador de Smartphone en Vivo (`PhoneSimulator.astro`):** Vista previa reactiva que permite al anfitrión verificar cómo ven sus invitados el álbum en dispositivos móviles.
+- **Curaduría y Moderación en Vivo:** Aprobación, ocultación o destacado de fotografías y videos subidos por los invitados antes de proyectarse en el Live Wall.
+- **Generador de Carteles de Mesa para Imprenta (`/admin/print/[slug]`):** Herramienta que genera de forma automática los diseños en tamaño estándar con código QR vectorial y PIN de 4 dígitos, listos para enviar a corte e imprenta física.
+- **Empaquetador Masivo ZIP:** Generación asíncrona en segundo plano del archivo maestro de recuerdos en máxima resolución para entrega formal al anfitrión.
 
 ---
 
-## Flujo de Usuario y Enrutamiento Dinamico (Time-Aware)
+## 3. Topología de Infraestructura y Pila Tecnológica
 
-El enlace principal compartido con los invitados se adapta automaticamente segun la fecha del evento:
-
-```
-┌─────────────────────────────────┐      ┌─────────────────────────────────┐      ┌─────────────────────────────────┐
-│        1. ANTES DEL EVENTO      │      │        2. EL DIA DE LA FIESTA   │      │        3. DIAS POSTERIORES      │
-│         /v/[evento-slug]        │ ───► │         /a/[evento-slug]        │ ───► │         /v/[evento-slug]        │
-├─────────────────────────────────┤      ├─────────────────────────────────┤      ├─────────────────────────────────┤
-│ • Invitacion formal             │      │ • QR fisico en mesas con PIN    │      │ • Agradecimiento automatico     │
-│ • Formulario RSVP de pases      │      │ • Carga masiva de fotos y clips │      │ • Acceso a la galeria de fotos  │
-│ • Ubicacion GPS e itinerario    │      │ • Proyeccion en Live Wall       │      │ • Generacion de ZIP descargable │
-└─────────────────────────────────┘      └─────────────────────────────────┘      └─────────────────────────────────┘
-```
-
----
-
-## Stack Tecnologico
-
-| Capa | Tecnologia | Proposito |
+| Componente | Tecnología | Justificación y Función |
 | :--- | :--- | :--- |
-| **Arquitectura** | **Monorepo** | Unificacion de cliente y API con despliegues independientes |
-| **Frontend** | **Astro + Tailwind CSS** | Serverless / Edge rendering para carga ultrarrapida en moviles |
-| **Backend API** | **FastAPI (Python 3.12)** | Asincronismo, validacion Pydantic v2 y firma criptografica S3 |
-| **Base de Datos** | **PostgreSQL 16** | Modelo relacional para eventos, boletos RSVP y metadatos de media |
-| **Almacenamiento** | **Cloudflare R2** | Almacenamiento compatible con S3 sin costos de transferencia ($0 egress) |
-| **Procesamiento** | **Canvas API / OffscreenCanvas** | Generacion de miniaturas del lado del cliente sin costo de CPU servidor |
-| **Correos** | **Resend API** | Notificaciones transaccionales y entrega del ZIP de recuerdos |
-| **Contenedores** | **Docker & Docker Compose** | Entorno local consistente para base de datos y backend |
+| **Arquitectura de Código** | Monorepo (`apps/web` + `apps/api`) | Sincronización atómica de modelos de datos, contratos API e interfaz. |
+| **Frontend de Invitados y Admin** | Astro + Vanilla CSS / Tailwind | Generación estática y renderizado en el borde (Edge), carga en < 1s sobre redes móviles con baja cobertura. |
+| **Backend Core** | FastAPI (Python 3.12) | Asincronismo de alto rendimiento, validación con Pydantic v2 y firma de URLs S3. |
+| **Base de Datos** | PostgreSQL 16 | Almacenamiento relacional estricto para eventos, pases RSVP y metadatos de archivos. |
+| **Almacenamiento de Archivos** | Cloudflare R2 | Compatibilidad nativa con S3 API con cero costos de egreso de datos ($0/GB egress). |
+| **Miniaturas** | OffscreenCanvas (Navegador) | Generación de thumbnails WebP del lado del cliente para eliminar consumo de CPU en servidor. |
+| **Correos Transaccionales** | Resend API | Envío de notificaciones de confirmación de asistencia y enlace de entrega del ZIP maestro. |
+| **Contenedores** | Docker y Docker Compose | Orquestación local homogénea para base de datos y backend. |
 
 ---
 
-## Estructura del Proyecto
+## 4. Estructura del Monorepo
 
 ```text
 ANIMUS-VOCATUS/
 ├── apps/
-│   ├── web/                        # Frontend en Astro (Edge Ready)
-│   │   └── src/
-│   │       ├── components/         # RSVPModal, PinGate, GalleryGrid, ReelsViewer, UploaderModal
-│   │       ├── layouts/            # Layout.astro (temas dark y editorial)
-│   │       ├── pages/
-│   │       │   ├── index.astro     # Landing comercial y portal de acceso
-│   │       │   ├── v/[slug].astro  # Invitacion Vocatus con cuenta regresiva y RSVP
-│   │       │   ├── a/[slug].astro  # Boveda Animus con galeria tipo telefono y Reels
-│   │       │   ├── live/[slug].astro # Proyeccion en vivo (Live Wall)
-│   │       │   └── admin/          # Panel de administracion y cotizaciones
-│   │       └── lib/                # Clientes API y generador de miniaturas en cliente
+│   ├── web/                              # Frontend Edge (Astro)
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   │   ├── GalleryGrid.astro     # Cuadrícula fluida de medios estilo móvil
+│   │   │   │   ├── LiveWallOverlay.astro # Capa de proyección para salones
+│   │   │   │   ├── PhoneSimulator.astro  # Marco de smartphone interactivo
+│   │   │   │   ├── PinGate.astro         # Puerta de autenticación por PIN
+│   │   │   │   ├── ReelsViewer.astro     # Reproductor inmersivo vertical
+│   │   │   │   ├── RSVPModal.astro       # Flujo interactivo de pases y dedicatorias
+│   │   │   │   └── UploaderModal.astro   # Gestor de subida con Canvas WebP
+│   │   │   ├── layouts/
+│   │   │   │   └── Layout.astro          # Layout base con tipografías y metas
+│   │   │   ├── pages/
+│   │   │   │   ├── index.astro           # Pilar 1: Landing comercial y vitrina
+│   │   │   │   ├── v/[slug].astro        # Pilar 2: Invitación y RSVP (Vocatus)
+│   │   │   │   ├── a/[slug].astro        # Pilar 3: Bóveda colaborativa (Animus)
+│   │   │   │   ├── live/[slug].astro     # Extensión Pilar 3: Muro en vivo
+│   │   │   │   └── admin/                # Pilar 4: Panel administrativo
+│   │   │   │       ├── index.astro       # Selector y métricas generales
+│   │   │   │       ├── [slug].astro      # Gestión del evento y moderación
+│   │   │   │       └── print/
+│   │   │   │           └── [slug].astro  # Carteles QR para imprenta
+│   │   │   └── lib/                      # Cliente API y generador de thumbnails
+│   │   ├── package.json
+│   │   └── tailwind.config.cjs
 │   │
-│   └── api/                        # Backend (FastAPI + Python 3.12)
-│       └── app/
-│           ├── routers/            # auth, events, rsvp, vault, admin
-│           └── services/           # storage (Cloudflare R2), mailer, zip_packager
+│   └── api/                              # Backend Core (FastAPI)
+│       ├── app/
+│       │   ├── config.py                 # Configuración por variables de entorno
+│       │   ├── database.py               # Motor SQLAlchemy 2.0 y sesiones
+│       │   ├── models.py                 # Entidades User, Event, RSVP, Media, ZipJob
+│       │   ├── schemas.py                # Validaciones Pydantic v2
+│       │   ├── routers/
+│       │   │   ├── auth.py               # Sesiones de anfitrión y PIN de acceso
+│       │   │   ├── events.py             # Consulta y configuración de eventos
+│       │   │   ├── rsvp.py               # Búsqueda y confirmación de pases
+│       │   │   ├── vault.py              # URLs prefirmadas batch y feed de medios
+│       │   │   └── admin.py              # Moderación, métricas y trigger ZIP
+│       │   ├── services/
+│       │   │   ├── storage.py            # Firma de URLs Cloudflare R2 con boto3
+│       │   │   ├── mailer.py             # Integración con Resend
+│       │   │   └── zip_packager.py       # Empaquetado asíncrono en ZIP
+│       │   └── main.py                   # Inicialización y middlewares CORS
+│       ├── Dockerfile
+│       └── requirements.txt
 │
-├── .agents/                        # Reglas y skills locales (instagram-media-experience)
-├── .env.example                    # Plantilla de variables de entorno
-├── docker-compose.yml              # Orquestacion local (PostgreSQL + API)
-├── VOCATUS_ANIMUS_SPEC.md          # Especificacion tecnica maestra y contratos de API
-└── README.md                       # Documentacion principal del proyecto
+├── .agents/                              # Reglas y habilidades de los agentes
+│   ├── rules/
+│   │   └── no-emojis.md                  # Regla obligatoria: Cero emojis
+│   └── skills/
+│       └── instagram-media-experience/   # Directrices de UX inmersiva
+├── docker-compose.yml                    # Postgres y API para desarrollo local
+├── .env.example                          # Plantilla de variables de entorno
+├── AGENTS.md                             # Protocolos de conducta y estilo
+├── ROADMAP_ARCO_2_MOMENTIIA.md           # Plan de evolución y benchmark
+├── VOCATUS_ANIMUS_SPEC.md                # Especificación técnica maestra
+└── README.md                             # Documento raíz del proyecto
 ```
 
 ---
 
-## Puesta en Marcha (Primeros Pasos)
+## 5. Guía de Puesta en Marcha (Instalación Local)
 
-### 1. Variables de Entorno
-Copia el archivo de ejemplo para configurar tus credenciales locales:
+### Paso 1: Configurar Variables de Entorno
+Copia la plantilla de variables de entorno en la raíz:
 ```bash
 cp .env.example .env
 ```
 
-### 2. Base de Datos Local
-Para levantar PostgreSQL 16 con Docker:
+### Paso 2: Iniciar Base de Datos Local
+Inicia el contenedor de PostgreSQL 16:
 ```bash
 docker compose up -d db
 ```
 
-### 3. Levantar Backend y Frontend en Desarrollo
+### Paso 3: Levantar el Backend (FastAPI)
+Desde un entorno virtual con Python 3.12:
 ```bash
-# Terminal 1 - Backend FastAPI
+pip install -r apps/api/requirements.txt
 python -m uvicorn app.main:app --app-dir apps/api --reload --port 8000
+```
+La documentación interactiva de la API estará disponible en `http://localhost:8000/docs`.
 
-# Terminal 2 - Frontend Astro
+### Paso 4: Levantar el Frontend (Astro)
+En otra terminal:
+```bash
 cd apps/web
+npm install
 npm run dev
 ```
+La aplicación web se ejecutará en `http://localhost:4321`.
 
 ---
 
-## Hoja de Ruta (Roadmap)
+## 6. Estado del Desarrollo y Hoja de Ruta
 
-- [x] **Fase 0:** Especificacion tecnica y definicion de contratos de API ([VOCATUS_ANIMUS_SPEC.md](file:///c:/Users/babaj/Documents/Yo/ANIMUS-VOCATUS/VOCATUS_ANIMUS_SPEC.md)).
-- [x] **Fase 1:** Inicializacion de estructura base del monorepo (`apps/web`, `apps/api`) y documentacion central.
-- [x] **Fase 2:** Modelado de datos en SQLAlchemy 2.0 y migraciones Alembic (User, Event, RSVPGuest, MediaItem, ZipJob).
-- [x] **Fase 3:** Core API Vocatus (Endpoints publicos de invitacion, busqueda y confirmacion RSVP con conteo de pases).
-- [x] **Fase 4:** Core API Animus (Validacion de PIN de 4 digitos, JWT efimero y generacion batch de URLs prefirmadas R2).
-- [x] **Fase 5:** Frontend Invitados (Vistas mobile-first `/v/[slug]` y `/a/[slug]` con carga directa, galeria tipo telefono y visor estilo Reels).
-- [x] **Fase 6:** Live Wall (`/live/[slug]`) con polling/refresco en pantalla completa para proyectores.
-- [x] **Fase 7:** Empaquetador masivo ZIP asincrono y notificaciones por correo via Resend.
-- [x] **Fase 9:** Landing Page Comercial & Captacion (`/`) — Vitrina de venta de alto impacto para clientes finales, cotizador interactivo en linea y demostraciones en vivo.
+### Arco 1: Cimientos Operativos (Completado)
+- **Fase 0:** Especificación técnica integral y contratos OpenAPI.
+- **Fase 1:** Configuración inicial del monorepo y contenedor de base de datos.
+- **Fase 2:** Esquema relacional con SQLAlchemy 2.0 y soporte multi-evento.
+- **Fase 3:** API de Vocatus con búsqueda inteligente de pases y confirmación RSVP.
+- **Fase 4:** API de Animus con validación de PIN y URLs prefirmadas R2 en lote.
+- **Fase 5:** Vistas web `/v/[slug]` y `/a/[slug]` con visor vertical Reels y miniaturas Canvas.
+- **Fase 6:** Live Wall (`/live/[slug]`) con rotación en pantalla completa para proyectores.
+- **Fase 7:** Servicio asíncrono de empaquetado masivo ZIP y entrega transaccional por correo.
+- **Fase 8:** Panel de control de anfitrión (`/admin`) con métricas de almacenamiento y moderación.
+- **Fase 9:** Landing comercial interactiva (`/`) con cotizador en línea y demostración en vivo.
 
-### Arco 1 (Cimientos Operativos) Concluido
-Las 9 fases fundacionales se encuentran completamente implementadas y operativas. A continuacion da inicio el **Arco 2 ("Hacerlo Guapo")** inspirado en el benchmark Momentiia: simulador de telefono interactivo, notas de voz en el navegador, retos fotograficos, organizacion por carpetas y generador de carteles de mesa. El desglose detallado se encuentra documentado en [ROADMAP_ARCO_2_MOMENTIIA.md](file:///c:/Users/babaj/Documents/Yo/ANIMUS-VOCATUS/ROADMAP_ARCO_2_MOMENTIIA.md).
+### Arco 2: Evolución de Experiencia (En Curso)
+- **Activación y Optimización de Cloudflare R2:** Bucket dedicado enlazado, firmas S3v4, URLs prefirmadas en lote y cabeceras `Cache-Control: public, max-age=31536000, immutable` para caché perimetral permanente.
+- **Subida en Segundo Plano Estilo Momentiia:** Carga no invasiva con banner superior, tarjeta flotante de progreso en esquina inferior derecha, cola concurrente de 2 trabajadores en paralelo y persistencia de autor/modo anónimo por 6 horas.
+- **Simulador de Smartphone en Panel:** Incorporado en el panel administrativo (`PhoneSimulator.astro`).
+- **Carteles de Mesa para Imprenta:** Generador dinámico listo para impresión física (`/admin/print/[slug]`).
+- **Próximos pasos:** Barra inferior fija (Dock Bar) de 5 accesos, libro de firmas y dedicatorias de texto, grabadora web de notas de voz con visualizador de ondas y retos fotográficos de la fiesta.
 
 ---
 
-## Especificacion Tecnica Detallada
+## 7. Documentación Complementaria
 
-Para consultar el modelo de datos relacional (Mermaid ERD), diagramas de secuencia, lista blanca de tipos MIME, limites por paquete comercial y contratos OpenAPI, revisa el archivo [VOCATUS_ANIMUS_SPEC.md](file:///c:/Users/babaj/Documents/Yo/ANIMUS-VOCATUS/VOCATUS_ANIMUS_SPEC.md).
+- [VOCATUS_ANIMUS_SPEC.md](file:///c:/Users/babaj/Documents/Yo/ANIMUS-VOCATUS/VOCATUS_ANIMUS_SPEC.md): Especificación técnica exhaustiva, esquemas ERD, flujos de autenticación y límites de almacenamiento.
+- [ROADMAP_ARCO_2_MOMENTIIA.md](file:///c:/Users/babaj/Documents/Yo/ANIMUS-VOCATUS/ROADMAP_ARCO_2_MOMENTIIA.md): Análisis funcional comparativo y módulos de gamificación.
+- [AGENTS.md](file:///c:/Users/babaj/Documents/Yo/ANIMUS-VOCATUS/AGENTS.md): Reglas de estilo y directrices obligatorias de comunicación para el desarrollo.

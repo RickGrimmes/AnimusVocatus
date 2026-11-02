@@ -12,6 +12,7 @@ const {
 } = Astro.props;
 
 import '../styles/global.css';
+import ToastStack from '../components/ToastStack.astro';
 ---
 
 <!doctype html>
@@ -30,5 +31,6 @@ import '../styles/global.css';
   </head>
   <body class={theme === 'dark' ? 'bg-[#14161b] text-gray-100 min-h-screen' : 'bg-editorial-bg text-gray-900 min-h-screen'}>
     <slot />
+    <ToastStack />
   </body>
 </html>

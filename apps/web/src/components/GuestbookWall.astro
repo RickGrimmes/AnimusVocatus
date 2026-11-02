@@ -1,0 +1,281 @@
+---
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<div id="guestbook-wall-component" data-slug={slug} class="w-full space-y-4 px-4 pb-28 text-white">
+  
+  <!-- Encabezado de la seccion -->
+  <div class="flex items-center justify-between border-b border-white/10 pb-3 pt-2">
+    <div>
+      <span class="text-[10px] font-semibold tracking-widest text-gray-400 uppercase">Firmas</span>
+      <h3 class="text-base font-bold text-white">Libro de Dedicatorias</h3>
+    </div>
+    
+    <button
+      type="button"
+      id="open-write-message-btn"
+      class="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-black transition active:scale-95 hover:bg-gray-200"
+    >
+      <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      <span>Escribir</span>
+    </button>
+  </div>
+
+  <!-- Formulario desplegable para redactar mensaje -->
+  <div id="write-message-panel" class="hidden rounded-2xl border border-white/15 bg-white/5 p-4 shadow-xl backdrop-blur-sm">
+    <div class="flex items-center justify-between mb-3">
+      <h4 class="text-xs font-bold text-white uppercase tracking-wider">Tu dedicatoria</h4>
+      <button id="cancel-write-btn" type="button" class="text-xs text-gray-400 hover:text-white">Cancelar</button>
+    </div>
+
+    <form id="new-message-form" class="space-y-3">
+      <div>
+        <label for="msg-author-input" class="block text-[11px] font-medium text-gray-400">Tu nombre o familia</label>
+        <input
+          type="text"
+          id="msg-author-input"
+          placeholder="Ej: Sofía y Carlos (Mesa 3)"
+          required
+          class="mt-1 w-full rounded-xl border border-white/20 bg-black/40 px-3 py-2 text-xs text-white placeholder-gray-500 focus:border-white focus:outline-none"
+        />
+      </div>
+
+      <div>
+        <label for="msg-text-input" class="block text-[11px] font-medium text-gray-400">Mensaje de felicitación</label>
+        <textarea
+          id="msg-text-input"
+          rows="3"
+          placeholder="Escribe tus mejores deseos para este día tan especial..."
+          required
+          class="mt-1 w-full rounded-xl border border-white/20 bg-black/40 px-3 py-2 text-xs text-white placeholder-gray-500 focus:border-white focus:outline-none"
+        ></textarea>
+      </div>
+
+      <div id="msg-error-alert" class="hidden rounded-xl bg-red-950/60 border border-red-500/40 p-2 text-[11px] text-red-300"></div>
+
+      <button
+        type="submit"
+        id="submit-message-btn"
+        class="w-full rounded-xl bg-white py-2.5 text-xs font-bold tracking-wider text-black uppercase transition active:scale-95 hover:bg-gray-200"
+      >
+        Publicar Dedicatoria
+      </button>
+    </form>
+  </div>
+
+  <!-- Estado Vacio -->
+  <div id="messages-empty-state" class="hidden flex flex-col items-center justify-center py-12 text-center">
+    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-white/5 text-gray-400">
+      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+      </svg>
+    </div>
+    <h4 class="mt-3 text-sm font-semibold text-white">Sé el primero en firmar</h4>
+    <p class="mt-1 text-xs text-gray-400 max-w-xs">
+      Deja unas palabras de bendición y cariño para los anfitriones en su gran día.
+    </p>
+  </div>
+
+  <!-- Lista de Dedicatorias -->
+  <div id="messages-cards-list" class="space-y-3">
+    <!-- Se llena dinamicamente por JS -->
+  </div>
+
+</div>
+
+<script>
+  const wall = document.getElementById('guestbook-wall-component');
+  const slug = wall?.getAttribute('data-slug') || 'boda-carlos-y-sofia';
+
+  const openWriteBtn = document.getElementById('open-write-message-btn');
+  const writePanel = document.getElementById('write-message-panel');
+  const cancelWriteBtn = document.getElementById('cancel-write-btn');
+  const messageForm = document.getElementById('new-message-form');
+  const authorInput = document.getElementById('msg-author-input');
+  const textInput = document.getElementById('msg-text-input');
+  const submitBtn = document.getElementById('submit-message-btn');
+  const msgError = document.getElementById('msg-error-alert');
+  const emptyState = document.getElementById('messages-empty-state');
+  const cardsList = document.getElementById('messages-cards-list');
+
+  // Precargar autor si ya existe
+  const savedAuthor = localStorage.getItem('animus_guest_author');
+  if (savedAuthor && authorInput) {
+    authorInput.value = savedAuthor;
+  }
+
+  openWriteBtn?.addEventListener('click', () => {
+    writePanel?.classList.remove('hidden');
+    textInput?.focus();
+  });
+
+  cancelWriteBtn?.addEventListener('click', () => {
+    writePanel?.classList.add('hidden');
+  });
+
+  async function loadMessages() {
+    if (!cardsList) return;
+    try {
+      const res = await fetch(`http://localhost:8000/api/a/${slug}/messages`);
+      if (res.ok) {
+        const messages = await res.json();
+        renderMessages(messages);
+      }
+    } catch (err) {
+      console.warn('Error al cargar mensajes:', err);
+    }
+  }
+
+  function renderMessages(messages: any[]) {
+    if (!cardsList || !emptyState) return;
+    cardsList.innerHTML = '';
+
+    if (!messages || messages.length === 0) {
+      emptyState.classList.remove('hidden');
+      return;
+    }
+
+    emptyState.classList.add('hidden');
+    messages.forEach((msg) => {
+      const card = document.createElement('div');
+      card.className = 'rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm transition space-y-2';
+
+      const dateStr = msg.created_at ? new Date(msg.created_at).toLocaleDateString('es-MX', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }) : 'Recién publicado';
+
+      card.innerHTML = `
+        <div class="flex items-center justify-between text-xs mb-1">
+          <span class="font-bold text-white tracking-wide">${msg.author_name}</span>
+          <span class="text-[10px] text-gray-500 font-mono">${dateStr}</span>
+        </div>
+        <p class="text-xs text-gray-200 leading-relaxed font-serif italic">${msg.message}</p>
+        <div class="flex items-center justify-end gap-3 pt-2 border-t border-white/5">
+          <button
+            type="button"
+            class="msg-delete-btn rounded-lg p-1.5 text-gray-500 transition hover:text-rose-400 hover:bg-white/5"
+            aria-label="Borrar mensaje"
+          >
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="msg-like-btn flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium text-gray-400 border border-white/10 transition hover:text-rose-400 hover:border-rose-500/30 hover:bg-rose-500/10"
+          >
+            <svg class="h-3.5 w-3.5 text-rose-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <span class="like-count">1</span>
+          </button>
+        </div>
+      `;
+
+      // Eventos de acciones en el mensaje
+      const deleteBtn = card.querySelector('.msg-delete-btn');
+      deleteBtn?.addEventListener('click', () => {
+        if (typeof window.showInAppToast === 'function') {
+          window.showInAppToast('Ya pasó el tiempo para borrar este mensaje', 'error');
+        }
+      });
+
+      const likeBtn = card.querySelector('.msg-like-btn');
+      let liked = false;
+      likeBtn?.addEventListener('click', () => {
+        liked = !liked;
+        const countSpan = likeBtn.querySelector('.like-count');
+        if (countSpan) {
+          countSpan.textContent = liked ? '2' : '1';
+        }
+        if (liked) {
+          likeBtn.classList.add('bg-rose-500/20', 'border-rose-500/40', 'text-rose-400');
+        } else {
+          likeBtn.classList.remove('bg-rose-500/20', 'border-rose-500/40', 'text-rose-400');
+        }
+      });
+
+      cardsList.appendChild(card);
+    });
+  }
+
+  messageForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!authorInput || !textInput) return;
+
+    const author_name = authorInput.value.trim();
+    const message = textInput.value.trim();
+    if (!author_name || !message) return;
+
+    const token = localStorage.getItem(`animus_token_${slug}`);
+    if (!token || token.startsWith('demo-')) {
+      const pinGate = document.getElementById('pin-gate');
+      pinGate?.classList.remove('hidden');
+      return;
+    }
+
+    try {
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Publicando...';
+      }
+      msgError?.classList.add('hidden');
+
+      const res = await fetch(`http://localhost:8000/api/a/${slug}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ author_name, message }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: 'Error al publicar' }));
+        throw new Error(err.detail || 'Fallo al publicar mensaje');
+      }
+
+      // Guardar nombre para futuras acciones
+      localStorage.setItem('animus_guest_author', author_name);
+
+      textInput.value = '';
+      writePanel?.classList.add('hidden');
+      await loadMessages();
+
+      // Notificacion apilada de exito
+      if (typeof window.showInAppToast === 'function') {
+        window.showInAppToast('Dedicatoria publicada para los anfitriones', 'success');
+      }
+
+      // Notificar actualizacion de stats
+      window.dispatchEvent(new CustomEvent('animus-stats-updated'));
+
+    } catch (err) {
+      if (typeof window.showInAppToast === 'function') {
+        window.showInAppToast(err.message || 'Error al publicar dedicatoria', 'error');
+      } else if (msgError) {
+        msgError.textContent = err.message || 'Error al publicar dedicatoria';
+        msgError.classList.remove('hidden');
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Publicar Dedicatoria';
+      }
+    }
+  });
+
+  // Carga inicial y listeners
+  loadMessages();
+  window.addEventListener('animus-authenticated', loadMessages);
+  window.addEventListener('refresh-messages', loadMessages);
+</script>

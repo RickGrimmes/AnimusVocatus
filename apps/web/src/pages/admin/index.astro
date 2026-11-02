@@ -300,7 +300,7 @@ import Layout from '../../layouts/Layout.astro';
         <!-- Resultado Calculado en Vivo -->
         <div class="mt-6 p-4 rounded-2xl bg-[#14151a] border border-white/10 space-y-2">
           <div class="flex justify-between text-xs">
-            <span class="text-gray-400">Cuota de Almacenamiento R2:</span>
+            <span class="text-gray-400">Cuota de la Bóveda:</span>
             <span id="quote-storage-calc" class="font-bold text-emerald-400">50 GB (Calidad Original)</span>
           </div>
           <div class="flex justify-between text-xs">
@@ -383,7 +383,10 @@ import Layout from '../../layouts/Layout.astro';
   selectTier?.addEventListener('change', recalculate);
 
   btnConfirmQuote?.addEventListener('click', () => {
-    alert('Cotización guardada. El evento estará disponible en tu listado.');
-    closeModal();
+    btnConfirmQuote.textContent = 'Guardado';
+    setTimeout(() => {
+      btnConfirmQuote.textContent = 'Guardar y Generar Enlace';
+      closeModal();
+    }, 600);
   });
 </script>

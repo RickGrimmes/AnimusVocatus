@@ -1,98 +1,61 @@
 # Roadmap Arco 2: Evolucion de Experiencia y Modularidad (Benchmark Momentiia)
 
-Este documento desglosa el analisis funcional y visual derivado del benchmark de **Momentiia**, estructurado como la guia maestra para el **Arco 2** ("Hacerlo Guapo") una vez concluido el despliegue del Arco 1 (Fases 1 a 9).
+Este documento desglosa el analisis funcional y visual derivado del benchmark de **Momentiia**, estructurado como la guia maestra de evolucion tras la conclusion de los cimientos operativos (Arco 1).
 
 ---
 
-## 1. Landing Page Comercial (Vitrina de Alta Conversion)
+## Prioridad Actual e Inmediata: Activacion Real de Cloudflare R2 en la Boveda
 
-### A. Composicion Estetica
-- **Paleta de Color:** Fondo crema calido (`#faf6ed` a `#ffffff`) con acentos dorados editoriales y tipografia serif clasica de alto contraste.
-- **Micro-interacciones:** Iconos flotantes organicos (camara, corazon, nota) con animacion sutil de flotacion.
-- **Copy Dinamico:** Titular interactivo con rotacion de tipos de evento:
-  *"Todas las fotos de tu [boda / graduacion / XV anos / cumpleanos / aniversario] en un solo lugar"*.
+Antes de desplegar las dinamicas sociales avanzadas (notas de voz y retos), el sistema requiere la activacion y validacion integral del almacenamiento en la nube con un bucket dedicado de **Cloudflare R2**.
 
-### B. Seccion Comparativa "Antitesis de WhatsApp"
-- Argumento de venta central:
-  - *WhatsApp:* fotos comprimidas, se pierden en el chat, requieren pedir fotos una por una.
-  - *Otras apps:* obligan a registrarse y los invitados mayores no las usan.
-  - *Animus:* cero registros, escaneo QR instantaneo, calidad original, notas de voz y dedicatorias en una sola boveda.
-- Cuadricula de 6 pilares de valor:
-  1. Invitados sin registro previo.
-  2. Album privado y exclusivo por QR / PIN.
-  3. Soporte de fotos y videos en calidad original.
-  4. Interfaz intuitiva para cualquier edad.
-  5. Cero instalaciones de apps nativas.
-  6. Preservacion de metadatos y calidad sin compresion destructiva.
-- **Mockup Interactivo en Vivo:** Telefono en pantalla con simulacion interactiva y QR para que el visitante de la landing lo escanee con su celular y viva la demo en tiempo real.
+### Objetivos Clave de la Fase R2 (Enfoque Inmediato):
+1. **Bucket Dedicado Aevum:** Creacion y configuracion del bucket independiente en Cloudflare R2 con politicas CORS completas (`PUT`, `GET`, `HEAD`).
+2. **Credenciales API con Permisos de Objeto:** Generacion de token R2 (Access Key ID y Secret Access Key) con permisos de lectura y escritura exclusivos sobre el bucket.
+3. **Flujo End-to-End de Subida Directa:**
+   - Validacion de cuota y tipos MIME en el backend (`/api/a/{slug}/batch-presigned`).
+   - Generacion de miniaturas WebP en el navegador del invitado con `OffscreenCanvas`.
+   - Subida concurrente directa via `HTTP PUT` desde el navegador a Cloudflare R2 sin sobrecarga de servidor.
+   - Confirmacion en base de datos (`/api/a/{slug}/media/confirm`) y refresco instantaneo en la galeria y visor Reels.
+4. **Dominio Publico o URLs Prefirmadas GET:** Servir imagenes y videos a maxima velocidad con CDN global o descarga firmada temporal.
+5. **Validacion del Empaquetador Masivo ZIP:** Comprobacion de lectura asincrona desde R2 para generar el archivo comprimido maestro del evento.
 
 ---
 
-## 2. Experiencia del Invitado (Web App Movil)
+## Matriz de Estado y Fases del Arco 2
 
-### A. Cabecera y Portada
-- Banner hero con fotografía de los anfitriones y degradado suave hacia el fondo crema.
-- Titulo del evento en serif elegante, fecha y contador total de recuerdos.
-- Filtro rapido de contenidos (todas, fotos, videos, audios).
-
-### B. Barra de Navegacion Flotante Inferior (Dock Bar)
-Estructura de 5 accesos directos:
-1. **Inicio:** Cuenta regresiva del gran dia, informacion clave y bienvenida.
-2. **Album:** Cuadricula fluida de fotos y videos con recuento de favoritos.
-3. **Subir (+ Prominente):** Boton circular central de carga rapida con indicador toast de subida en segundo plano.
-4. **Libro de Firmas / Mensajes:** Muro de dedicatorias de texto escritas por los invitados.
-5. **Notas de Voz:** Grabadora de audio en el navegador para dejar felicitaciones de voz con reproductor de ondas (*waveform*).
+| Fase | Modulo | Estado | Descripcion Funcional |
+| :--- | :--- | :--- | :--- |
+| **Fase 2.0** | **Activacion & Optimizacion Cloudflare R2** | **Completado** | Bucket dedicado, firmas S3v4, URLs prefirmadas batch, Cache-Control inmutable, cola paralela (2 workers) y widget no invasivo estilo Momentiia. |
+| **Fase 2.1** | Landing Comercial Premium | Completado | Hero dinamico, comparativa vs WhatsApp, cotizador en linea y mockup interactivo. |
+| **Fase 2.2** | Simulador de Telefono en Vivo | Completado | Marco interactivo reactivo integrado en el panel del anfitrion (`PhoneSimulator.astro`). |
+| **Fase 2.3** | Generador de Carteles QR Imprimibles | Completado | Generacion de disenos vectoriales para centros de mesa con QR y PIN listos para imprenta (`/admin/print/[slug]`). |
+| **Fase 2.4** | **Dock Bar Movil + Notas de Voz** | **SIGUIENTE** | Barra de navegacion inferior fija de 5 accesos en `/a/[slug]`, grabador de audio web con ondas de audio y libro de firmas. |
+| **Fase 2.5** | Carpetas y Momentos del Evento | Pendiente | Agrupacion de recuerdos por fases (Civil, Ceremonia, Recepcion, Fiesta) en la boveda y panel. |
+| **Fase 2.6** | Retos Fotograficos Gamificados | Pendiente | Lista de misiones interactivas para invitados ("Foto con los novios", "El mejor baile") con contador de retos cumplidos. |
+| **Fase 2.7** | Dashboard Central del Anfitrion | Pendiente | Vista consolidada `/dashboard` con barra de progreso de configuracion global (8 de 9 pasos) y selector de eventos. |
 
 ---
 
-## 3. Panel de Administracion del Anfitrion (Dashboard VIP)
+## Detalle Funcional de los Modulos Pendientes
 
-### A. Pantalla Principal del Dashboard (`/dashboard`)
-- Saludo personalizado: *"Hola, [Nombre]. Esto es lo que tienes entre manos."*
-- Tarjeta de Proximo Evento:
-  - Foto de portada, dias restantes con contador regresivo.
-  - Barra de progreso de configuracion: *"8 de 9 pasos listos (89%)"*.
-  - Estado de cuenta / suscripcion.
-- Tarjetas de Metricas Rapidas:
-  - Total de albumes activos.
-  - Fotos y videos guardados.
-  - Mensajes y notas de voz recibidos.
-- Acciones Rapidas:
-  - Crear un nuevo album.
-  - Ver y gestionar albumes.
-  - Descargar carteles para mesa.
-  - Vista previa interactiva ("Ver como invitado").
+### 1. Dock Bar Movil y Notas de Voz (Fase 2.4)
+- **Barra de Navegacion Inferior Fija:**
+  - Acceso 1: Inicio (cuenta regresiva, portada y bienvenida).
+  - Acceso 2: Album (galeria fluida filtrable por fotos, videos y audios).
+  - Acceso 3: Boton central de carga rapida (+ destacado con indicador de progreso).
+  - Acceso 4: Dedicatorias (libro de firmas de texto escrito por los invitados).
+  - Acceso 5: Notas de voz (grabacion de felicitaciones desde el navegador).
+- **Grabadora de Audio en Navegador:**
+  - Uso de `MediaRecorder API` para captura de audio en formato WebM/Opus o AAC/M4A.
+  - Generador de visualizacion de ondas (*waveform*) en tiempo real.
+  - Subida directa a Cloudflare R2 bajo el prefijo `events/{slug}/audio/`.
 
-### B. Panel Detallado por Evento (`/dashboard/events/[id]`)
-Menu lateral modular especializado:
-1. **Resumen:**
-   - Contador regresivo en tiempo real (dias, horas, minutos, segundos).
-   - Textos y citas inspiracionales configurables para el gran dia.
-   - Simulador en vivo (*Phone Mockup Frame*): muestra en tiempo real en la columna derecha como ven los invitados el album segun los cambios del anfitrion.
-2. **Fotos y Carpetas:**
-   - Organizacion de fotos por momentos o carpetas (ej. Civil, Ceremonia, Fiesta, Tornaboda).
-3. **Retos Fotograficos:**
-   - Dinamica de gamificacion para la fiesta (ej. "Foto con los novios", "El mejor paso de baile", "El invitado mejor vestido").
-4. **Libro de Firmas:**
-   - Moderacion y lectura de todas las dedicatorias y mensajes de texto dejados por los asistentes.
-5. **Apariencia & Plantillas:**
-   - Seleccion de temas visuales (crema editorial, oscuro fiesta, minimalista dorado, etc.), fuentes y colores.
-6. **Generador de Carteles de Mesa:**
-   - Herramienta para descargar plantillas PDF listas para imprimir con el QR del evento y PIN de mesa integrado.
-7. **Personas & Moderacion:**
-   - Gestion de anfitriones, colaboradores con permisos de moderacion y bloqueo de contenido no deseado.
-8. **Configuracion:**
-   - Almacenamiento, limite de dias, descargas masivas ZIP y reglas de privacidad.
+### 2. Carpetas y Momentos (Fase 2.5)
+- Clasificacion dinamica de recuerdos:
+  - Selector superior de momentos configurables por el anfitrion (ej. "Preparativos", "Ceremonia", "Banquete", "Fiesta").
+  - Filtrado instantaneo tanto en la vista de invitado como en la consola de moderacion.
 
----
-
-## 4. Matriz de Fases del Arco 2 (Plan Futuro)
-
-| Fase Arco 2 | Modulo | Descripcion Funcional |
-| :--- | :--- | :--- |
-| **Fase 2.1** | Landing Comercial Premium | Hero interactivo con copy dinamico, comparativa WhatsApp y demo con QR en vivo. |
-| **Fase 2.2** | Dock Bar Movil + Notas de Voz | Barra de 5 accesos en `/a/[slug]`, grabador de audio web con ondas y libro de dedicatorias. |
-| **Fase 2.3** | Dashboard Central del Anfitrion | Home del panel con barra de progreso (8 de 9 pasos), tarjetas de metricas y accesos rapidos. |
-| **Fase 2.4** | Simulador de Telefono en Vivo | Preview interactivo en tiempo real integrado en el panel del anfitrion. |
-| **Fase 2.5** | Retos Fotograficos y Carpetas | Sistema de gamificacion (misiones para la fiesta) y agrupacion de recuerdos por carpetas. |
-| **Fase 2.6** | Generador de Carteles QR Imprimibles | Exportacion de disenos elegantes de centros de mesa con QR y PIN listos para imprenta. |
+### 3. Retos Fotograficos (Fase 2.6)
+- Gamificacion de la fiesta:
+  - Tarjetas de reto con instrucciones claras y boton directo de captura.
+  - Insignia de reto cumplido en la galeria y acumulador de progreso general del evento.

@@ -4,6 +4,10 @@ import PinGate from '../../components/PinGate.astro';
 import GalleryGrid from '../../components/GalleryGrid.astro';
 import ReelsViewer from '../../components/ReelsViewer.astro';
 import UploaderModal from '../../components/UploaderModal.astro';
+import VaultDockBar from '../../components/VaultDockBar.astro';
+import VoiceRecorderModal from '../../components/VoiceRecorderModal.astro';
+import GuestbookWall from '../../components/GuestbookWall.astro';
+import VoiceNotesWall from '../../components/VoiceNotesWall.astro';
 
 export function getStaticPaths() {
   return [
@@ -15,11 +19,11 @@ const { slug } = Astro.params;
 const eventSlug = slug || 'boda-carlos-y-sofia';
 ---
 
-<Layout title="Bóveda de Recuerdos — Animus" theme="dark">
+<Layout title="Bóveda de Recuerdos — Aevum" theme="dark">
   
-  <!-- Barra superior -->
-  <header class="sticky top-0 z-30 flex items-center justify-between border-b border-white/10 bg-[#181a20]/95 px-4 py-3.5 backdrop-blur-md">
-    <a href={`/v/${eventSlug}`} class="flex items-center gap-1.5 text-sm font-medium text-gray-300 hover:text-white transition">
+  <!-- Barra superior fija -->
+  <header class="sticky top-0 z-30 flex items-center justify-between border-b border-white/10 bg-[#16181d]/95 px-4 py-3 backdrop-blur-md">
+    <a href={`/v/${eventSlug}`} class="flex items-center gap-1.5 text-xs font-medium text-gray-300 hover:text-white transition active:scale-95">
       <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
@@ -27,22 +31,313 @@ const eventSlug = slug || 'boda-carlos-y-sofia';
     </a>
 
     <div class="text-center">
-      <span class="block text-xs font-semibold tracking-widest text-gray-400 uppercase">Animus</span>
-      <h1 class="text-sm font-bold text-white tracking-wide">Boda Carlos & Sofía</h1>
+      <span class="block text-[10px] font-semibold tracking-widest text-gray-400 uppercase">[AE] Bóveda</span>
+      <h1 class="text-xs font-bold text-white tracking-wide">Carlos & Sofía</h1>
     </div>
 
-    <!-- Espacio equilibrado para centrado -->
-    <div class="w-16"></div>
+    <!-- Accion rapida: recargar feed -->
+    <button
+      id="btn-refresh-vault"
+      type="button"
+      class="rounded-full p-1.5 text-gray-400 hover:text-white transition active:scale-90"
+      aria-label="Actualizar contenido"
+    >
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+    </button>
   </header>
 
-  <!-- Contenido Principal: Galería tipo teléfono -->
-  <main class="mx-auto max-w-lg min-h-screen">
-    <GalleryGrid slug={eventSlug} />
+  <!-- Contenedor Principal Adaptable (Mobile-First) -->
+  <main class="mx-auto max-w-md min-h-screen pb-20">
+    
+    <!-- ========================================================================= -->
+    <!-- PESTAÑA 1: INICIO (Estilo Momentiia: Portada, Contadores y Accesos)       -->
+    <!-- ========================================================================= -->
+    <section id="tab-content-home" class="tab-view block space-y-5">
+      
+      <!-- Portada Hero con degradado y fotografia -->
+      <div class="relative overflow-hidden rounded-b-3xl border-b border-white/10 bg-black/60 shadow-2xl">
+        <img
+          src="https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&auto=format&fit=crop&q=85"
+          alt="Boda Carlos y Sofia"
+          class="h-64 w-full object-cover opacity-80"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#121316] via-black/40 to-transparent"></div>
+
+        <div class="absolute bottom-4 left-4 right-4 text-center">
+          <span class="text-[10px] font-mono tracking-widest text-amber-300 uppercase">24 de Septiembre de 2026</span>
+          <h2 class="mt-1 font-serif text-2xl font-bold tracking-wide text-white">Carlos & Sofía</h2>
+          <p id="home-total-media" class="mt-0.5 text-xs text-gray-300">Cargando recuerdos...</p>
+        </div>
+      </div>
+
+      <!-- Cuadricula de 4 Contadores Rapidos (Fotos, Videos, Mensajes, Voces) -->
+      <div class="px-4">
+        <div class="grid grid-cols-4 gap-2 rounded-2xl border border-white/10 bg-white/5 p-3 text-center backdrop-blur-sm">
+          
+          <button type="button" class="quick-counter-btn flex flex-col items-center" data-goto="album">
+            <span id="stat-photos" class="text-base font-bold text-white">0</span>
+            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-tight">Fotos</span>
+          </button>
+
+          <button type="button" class="quick-counter-btn flex flex-col items-center border-l border-white/10" data-goto="album">
+            <span id="stat-videos" class="text-base font-bold text-white">0</span>
+            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-tight">Videos</span>
+          </button>
+
+          <button type="button" class="quick-counter-btn flex flex-col items-center border-l border-white/10" data-goto="messages">
+            <span id="stat-messages" class="text-base font-bold text-white">0</span>
+            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-tight">Mensajes</span>
+          </button>
+
+          <button type="button" class="quick-counter-btn flex flex-col items-center border-l border-white/10" data-goto="voices">
+            <span id="stat-audios" class="text-base font-bold text-white">0</span>
+            <span class="text-[10px] font-medium text-gray-400 uppercase tracking-tight">Voces</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Accesos Directos a la Accion -->
+      <div class="px-4 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Actividades de la fiesta</span>
+          <span class="text-[10px] font-mono text-emerald-400">En Vivo</span>
+        </div>
+
+        <!-- Tarjeta: Dejar Nota de Voz -->
+        <button
+          type="button"
+          id="home-action-voice-btn"
+          class="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-gradient-to-r from-red-950/40 to-black/60 p-4 text-left transition active:scale-95 hover:border-red-500/40"
+        >
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-red-600/20 text-red-400">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Grabar Nota de Voz</h4>
+              <p class="text-[11px] text-gray-400">Dedica tus mejores deseos con tu propia voz</p>
+            </div>
+          </div>
+          <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <!-- Tarjeta: Escribir Dedicatoria -->
+        <button
+          type="button"
+          id="home-action-msg-btn"
+          class="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 text-left transition active:scale-95 hover:border-white/30"
+        >
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-white">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Libro de Firmas</h4>
+              <p class="text-[11px] text-gray-400">Deja un mensaje escrito de felicitación</p>
+            </div>
+          </div>
+          <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <!-- Tarjeta: Ver Galeria de Fotos y Videos -->
+        <button
+          type="button"
+          id="home-action-album-btn"
+          class="w-full flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4 text-left transition active:scale-95 hover:border-white/30"
+        >
+          <div class="flex items-center gap-3">
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-white">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-white">Explorar Álbum</h4>
+              <p class="text-[11px] text-gray-400">Ver todas las fotos, videos y momentos compartidos</p>
+            </div>
+          </div>
+          <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- PESTAÑA 2: ÁLBUM COMPLETO                                                -->
+    <!-- ========================================================================= -->
+    <section id="tab-content-album" class="tab-view hidden">
+      <GalleryGrid slug={eventSlug} />
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- PESTAÑA 4: MENSAJES (LIBRO DE FIRMAS)                                     -->
+    <!-- ========================================================================= -->
+    <section id="tab-content-messages" class="tab-view hidden pt-2">
+      <GuestbookWall slug={eventSlug} />
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- PESTAÑA 5: VOCES (NOTAS DE AUDIO CON DISEÑO PROPIO EDITORIAL)             -->
+    <!-- ========================================================================= -->
+    <section id="tab-content-voices" class="tab-view hidden">
+      <VoiceNotesWall slug={eventSlug} />
+    </section>
+
   </main>
 
-  <!-- Componentes modales y reproductores -->
+  <!-- Componentes Modales, Reproductores y Navegacion Fija -->
+  <VaultDockBar activeTab="home" />
+  <VoiceRecorderModal slug={eventSlug} />
   <PinGate slug={eventSlug} />
   <ReelsViewer />
   <UploaderModal slug={eventSlug} />
 
 </Layout>
+
+<script define:vars={{ eventSlug }}>
+  // Enrutamiento de pestañas por eventos con persistencia de estado
+  const views = {
+    home: document.getElementById('tab-content-home'),
+    album: document.getElementById('tab-content-album'),
+    messages: document.getElementById('tab-content-messages'),
+    voices: document.getElementById('tab-content-voices'),
+  };
+
+  function getInitialTab() {
+    const hash = window.location.hash.replace('#', '');
+    if (['home', 'album', 'messages', 'voices'].includes(hash)) return hash;
+    const saved = localStorage.getItem('animus_vault_active_tab');
+    if (['home', 'album', 'messages', 'voices'].includes(saved)) return saved;
+    return 'home';
+  }
+
+  function switchTab(targetTab, shouldScroll = true) {
+    if (!views[targetTab]) return;
+
+    localStorage.setItem('animus_vault_active_tab', targetTab);
+    if (window.location.hash !== '#' + targetTab) {
+      window.history.replaceState(null, '', '#' + targetTab);
+    }
+
+    Object.keys(views).forEach((tabKey) => {
+      const el = views[tabKey];
+      if (el) {
+        if (tabKey === targetTab) {
+          el.classList.remove('hidden');
+          el.classList.add('block');
+        } else {
+          el.classList.remove('block');
+          el.classList.add('hidden');
+        }
+      }
+    });
+
+    // Sincronizar dock bar activo
+    document.querySelectorAll('.dock-item').forEach((b) => {
+      const bTab = b.getAttribute('data-tab');
+      if (bTab === targetTab) {
+        b.classList.remove('text-gray-400');
+        b.classList.add('text-white');
+      } else {
+        b.classList.remove('text-white');
+        b.classList.add('text-gray-400');
+      }
+    });
+
+    if (shouldScroll) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('animus-tab-changed', (e) => {
+    switchTab(e.detail.tab, true);
+  });
+
+  window.addEventListener('hashchange', () => {
+    const hash = window.location.hash.replace('#', '');
+    if (['home', 'album', 'messages', 'voices'].includes(hash)) {
+      switchTab(hash, false);
+    }
+  });
+
+  // Botones de acceso rapido desde la pestaña Inicio
+  document.querySelectorAll('.quick-counter-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-goto');
+      if (target) switchTab(target, true);
+    });
+  });
+
+  document.getElementById('home-action-album-btn')?.addEventListener('click', () => switchTab('album', true));
+  document.getElementById('home-action-msg-btn')?.addEventListener('click', () => switchTab('messages', true));
+  document.getElementById('home-action-voice-btn')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-voice-recorder'));
+  });
+
+  // Cargar metricas en tiempo real (Fotos, Videos, Mensajes, Voces)
+  async function loadStats() {
+    try {
+      const res = await fetch(`http://localhost:8000/api/a/${eventSlug}/stats`);
+      if (res.ok) {
+        const stats = await res.json();
+        const statPhotos = document.getElementById('stat-photos');
+        const statVideos = document.getElementById('stat-videos');
+        const statMessages = document.getElementById('stat-messages');
+        const statAudios = document.getElementById('stat-audios');
+        const homeTotal = document.getElementById('home-total-media');
+
+        if (statPhotos) statPhotos.textContent = stats.photos || 0;
+        if (statVideos) statVideos.textContent = stats.videos || 0;
+        if (statMessages) statMessages.textContent = stats.messages || 0;
+        if (statAudios) statAudios.textContent = stats.audios || 0;
+
+        const totalRecuerdos = (stats.photos || 0) + (stats.videos || 0) + (stats.audios || 0);
+        if (homeTotal) {
+          homeTotal.textContent = `${totalRecuerdos} ${totalRecuerdos === 1 ? 'recuerdo guardado' : 'recuerdos guardados'}`;
+        }
+      }
+    } catch (err) {
+      console.warn('Detalle al cargar datos de bóveda:', err);
+    }
+  }
+
+  document.getElementById('btn-refresh-vault')?.addEventListener('click', () => {
+    loadStats();
+    window.dispatchEvent(new CustomEvent('refresh-voices'));
+    window.dispatchEvent(new CustomEvent('animus-media-uploaded'));
+  });
+
+  // Listeners de sincronizacion en vivo sin reseteo involuntario
+  window.addEventListener('animus-media-uploaded', () => {
+    loadStats();
+    // Si el usuario subió fotos desde Inicio, llevarlo al Álbum para verlas de inmediato
+    const currentTab = localStorage.getItem('animus_vault_active_tab') || 'home';
+    if (currentTab === 'home') {
+      switchTab('album', false);
+    }
+  });
+
+  window.addEventListener('animus-stats-updated', loadStats);
+  window.addEventListener('animus-authenticated', () => {
+    loadStats();
+  });
+
+  // Inicializar en la pestaña activa guardada sin saltos
+  const initialTab = getInitialTab();
+  switchTab(initialTab, false);
+  loadStats();
+</script>

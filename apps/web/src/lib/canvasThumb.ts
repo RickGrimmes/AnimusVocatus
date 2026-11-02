@@ -88,3 +88,93 @@ export async function generateClientThumbnail(
     img.src = URL.createObjectURL(file);
   });
 }
+
+/**
+ * Obtiene la duracion en segundos de un archivo de video.
+ */
+export async function getVideoDuration(videoFile: File): Promise<number> {
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    const url = URL.createObjectURL(videoFile);
+    video.src = url;
+    video.onloadedmetadata = () => {
+      const dur = video.duration || 0;
+      URL.revokeObjectURL(url);
+      resolve(dur);
+    };
+    video.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(0);
+    };
+  });
+}
+
+/**
+ * Extrae un fotograma del video en el segundo 0.5 y genera miniatura WebP de 400px en el navegador.
+ */
+export async function generateVideoThumbnail(
+  videoFile: File,
+  maxDimension = 400,
+  quality = 0.8
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.muted = true;
+    video.playsInline = true;
+    const url = URL.createObjectURL(videoFile);
+    video.src = url;
+
+    video.onloadedmetadata = () => {
+      video.currentTime = Math.min(0.5, video.duration > 1 ? 0.5 : 0.1);
+    };
+
+    video.onseeked = () => {
+      try {
+        let w = video.videoWidth || 400;
+        let h = video.videoHeight || 400;
+        if (w > h) {
+          if (w > maxDimension) {
+            h = Math.round((h * maxDimension) / w);
+            w = maxDimension;
+          }
+        } else {
+          if (h > maxDimension) {
+            w = Math.round((w * maxDimension) / h);
+            h = maxDimension;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, w, h);
+          canvas.toBlob(
+            (blob) => {
+              URL.revokeObjectURL(url);
+              if (blob) resolve(blob);
+              else reject(new Error('Fallo la creacion de miniatura WebP del video'));
+            },
+            'image/webp',
+            quality
+          );
+        } else {
+          URL.revokeObjectURL(url);
+          reject(new Error('No se pudo obtener contexto 2D'));
+        }
+      } catch (err) {
+        URL.revokeObjectURL(url);
+        reject(err);
+      }
+    };
+
+    video.onerror = (err) => {
+      URL.revokeObjectURL(url);
+      reject(err);
+    };
+  });
+}
+
