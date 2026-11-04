@@ -1,9 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/v/boda-ricardo-y-kiara"
-    }
-  ]
-}
-

@@ -65,30 +65,12 @@ export const DEMO_VOCATUS_EVENT: VocatusEvent = {
   is_active: true,
 };
 
-export const DEMO_RICARDO_KIARA_EVENT: VocatusEvent = {
-  slug: 'boda-ricardo-y-kiara',
-  title: 'Ricardo & Kiara',
-  event_date: '2027-04-02T17:00:00Z',
-  event_type: 'boda',
-  location_name: 'Centro de Convenciones San Ángel',
-  location_address: 'Av. Lerdo de Tejada, Torreón, Coahuila 27100',
-  location_maps_url: 'https://maps.app.goo.gl/YqPAXaNvbj2CnKM49',
-  location_waze_url: 'https://waze.com/ul?ll=25.5546346,-103.4324767&navigate=yes',
-  dress_code: 'Rigurosa Etiqueta / Formal',
-  gift_registry_info: 'Liverpool: Evento 5139481 | Amazon: Mesa Ricardo & Kiara | Transferencia BBVA',
-  itinerary: '16:30 Recepción de Invitados | 17:00 Ceremonia Religiosa | 19:00 Cóctel de Bienvenida | 20:30 Banquete & Brindis | 22:30 Apertura de Pista & Fiesta',
-  is_active: true,
-};
-
 export async function fetchEventVocatus(slug: string): Promise<VocatusEvent> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/v/${slug}`);
     if (res.ok) return await res.json();
   } catch (err) {
     console.warn('API local no disponible, usando datos demostrativos:', err);
-  }
-  if (slug === 'boda-ricardo-y-kiara') {
-    return DEMO_RICARDO_KIARA_EVENT;
   }
   return DEMO_VOCATUS_EVENT;
 }
